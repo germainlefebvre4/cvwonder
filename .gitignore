@@ -1,8 +1,20 @@
-.vscode/
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
 
+# Test
 test_CV.y*ml
 test.y*ml
 test.html
 test.pdf
 
+# Custom theme directory
+/themes/
+
+# Generated directory
+/generated/
+
+# Generated files
 cv.html

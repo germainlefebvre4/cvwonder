@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]>
+<html class="ie ie6" lang="en"> <![end]-->
+<!--[if IE 7 ]>
+<html class="ie ie7" lang="en"> <![end]-->
+<!--[if IE 8 ]>
+<html class="ie ie8" lang="en"> <![end]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html lang="en">
+<!--<![end]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Person.Name }}'s CV</title>
+    <meta name="author" content="{{ .Person.Name }}"/>
+    <meta name="description" content="{{ .Person.Name }}'s CV"/>
+    <link rel="shortcut icon" href="/favicon.png">
+    <link href="{{ .Site.URL }}/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ .Site.URL }}/css/cv1.css" rel="stylesheet">
+    <link href="{{ .Site.URL }}/css/flags/flags.css" rel="stylesheet">
+  
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet" media="all"/>
+    <link href='https://fonts.googleapis.com/css?family=Lusitana:400,700' rel='stylesheet' type='text/css'>
+  
+    <link href='https://fonts.googleapis.com/css?family=Archivo+Black' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300' rel='stylesheet' type='text/css'>
+    <script type="text/javascript">
+      WebFontConfig = {
+        google: {families: ['Passion+One:400,700:latin']}
+      };
+      (function () {
+        var wf = document.createElement('script');
+        wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+      })(); </script>
+  
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  
+      <script>
+  
+      $(window).on('load', function() {
+        $('[data-github]').each(function () {
+        var _this = this;
+        var repo = $(_this).data('github')
+  
+        fetch('https://api.SocialNetworks.Github.com/repos/' + repo).then(function (response) {
+          return response.json();
+        }).then(function (response) {
+          $(_this).find('[data-forks]').text(response.forks);
+          $(_this).find('[data-stars]').text(response.stargazers_count);
+        });
+      });
+      // code here
+      });
+  
+  </script>
+  
+  </head>
+
+<body>
+  <div class="container">
+
+      <div class="row header section-border">
+        <div class="col-xs-3">
+          <img src="{{ .Company.Logo }}" class="img-responsive img-circle" alt="{{ .Company.Name }}">   
+        </div>
+  
+        <div class="col-xs-9">
+          <div class="row">
+            <div class="col-xs-12">
+              <h1 class="name">{{ .Person.Name }}</h1>
+              <h2 class="profession">{{ .Person.Profession }}</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row section section-border">
+        <div class="col-xs-3">
+          <h2>Abstrait</h2>
+                </div>
+  
+        <div class="col-xs-9">
+          {{ range .Abstract }}
+          <div class="row">
+            <div class="col-xs-12">
+              <p>{{ .Tr }}</p>
+            </div>
+          </div>
+          {{ end }}
+
+          {{ if .SocialNetworks.Github }}
+          <div class="row">
+            <div class="col-xs-12">
+              <i class="fa fa-github"></i>Github : <a href="https://github.com/{{ .SocialNetworks.Github }}">{{ .SocialNetworks.Github }}</a>
+            </div>
+          </div>
+          {{ end }}
+        </div>
+      </div>
+
+
+      <div class="row section section-border">
+        <div class="col-xs-3">
+          <h2>Dernières expériences</h2>
+        </div>
+
+        
+        <div class="col-xs-9">
+          {{ range .Career }}
+          <h3>
+            {{ .CompanyName }}
+          </h3>
+          <h6>
+            {{ .Duration }}
+          </h6>
+
+            {{ range .Missions }}
+            <div class="row">
+              <div class="col-xs-6">
+                  <h4><b>{{ .Position }}</b></h4>
+                  <h6 class="">{{ .Dates }}, chez {{ .Company }}</h6>
+              </div>
+              <div class="col-xs-6 pull-right">
+                <h5 class="pull-right">{{ .Dates }}<br/>
+                {{ .Company }} <i>({{ .Location }})</i></h5>
+              </div>
+            </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <p><b>Mission</b> : {{ .Summary }}</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <p><b>Client</b> : {{ .Company }}</p>
+                </div>
+              </div>
+              {{ if .Project }}
+              <div class="row">
+                <div class="col-xs-12">
+                  <p><b>Projet</b> : {{ .Project }}</p>
+                </div>
+              </div>
+              {{ end }}
+              <div class="row">
+                <div class="col-xs-12">
+                  <p><b>Technologies</b> : {{ .Technologies }}</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+    
+                {{ $length := len .Description }}{{ if gt $length 0 }}
+                <b>Description :</b>
+                <ul>
+                  {{ range .Description }}
+                  <li>{{ . }}</li>
+                  {{ end }}
+                </ul>
+                {{ end }}
+                </div>
+              </div>
+              {{ end }}
+          {{ end }}
+        </div>
+      </div>
+
+
+    <div class="row section section-border pagebreakishere">
+      <div class="col-xs-3">
+        <h2>Technical skills</h2>
+      </div>
+      <div class="col-xs-9">
+        <div class="row">
+          {{ range .TechnicalSkills.Domains }}
+          <div class="col-xs-4">
+
+            <h4 class="techSkillHeader"><i class="fa fa-terminal"></i> {{ .Name }}</h4>
+            {{ range .Competencies }}{{ .Name }}
+            <div class="progress">
+              <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: {{ .Level }}%"></div>
+            </div>
+            {{ end }}
+          </div>
+          {{ end }}
+        </div>
+
+        {{ $length := len .TechnicalSkills.List }}{{ if gt $length 0 }}
+        <div>
+          <h4><i class="fa fa-male"></i> Key competencies:</h4>
+          <ul>
+            {{ range .TechnicalSkills.List }}
+            <li>{{ .Tr }}</li>
+            {{ end }}
+          </ul>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+
+
+    <div class="row section">
+        <div class="col-xs-3"><h2>Open Source Projects</h2></div>
+        <div class="col-xs-9">
+        {{ range .SideProjects }}
+            <div class="github-cards col-xs-6">
+            <a href="https://github.com/{{ .Link }}" class="github-card" data-github="{{ .Link }}">
+                <h3>{{ .Name }}</h3>
+                <p>{{ .Description }}</p>
+                <h5><i>As a {{ .Position }}</i></h5>
+                <span class="github-card__meta">
+                <span class="github-card__language-icon" style="color: #{{ .Color }};">●</span> {{ .Langs }}
+                </span>
+                <span class="github-card__meta">
+                <i class="fa fa-star" aria-hidden="true"></i>
+                <span data-stars>
+                    <i class="fa fa-spinner" aria-hidden="true"></i>
+                </span>
+                </span>
+                <span class="github-card__meta">
+                <i class="fa fa-code-fork" aria-hidden="true"></i>
+                <span data-forks>
+                    <i class="fa fa-spinner" aria-hidden="true"></i>
+                </span>
+                </span>
+            </a>
+
+            </div>
+        {{ end }}
+        </div>
+    </div>
+
+
+    <div class="row section">
+        <div class="col-xs-3"><h2>Certifications</h2></div>
+        <div class="col-xs-9">
+        {{ range .Certifications }}
+
+        <div class="row">
+
+        <div class="col-xs-6" style="padding-top: 5px; padding-bottom: 5px;">
+            <a href="{{ .Link }}"><img style="height: 90px;display: inline-block;vertical-align: middle;"
+                                        src="/images/cv/{{ .Badge }}"></a>
+            <div style="display: inline-block; vertical-align: middle;">
+            <div><b>{{ .CompanyName }}</b></div>
+            <div><b>{{ .CertificationName }}</b></div>
+            <div>{{ .Issuer }}</div>
+            <div>{{ .Date }}</div>
+            </div>
+        </div>
+
+        </div>
+
+
+        {{ end }}
+        </div>
+    </div>
+    </div>
+
+    <div class="row section section-border">
+      <div class="col-xs-3"><h2>Formation</h2></div>
+      <div class="col-xs-9">
+
+        {{ range .Education }}
+        <div class="row">
+          <div class="col-xs-12"><h4><b>{{ .Degree }}</b></h4></div>
+          <div class="col-xs-12">{{ .Name }}, <i class="fa fa-graduation-cap">{{ .Location }}</i></div>
+          <div class="col-xs-12">{{ .Dates }}</div>
+          <div class="col-xs-12"><a href="{{ .Link }}">{{ .Link }}</a></div>
+        </div>
+        {{ end }}
+        </div>
+    </div>
+</body>
+
+</html>

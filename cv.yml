@@ -2,6 +2,8 @@
 site:
   url: germainlefebvre.fr
 
+theme: default
+
 company:
   name: My Company
   logo: images/company.png

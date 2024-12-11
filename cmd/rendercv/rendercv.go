@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"rendercv/internal/model"
 	"rendercv/internal/parser"
 	"rendercv/internal/render"
 	"rendercv/internal/utils"
@@ -32,20 +33,31 @@ var rootCmd = &cobra.Command{
 		// 		fmt.Println("wooooof!")
 		// 	}
 
-		testMyFunction()
-
-		inputFilePath := args[0]
+		argInputFilePath := args[0]
 		outputDirectory := args[1]
 
+		themeName := "default"
+		if len(args) > 2 {
+			themeName = args[2]
+		}
+		fmt.Println(themeName)
+
+		// Build InputFile object
+		inputFile := model.BuildInputFile(argInputFilePath)
+
+		// Build OutputDirectory object
+		outputDir := model.BuildOutputDirectory(outputDirectory)
+
 		fmt.Println("RenderCV")
-		fmt.Println("  Input file: ", inputFilePath)
-		fmt.Println("  Output directory: ", outputDirectory)
+		fmt.Println("  Input file: ", inputFile.FullPath)
+		fmt.Println("  Output directory: ", inputFile.Directory)
+		fmt.Println("  Theme: ", themeName)
 		fmt.Println()
 
-		content, err := parser.ParseFile(inputFilePath)
+		content, err := parser.ParseFile(inputFile.FullPath)
 		utils.CheckError(err)
 
-		render.RenderCV(content, outputDirectory, inputFilePath)
+		render.RenderCV(content, outputDir.FullPath, inputFile.FullPath, themeName)
 		utils.CheckError(err)
 
 	},
@@ -56,10 +68,4 @@ func Execute() {
 		_, _ = fmt.Fprintf(os.Stderr, "There was an error while executing your CLI '%s'", err)
 		os.Exit(1)
 	}
-}
-
-func testMyFunction() {
-	// give the current directory path
-	dir, _ := os.Getwd()
-	fmt.Println("Current directory path: ", dir)
 }

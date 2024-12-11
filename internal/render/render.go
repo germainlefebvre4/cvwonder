@@ -9,12 +9,12 @@ import (
 )
 
 // RenderCV renders the CV based on html template located at internal/templates/index.html
-func RenderCV(cv model.CV, outputDirectory string, inputFilePath string) {
+func RenderCV(cv model.CV, outputDirectory string, inputFilePath string, themeName string) {
 	fmt.Println("Rendering CV")
 
 	inputFilenameExt := path.Base(inputFilePath)
 	inputFilename := inputFilenameExt[:len(inputFilenameExt)-len(path.Ext(inputFilenameExt))]
 
-	err := render_html.GenerateFormatHTML(cv, outputDirectory, inputFilename)
+	err := render_html.GenerateFormatHTML(cv, outputDirectory, inputFilename, themeName)
 	utils.CheckError(err)
 }

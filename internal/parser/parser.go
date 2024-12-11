@@ -9,14 +9,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func ParseFile(file_path string) (model.CV, error) {
-	file_content, err := readFile(file_path)
+func ParseFile(filePath string) (model.CV, error) {
+	fileContent, err := readFile(filePath)
 	utils.CheckError(err)
 
-	data_content, err := convertFileContentToStruct(file_content)
+	dataContent, err := convertFileContentToStruct(fileContent)
 	utils.CheckError(err)
 
-	return data_content, nil
+	return dataContent, nil
 }
 
 func convertFileContentToStruct(content []byte) (model.CV, error) {
@@ -27,9 +27,9 @@ func convertFileContentToStruct(content []byte) (model.CV, error) {
 	return cvOutput, err
 }
 
-func readFile(file_path string) ([]byte, error) {
+func readFile(filePath string) ([]byte, error) {
 	fmt.Println("Reading file")
-	content, err := os.ReadFile(file_path)
+	content, err := os.ReadFile(filePath)
 	utils.CheckError(err)
 	return content, err
 }
