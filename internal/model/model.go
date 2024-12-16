@@ -70,10 +70,11 @@ type CV struct {
 		Badge             string `yaml:"badge"`
 	} `yaml:"certifications"`
 	Education []struct {
-		Name     string `yaml:"name"`
-		Degree   string `yaml:"degree"`
-		Location string `yaml:"location"`
-		Dates    string `yaml:"dates"`
-		Link     string `yaml:"link"`
+		SchoolName string `yaml:"schoolName"`
+		SchoolLogo string `yaml:"schoolLogo"`
+		Degree     string `yaml:"degree"`
+		Location   string `yaml:"location"`
+		Dates      string `yaml:"dates"`
+		Link       string `yaml:"link"`
 	} `yaml:"education"`
 }

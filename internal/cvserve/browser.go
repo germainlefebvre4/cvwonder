@@ -1,14 +1,17 @@
 package cvserve
 
 import (
-	"cvrender/internal/utils"
+	"cvwonder/internal/utils"
 	"fmt"
 	"os/exec"
 	"runtime"
+
+	"github.com/sirupsen/logrus"
 )
 
-func OpenBrowser(url string) {
-	fmt.Println("Opening browser")
+func OpenBrowser() {
+	logrus.Debug("Opening browser")
+	url := fmt.Sprintf("http://localhost:%d", utils.CliArgs.Port)
 	var err error
 	switch runtime.GOOS {
 	case "linux":

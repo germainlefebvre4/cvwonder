@@ -1,16 +1,16 @@
 package cvparser
 
 import (
-	"cvrender/internal/model"
-	"cvrender/internal/utils"
-	"fmt"
+	"cvwonder/internal/model"
+	"cvwonder/internal/utils"
 	"os"
 
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
 
 func ParseFile(filePath string) (model.CV, error) {
-	fmt.Println("Parsing YAML file")
+	logrus.Debug("Parsing YAML file")
 	fileContent, err := readFile(filePath)
 	utils.CheckError(err)
 

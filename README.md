@@ -1,9 +1,67 @@
-# cvrender
+# cvwonder
+
+## Getting started
+
+Install the binary using `go get`:
+
+```bash
+go get github.com/germainlefebvre/cvwonder
+```
+
+Write your CV in a YAML file (i.e; `cv.yml`):
+
+Generate your CV using the following command:
+
+```bash
+cvwonder generate --input=cv.yml --output=generated/ --theme=default
+```
+
+## Themes
+
+### Default
+
+The default theme is a simple theme to help you get started.
+It includes:
+
+* Simple design
+* Printable version of your CV
+* Web version of your CV
+* Github stars and forks count of your side projects
+* Graphical bar level for you Tech Skills
+* Logo of your companies and schools
+
+## Theme Functions
+
+Theme templating is based on [`template/html` package](https://pkg.go.dev/html/template) from Go. It is a simple and basic templating engine without any flourish stuff.
+
+To allow basic string manipulation, here are the functions available in the templates:
+
+* `dec` - Decrement a number
+* `replace` - Replace a substring by another
+* `join` - Join a list of strings with a separator
+
+| Function | Description | Example | Result |
+|----------|-------------|---------|--------|
+| `dec` | Decrement a number | `{{ dec 2 }}` | `1` |
+| `replace` | Replace a substring by another | `{{ replace "Hello World" "World" "Universe" }}` | `Hello Universe` |
+| `join` | Join a list of strings with a separator | `{{ join ["one", "two", "three"] ", " }}` | `one, two, three` |
 
 ## Development
 
-### Testing
+### Run
 
 ```bash
-go run ./cmd/cvrender cv.yml .
+go run ./cmd/cvwonder/cvwonder.go --input=cv.yml --output=generated/ --theme=default 
+# make run
 ```
+
+### Build
+
+```bash
+go build -o cvwonder ./cmd/cvwonder/cvwonder.go
+# make build
+```
+
+### VSCode
+
+A `.vscode/launch.json` file is provided to help you debug the application.

@@ -1,47 +1,72 @@
 package render_html
 
 import (
-	"cvrender/internal/model"
-	utils "cvrender/internal/utils"
-	"fmt"
+	"cvwonder/internal/model"
+	utils "cvwonder/internal/utils"
+	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
+
+	"github.com/sirupsen/logrus"
 )
 
 func GenerateFormatHTML(cv model.CV, outputDirectory string, inputFilename string, themeName string) error {
-	fmt.Println("Generating HTML")
+	logrus.Debug("Generating HTML")
 
 	// Theme directory
 	currentDirectory, err := os.Getwd()
 	utils.CheckError(err)
-	themeDirectory := currentDirectory + "/internal/themes"
+	themeDirectory := currentDirectory + "/themes"
 
-	if os.Getenv("DEBUG") == "1" {
-		themeDirectory = currentDirectory + "/../../internal/themes"
-		// themeIndexFile := render_index.HTML
+	// Inject custom functions in template
+	funcMap := template.FuncMap{
+		"dec":     func(i int) int { return i - 1 },
+		"replace": strings.ReplaceAll,
+		"join":    strings.Join,
 	}
 
-	tmpl, err := template.ParseFiles(themeDirectory + "/" + themeName + "/index.html")
+	// Template file
+	tmplFile := themeDirectory + "/" + themeName + "/index.html"
+	tmpl, err := template.New("index.html").Funcs(funcMap).ParseFiles(tmplFile)
 	utils.CheckError(err)
 
 	// Output file
 	outputDirectory, err = filepath.Abs(outputDirectory)
 	utils.CheckError(err)
 	outputFilePath := outputDirectory + "/" + "index.html"
-	// outputFilePath := outputDirectory + "/" + inputFilename + ".html"
+	outputTmpFilePath := outputFilePath + ".tmp"
 
 	// Create output file and directory
-	err = os.MkdirAll(outputDirectory, os.ModePerm)
-	utils.CheckError(err)
+	if _, err := os.Stat(outputDirectory); errors.Is(err, os.ErrNotExist) {
+		err = os.MkdirAll(outputDirectory, os.ModePerm)
+		utils.CheckError(err)
+	}
 	outputFile, err := os.Create(outputFilePath)
+	outputTmpFile, err := os.Create(outputTmpFilePath)
 	utils.CheckError(err)
+	// var outputTmpFile *os.File
+	// if _, err := os.Stat(outputTmpFilePath); errors.Is(err, os.ErrNotExist) {
+	// 	outputTmpFile, err = os.Create(outputTmpFilePath)
+	// 	utils.CheckError(err)
+	// } else {
+	// 	outputTmpFile, err = os.OpenFile(outputTmpFilePath, os.O_WRONLY, 0644)
+	// 	utils.CheckError(err)
+	// }
 
 	// Generate output
-	err = tmpl.Execute(outputFile, cv)
+	err = tmpl.ExecuteTemplate(outputTmpFile, "index.html", cv)
 	utils.CheckError(err)
 
-	fmt.Println("HTML file generated at:", outputFilePath)
+	// Copy file content - Method 2
+	input, err := os.ReadFile(outputTmpFilePath)
+	utils.CheckError(err)
+	err = os.WriteFile(outputFilePath, input, 0644)
+	utils.CheckError(err)
+
+	logrus.Debug("HTML file generated at:", outputFile)
+	logrus.Debug("HTML file generated at:", outputFilePath)
 
 	return err
 }

@@ -1,9 +1,11 @@
 package utils
 
-import "log"
+import (
+	"github.com/sirupsen/logrus"
+)
 
 func CheckError(err error) {
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 }

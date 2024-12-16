@@ -1,0 +1,96 @@
+---
+site_name: CV Wonder
+site_description: CV Wonder generates wonderful CV from YAML.
+site_url: https://cvwonder.readthedocs.io/
+
+repo_name: germainlefebvre4/cvwonder
+repo_url: https://github.com/germainlefebvre4/cvwonder
+
+docs_dir: readthedocs
+
+theme:
+  name: material
+  language: en
+  logo: logo.svg
+  favicon: logo.ico
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.path
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - navigation.footer
+    - content.code.copy
+
+plugins:
+  - search:
+      lang: en
+  - autorefs
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: zoom
+      slide_effect: slide
+      width: 100%
+      height: auto
+      zoomable: true
+      draggable: true
+      skip_classes:
+        - custom-skip-class-name
+      auto_caption: false
+      caption_position: bottom
+      background: white
+      shadow: true
+      manual: false
+
+nav:
+  - CV Wonder:
+    - index.md
+  - Getting Started:
+    - Write your CV : getting-started/write-cv.md
+    - Generate your CV: getting-started/generate-cv.md
+  - Themes:
+    - Overview: themes/overview.md
+    - Use a theme: themes/use-theme.md
+    - Write your theme: themes/write-theme.md
+  - Contributing:
+    - Support: contributing/support.md
+    - How to contribute:
+        - Issues: contributing/issues.md
+        - Discussions: contributing/discussions.md
+        - Pull Requests: contributing/pull-requests.md
+        - Development: contributing/development.md
+        - Code of Conduct: contributing/code-of-conduct.md
+    - Maintainer:
+        - Git workflow: contributing/maintainer/git-workflow.md
+        - Release Flow: contributing/maintainer/release-flow.md
+    - The Team: contributing/team.md
+  - License: license.md
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - admonition
+  - codehilite
+  - tables
+  - footnotes
+  - extra
+  - toc:
+      permalink: true
+  - markdown.extensions.codehilite:
+      guess_lang: false
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - markdown_include.include:
+      base_path: readthedocs
+
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/germainlefebvre4/cvwonder
+
+copyright: Copyright &copy; 2024 CV Wonder, and contributors
+

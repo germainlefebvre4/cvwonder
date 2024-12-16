@@ -5,16 +5,14 @@
 !.vscode/launch.json
 
 # Golang
-/cmd/cvrender/__*
+/cmd/cvwonder/__*
+/cvwonder
 
 # Test
 test_CV.y*ml
 test.y*ml
 test.html
 test.pdf
-
-# Custom theme directory
-/themes/
 
 # Generated directory
 /generated/
@@ -23,3 +21,6 @@ test.pdf
 cv.html
 
 /index.html
+
+# Documentation
+.venv/

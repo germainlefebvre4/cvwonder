@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "cvwonder"
+version = "0.1.0"
+description = ""
+authors = ["Germain LEFEBVRE <germain.lefebvre4@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+mkdocs = "*"
+mkdocs-autorefs = "*"
+mkdocs-click = "*"
+mkdocs-material = "*"
+mkdocs-material-extensions = "*"
+mkdocstrings = "*"
+mkdocstrings-python = "*"
+typing-extensions = "*"
+mkdocs-glightbox = "*"
+markdown-include = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

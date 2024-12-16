@@ -6,11 +6,15 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "${workspaceFolder}/cmd/cvrender",
+            "cwd": "${workspaceFolder}",
+            "program": "./cmd/cvwonder",
             "args": [
+                "serve",
                 "--input=cv.yml",
-                "--output=generated",
+                "--output=generated/",
                 "--theme=default",
+                "--watch",
+                // "--verbose",
             ],
             "debugAdapter": "dlv-dap",
             "env": {
@@ -25,7 +29,8 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "${workspaceFolder}/cmd/cvrender",
+            "cwd": "${workspaceFolder}",
+            "program": "./cmd/cvwonder",
             "env": {
             }
         }

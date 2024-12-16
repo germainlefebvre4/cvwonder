@@ -1,0 +1,9 @@
+mkdocs
+mkdocs-autorefs
+mkdocs-material
+mkdocs-material-extensions
+mkdocstrings
+typing-extensions
+mkdocs-glightbox
+mdokcs-embed-external-markdown
+mkdocs-badges

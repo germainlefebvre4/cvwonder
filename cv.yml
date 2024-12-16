@@ -5,8 +5,8 @@ site:
 theme: default
 
 company:
-  name: My Company
-  logo: images/company.png
+  name: Zatsit
+  logo: images/zatsit-logo.webp
 
 person:
   name: Germain
@@ -27,12 +27,39 @@ socialNetworks:
 abstract:
   - tr: "J'ai grandi dans l'univers des systèmes Linux. Ma volonté de progression m'a rapidement amené vers des outils automatisation, d'Infra-as-Code, ainsi que les plateformes de CI/CD."
   - tr: "La découverte de l'univers des conteneurs est digne de 'Rencontre avec le 3ème type'. C'est devenu un écosyst-me que j'aime tester, utiliser et transmettre."
-  - tr: "Mon amour pour le logiciel libre m'a amené à contribuer pour des librairies, sqlfluff, libtado, crossplane-assistant ou encore cvrender."
+  - tr: "Mon amour pour le logiciel libre m'a amené à contribuer pour des librairies, sqlfluff, libtado, crossplane-assistant ou encore cvwonder."
   - tr: "J'aime passer du temps sur des 'side projects' qui peuvent aider, servir et simplifier le quotidien des Techs. Ce que nous enseigne la sphère de l'open source est vertueux : l'entraide et le partage."
 
 career:
+  - companyName: Zatsit
+    companyLogo: images/zatsit-logo.webp
+    duration: 10 mois, aujourd'hui
+    missions:
+      - position: Platform Engineer
+        company: Adeo
+        location: Ronchin, France
+        dates: 2024, mars - 2024, décembre
+        summary: Construire une IDP, plateforme interne de développement, totalement managée pour aider les développeurs à se focaliser sur le code. Sur base du code source, la plateforme provisionne l'infrastructure sous-jacente, les base de données, la construction des artefact et publication sur la registry, le déploiement dans Kubernetes, l'intégration du monitoring avec Datadog et construction des Monitors.
+        technologies:
+          - ArgoCD
+          - Kubernetes
+          - K8s Operrator
+          - Crossplane
+          - Vault
+          - Github Actions
+          - JFrog Artifactory
+          - Backstage
+          - Python
+          - Golang
+        description:
+          - Développement de l'operator Kubernetes responsable du provisioning des bases de données
+          - Développement des Compositions Crossplane pour provisionner les base de données
+          - Développement de l'API de l'IDP en Golang
+          - Déploiement avec ArgoCD
+          - Vulgarisation d'une architecture applicative en langage déclaratif (yaml)
+
   - companyName: Ineat
-    companyLogo: images/ineat-logo.jpeg
+    companyLogo: images/ineat-logo.webp
     duration: 7 ans, 10 mois
     missions:
       - position: Lead Tech Ops
@@ -335,6 +362,7 @@ career:
           - Automatisation de "tout ce qui est possible d'automatiser" avec Ansible, Rundeck, Jenkins, scripts Python
 
   - companyName: CGI
+    companyLogo: images/cgi-logo.webp
     missions:
       - position: Intégrateur Système et Applicatif
         company: Auchan
@@ -388,6 +416,8 @@ technicalSkills:
           level: 90
     - name: Others
       competencies:
+        - name: Golang
+          level: 40
         - name: Python
           level: 70
         - name: Gitlab CI
@@ -412,28 +442,45 @@ sideProjects:
     langs: Python
     color: 3572A5
 
+  - name: crossplane-assistant
+    position: maintainer
+    description: A CLI to help you to manage your Crossplane resources.
+    link: crossplane-assistant/crossplane-assistant
+    type: github
+    langs: Go
+    color: 3572A5
+
+  - name: cvwonder
+    position: maintainer
+    description: A CLI to render your CV from a YAML file.
+    link: germainlefebvre4/cvwonder
+    type: github
+    langs: Go
+    color: 3572A5
+
 certifications:
   - companyName: AWS
     certificationName: Cloud Practitioner
     issuer: Person View
     date: Février 2022
     link: https://www.credly.com/badges/e7955ad8-1d54-4eb3-ac0f-1f69e644e14c/public_url
-    badge: aws-certified-cloud-practitioner.png
+    badge: images/aws-certified-cloud-practitioner.png
   - companyName: AWS
     certificationName: Solutions Architect Associate
     issuer: Coursera
     date: Mars 2018
     link: https://www.credly.com/badges/dd09dc40-9ef8-43a4-addb-d861d4dadf26/public_url
-    badge: aws-certified-solutions-architect-associate.png
+    badge: images/aws-certified-solutions-architect-associate.png
   - companyName: AWS
     certificationName: SysOps Administrator Associate
     issuer: Coursera
     date: Août 2017
     link: https://www.credly.com/badges/f0054964-7101-47a0-82b2-16d351eb08f2/public_url
-    badge: aws-certified-sysops-administrator-associate.png
+    badge: images/aws-certified-sysops-administrator-associate.png
 
 education:
-  - name: IG2I - Centrale
+  - schoolName: IG2I - Centrale
+    schoolLogo: images/centrale-lille-logo.webp
     degree: Titre d'ingénieur (BAC+5)
     location: Lens, France
     dates: 2019 - 2014
