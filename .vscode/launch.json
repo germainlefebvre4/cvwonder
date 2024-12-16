@@ -6,7 +6,7 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "${workspaceFolder}/cmd/rendercv",
+            "program": "${workspaceFolder}/cmd/cvrender",
             "args": [
                 "--input=cv.yml",
                 "--output=generated",
@@ -25,7 +25,7 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "${workspaceFolder}/cmd/rendercv",
+            "program": "${workspaceFolder}/cmd/cvrender",
             "env": {
             }
         }

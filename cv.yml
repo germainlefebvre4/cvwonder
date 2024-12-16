@@ -11,7 +11,7 @@ company:
 person:
   name: Germain
   depiction: profile.png
-  profession: Bâtisseur de nuages
+  profession: Bâtisseur de Plateformes et de Nuages
   location: Lille
   citizenship: FR
   email: germain.lefebvre@mycompany.fr
@@ -25,13 +25,14 @@ socialNetworks:
   twitter: germainlefebvr4
 
 abstract:
-  - tr: J'ai grandi dans l'univers des systèmes Linux. Ma volonté d'accélération m'a rapidement amené vers des outils automatisation, d'Infra-as-Code, ainsi que les plateformes de CI/CD.
-  - tr: La découverte de l'univers des conteneurs est digne de "Rencontre avec le 3ème type". C'est devenu une sphère que j'aime tester, utiliser et transmettre.
-  - tr: Mon amour pour le logiciel libre m'a amené à contribuer pour des projets tels que que sqlfluff, libtado, crossplane-assistant, germainlefebvre4/rendercv.
-  - tr: J'aime passer du temps sur des projets sides qui peuvent aider, servir, simplifier le quotidien des tech. Ce que nous enseigne la sphère de l'open source est vertueux, tel que l'entraide et le partage.
+  - tr: "J'ai grandi dans l'univers des systèmes Linux. Ma volonté de progression m'a rapidement amené vers des outils automatisation, d'Infra-as-Code, ainsi que les plateformes de CI/CD."
+  - tr: "La découverte de l'univers des conteneurs est digne de 'Rencontre avec le 3ème type'. C'est devenu un écosyst-me que j'aime tester, utiliser et transmettre."
+  - tr: "Mon amour pour le logiciel libre m'a amené à contribuer pour des librairies, sqlfluff, libtado, crossplane-assistant ou encore cvrender."
+  - tr: "J'aime passer du temps sur des 'side projects' qui peuvent aider, servir et simplifier le quotidien des Techs. Ce que nous enseigne la sphère de l'open source est vertueux : l'entraide et le partage."
 
 career:
   - companyName: Ineat
+    companyLogo: images/ineat-logo.jpeg
     duration: 7 ans, 10 mois
     missions:
       - position: Lead Tech Ops

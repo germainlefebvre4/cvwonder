@@ -1,9 +1,9 @@
-# rendercv
+# cvrender
 
 ## Development
 
 ### Testing
 
 ```bash
-go run ./cmd/rendercv cv.yml .
+go run ./cmd/cvrender cv.yml .
 ```

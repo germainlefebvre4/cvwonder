@@ -29,6 +29,7 @@ type CV struct {
 	} `yaml:"abstract"`
 	Career []struct {
 		CompanyName string `yaml:"companyName"`
+		CompanyLogo string `yaml:"companyLogo"`
 		Duration    string `yaml:"duration,omitempty"`
 		Missions    []struct {
 			Position     string   `yaml:"position"`

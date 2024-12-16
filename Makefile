@@ -1,6 +1,6 @@
 
 run:
-	go run ./cmd/rendercv $(filter-out $@,$(MAKECMDGOALS))
+	go run ./cmd/cvrender $(filter-out $@,$(MAKECMDGOALS))
 
 %:
     @:

@@ -1,20 +1,6 @@
-aaaaaaa
-aaaaaaa
-vvvvvvvvvvvv
-ggg
-aaaaaaaaaaaaaaaaaaaaaaaa
 <!DOCTYPE html>
-<!--[if lt IE 7 ]>
-<html class="ie ie6" lang="en"> <![end]-->
-<!--[if IE 7 ]>
-<html class="ie ie7" lang="en"> <![end]-->
-<!--[if IE 8 ]>
-<html class="ie ie8" lang="en"> <![end]-->
-<!--[if (gte IE 9)|!(IE)]><!-->
 <html lang="en">
-<!--<![end]-->
-
-<head>
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ .Person.Name }}'s CV</title>
@@ -43,10 +29,9 @@ aaaaaaaaaaaaaaaaaaaaaaaa
         s.parentNode.insertBefore(wf, s);
       })(); </script>
   
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   
-      <script>
-  
+    <script>
       $(window).on('load', function() {
         $('[data-github]').each(function () {
         var _this = this;
@@ -61,12 +46,11 @@ aaaaaaaaaaaaaaaaaaaaaaaa
       });
       // code here
       });
-  
-  </script>
-  
+    </script>  
   </head>
 
 <body>
+  <script src="http://localhost:35729/livereload.js"></script>
   <div class="container">
 
       <div class="row header section-border">
@@ -119,7 +103,7 @@ aaaaaaaaaaaaaaaaaaaaaaaa
         <div class="col-xs-9">
           {{ range .Career }}
           <h3>
-            {{ .CompanyName }}
+            <img src="{{ .CompanyLogo }}" alt="{{ .CompanyName }}" style="max-width: 50px; max-height: 50px;" /> {{ .CompanyName }}
           </h3>
           <h6>
             {{ .Duration }}
@@ -286,6 +270,3 @@ aaaaaaaaaaaaaaaaaaaaaaaa
 </body>
 
 </html>
-
-
-

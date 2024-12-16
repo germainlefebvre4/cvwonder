@@ -4,6 +4,9 @@
 !.vscode/tasks.json
 !.vscode/launch.json
 
+# Golang
+/cmd/cvrender/__*
+
 # Test
 test_CV.y*ml
 test.y*ml

@@ -1,11 +1,11 @@
 package render_html
 
 import (
+	"cvrender/internal/model"
+	utils "cvrender/internal/utils"
 	"fmt"
 	"os"
 	"path/filepath"
-	"rendercv/internal/model"
-	utils "rendercv/internal/utils"
 	"text/template"
 )
 

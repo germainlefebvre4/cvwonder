@@ -1,9 +1,9 @@
-package serve
+package cvserve
 
 import (
+	"cvrender/internal/utils"
 	"fmt"
 	"os/exec"
-	"rendercv/internal/utils"
 	"runtime"
 )
 

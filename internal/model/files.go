@@ -1,9 +1,9 @@
 package model
 
 import (
+	"cvrender/internal/utils"
 	"os"
 	"path/filepath"
-	"rendercv/internal/utils"
 	"strings"
 )
 

@@ -1,14 +1,14 @@
 package main
 
 import (
+	"cvrender/internal/cvparser"
+	"cvrender/internal/cvrender"
+	"cvrender/internal/cvserve"
+	"cvrender/internal/model"
+	"cvrender/internal/utils"
+	"cvrender/internal/watcher"
 	"fmt"
 	"os"
-	"rendercv/internal/model"
-	"rendercv/internal/parser"
-	"rendercv/internal/render"
-	"rendercv/internal/serve"
-	"rendercv/internal/utils"
-	"rendercv/internal/watcher"
 
 	"github.com/spf13/cobra"
 )
@@ -29,7 +29,7 @@ func init() {
 	var argThemeName string
 
 	var rootCmd = &cobra.Command{
-		Use:              "rendercv [OPTIONS] [COMMANDS]",
+		Use:              "cvrender [OPTIONS] [COMMANDS]",
 		Short:            "RenderCV",
 		Long:             `RenderCV - Launch RenderCV CLI`,
 		TraverseChildren: true,
@@ -52,19 +52,17 @@ func init() {
 			fmt.Println("  Theme: ", argThemeName)
 			fmt.Println()
 
-			content, err := parser.ParseFile(inputFile.FullPath)
+			content, err := cvparser.ParseFile(inputFile.FullPath)
 			utils.CheckError(err)
 
-			render.RenderCV(content, outputDir.FullPath, inputFile.FullPath, argThemeName)
+			cvrender.Render(content, outputDir.FullPath, inputFile.FullPath, argThemeName)
 			utils.CheckError(err)
 
-			// app := gin.Default()
-			listeningUrl := serve.ListeningUrl(3000)
+			listeningUrl := cvserve.ListeningUrl(3000)
 			fmt.Println("Listening on: ", listeningUrl)
-			go watcher.ObserveTemplate(outputDir.FullPath, inputFile.FullPath, argThemeName)
-			go watcher.ObserveGenerated(outputDir.FullPath, inputFile.FullPath, argThemeName)
-			// serve.OpenBrowser(listeningUrl)
-			serve.StartServer(outputDir.FullPath)
+			go watcher.ObserveFileEvents(outputDir.FullPath, inputFile.FullPath, argThemeName)
+			cvserve.OpenBrowser(listeningUrl)
+			cvserve.StartLiveReloader(outputDir.FullPath)
 
 		},
 	}
