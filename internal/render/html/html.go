@@ -19,6 +19,7 @@ func GenerateFormatHTML(cv model.CV, outputDirectory string, inputFilename strin
 
 	if os.Getenv("DEBUG") == "1" {
 		themeDirectory = currentDirectory + "/../../internal/themes"
+		// themeIndexFile := render_index.HTML
 	}
 
 	tmpl, err := template.ParseFiles(themeDirectory + "/" + themeName + "/index.html")
@@ -27,7 +28,8 @@ func GenerateFormatHTML(cv model.CV, outputDirectory string, inputFilename strin
 	// Output file
 	outputDirectory, err = filepath.Abs(outputDirectory)
 	utils.CheckError(err)
-	outputFilePath := outputDirectory + "/" + inputFilename + ".html"
+	outputFilePath := outputDirectory + "/" + "index.html"
+	// outputFilePath := outputDirectory + "/" + inputFilename + ".html"
 
 	// Create output file and directory
 	err = os.MkdirAll(outputDirectory, os.ModePerm)

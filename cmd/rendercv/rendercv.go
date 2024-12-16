@@ -6,7 +6,9 @@ import (
 	"rendercv/internal/model"
 	"rendercv/internal/parser"
 	"rendercv/internal/render"
+	"rendercv/internal/serve"
 	"rendercv/internal/utils"
+	"rendercv/internal/watcher"
 
 	"github.com/spf13/cobra"
 )
@@ -18,54 +20,70 @@ var (
 )
 
 func main() {
-	Execute()
+	// Execute()
 }
 
-var rootCmd = &cobra.Command{
-	Use:   "rendercv",
-	Short: "RenderCV",
-	Long:  `RenderCV - Launch RenderCV CLI`,
-	Run: func(cmd *cobra.Command, args []string) {
-		// 	if len(args) == 0 {
-		// 		log.Fatal("please provide a pet")
-		// 	}
-		// 	if args[0] == "dog" {
-		// 		fmt.Println("wooooof!")
-		// 	}
+func init() {
+	var argInputFilePath string
+	var argOutputDirectoryPath string
+	var argThemeName string
 
-		argInputFilePath := args[0]
-		outputDirectory := args[1]
+	var rootCmd = &cobra.Command{
+		Use:              "rendercv [OPTIONS] [COMMANDS]",
+		Short:            "RenderCV",
+		Long:             `RenderCV - Launch RenderCV CLI`,
+		TraverseChildren: true,
+		Run: func(cmd *cobra.Command, args []string) {
+			argThemeName := "default"
+			if len(args) > 2 {
+				argThemeName = args[2]
+			}
+			fmt.Println(argThemeName)
 
-		themeName := "default"
-		if len(args) > 2 {
-			themeName = args[2]
-		}
-		fmt.Println(themeName)
+			// Build InputFile object
+			inputFile := model.BuildInputFile(argInputFilePath)
 
-		// Build InputFile object
-		inputFile := model.BuildInputFile(argInputFilePath)
+			// Build OutputDirectory object
+			outputDir := model.BuildOutputDirectory(argOutputDirectoryPath)
 
-		// Build OutputDirectory object
-		outputDir := model.BuildOutputDirectory(outputDirectory)
+			fmt.Println("RenderCV")
+			fmt.Println("  Input file: ", inputFile.FullPath)
+			fmt.Println("  Output directory: ", inputFile.Directory)
+			fmt.Println("  Theme: ", argThemeName)
+			fmt.Println()
 
-		fmt.Println("RenderCV")
-		fmt.Println("  Input file: ", inputFile.FullPath)
-		fmt.Println("  Output directory: ", inputFile.Directory)
-		fmt.Println("  Theme: ", themeName)
-		fmt.Println()
+			content, err := parser.ParseFile(inputFile.FullPath)
+			utils.CheckError(err)
 
-		content, err := parser.ParseFile(inputFile.FullPath)
-		utils.CheckError(err)
+			render.RenderCV(content, outputDir.FullPath, inputFile.FullPath, argThemeName)
+			utils.CheckError(err)
 
-		render.RenderCV(content, outputDir.FullPath, inputFile.FullPath, themeName)
-		utils.CheckError(err)
+			// app := gin.Default()
+			listeningUrl := serve.ListeningUrl(3000)
+			fmt.Println("Listening on: ", listeningUrl)
+			go watcher.ObserveTemplate(outputDir.FullPath, inputFile.FullPath, argThemeName)
+			go watcher.ObserveGenerated(outputDir.FullPath, inputFile.FullPath, argThemeName)
+			// serve.OpenBrowser(listeningUrl)
+			serve.StartServer(outputDir.FullPath)
 
-	},
-}
+		},
+	}
 
-func Execute() {
+	rootCmd.Flags().StringVarP(&argInputFilePath, "input", "i", "", "Input file in YAML format (required)")
+	rootCmd.Flags().StringVarP(&argOutputDirectoryPath, "output", "o", "", "Output directory (optionnal)")
+	rootCmd.Flags().StringVarP(&argThemeName, "theme", "t", "", "Name of the theme (optionnal)")
+
 	if err := rootCmd.Execute(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "There was an error while executing your CLI '%s'", err)
 		os.Exit(1)
 	}
+
 }
+
+// func Execute() {
+
+// 	if err := rootCmd.Execute(); err != nil {
+// 		_, _ = fmt.Fprintf(os.Stderr, "There was an error while executing your CLI '%s'", err)
+// 		os.Exit(1)
+// 	}
+// }
