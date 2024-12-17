@@ -1,9 +1,10 @@
 mkdocs
 mkdocs-autorefs
+mkdocs-click
 mkdocs-material
 mkdocs-material-extensions
 mkdocstrings
+mkdocstrings-python
 typing-extensions
 mkdocs-glightbox
-mdokcs-embed-external-markdown
-mkdocs-badges
+markdown-include
