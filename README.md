@@ -1,4 +1,8 @@
-# cvwonder
+# CV Wonder
+
+<p align="center">
+    <img src="./docs/readthedocs/logo.svg" alt="CvWonder" width="400px" style="display: block; margin: 0 auto;" />
+</p>
 
 ## Getting started
 
@@ -45,6 +49,25 @@ To allow basic string manipulation, here are the functions available in the temp
 | `dec` | Decrement a number | `{{ dec 2 }}` | `1` |
 | `replace` | Replace a substring by another | `{{ replace "Hello World" "World" "Universe" }}` | `Hello Universe` |
 | `join` | Join a list of strings with a separator | `{{ join ["one", "two", "three"] ", " }}` | `one, two, three` |
+
+## Serve your CV
+
+Serve your CV on a local server to preview it in your browser:
+
+```bash
+cvwonder serve --input=cv.yml --output=generated/ --theme=default
+```
+
+## Watch for changes
+
+Enable the watcher to automatically generate your CV when any involved file is modified:
+
+* `themes/<theme-name>/index.html`: The main template of the theme
+* `<input-cv>.yml`: Your CV in YAML format
+
+```bash
+cvwonder render --input=cv.yml --output=generated/ --theme=default --watch
+```
 
 ## Development
 
