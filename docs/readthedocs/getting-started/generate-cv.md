@@ -11,5 +11,5 @@ cvwonder generate --input=cv.yml --output=generated/
 To render your CV, you can use the following command:
 
 ```bash
-cvwonder render --input=generated/ --output=rendered/ --watch
+cvwonder generate --input=generated/ --output=rendered/ --watch
 ```
