@@ -84,7 +84,9 @@ markdown_extensions:
       custom_checkbox: true
   - markdown_include.include:
       base_path: docs/readthedocs
-
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 extra:
   generator: false
@@ -92,5 +94,7 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/germainlefebvre4/cvwonder
 
-copyright: Copyright &copy; 2024 CV Wonder, and contributors
+extra_css:
+  - stylesheets/extra.css
 
+copyright: Copyright &copy; 2025 CV Wonder, and contributors
