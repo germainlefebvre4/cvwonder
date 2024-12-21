@@ -1,6 +1,6 @@
 # Pull Requests
 
-Thank you for taking interest in contributing to Crossplane Assistant!
+Thank you for taking interest in contributing to CV Wonder!
 
 1. Every Pull Request should have an associated GitHub issue link in the PR description. Please refer to the issue and discussion pages for explanation about this process. If you think your change is trivial enough, you can skip the issue and instead add justification and explanation in the PR description.
 1. Your PR is more likely to be accepted if it focuses on just one change.

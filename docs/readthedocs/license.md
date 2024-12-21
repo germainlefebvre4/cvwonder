@@ -4,41 +4,22 @@ hide:
 ---
 # License
 
-Crossplane Assistant is released under [AGPL-3.0-or-later](https://spdx.org/licenses/AGPL-3.0-or-later.html) and [Commons Clause](https://commonsclause.com/) licenses.
+CV Wonder is released under [MIT](https://spdx.org/licenses/MIT.html) license.
 
-To really understand what the license mean.
+## MIT
 
-## AGPL-3.0-or-later
+| Permission | Conditions | Limitations |
+|------------|------------|-------------|
+| :material-circle:{ .cvwonder-license-green } Commercial use | :material-circle:{ .cvwonder-license-blue } License and copyright notice | :material-circle:{ .cvwonder-license-red } Liability |
+| :material-circle:{ .cvwonder-license-green } Distribution | | :material-circle:{ .cvwonder-license-red } Warranty |
+| :material-circle:{ .cvwonder-license-green } Modification | | |
+| :material-circle:{ .cvwonder-license-green } Private use | | |
 
-### Permissions
+```raw
+{!./../../LICENSE!}
+```
 
-- Commercial use
-- Distribution
-- Modification
-- Patent use
-- Private use
+For more information, please refer the following links:
 
-### Conditions
-
-- Disclose source
-- License and copyright notice
-- Network use is distribution
-- Same license
-- State changes
-
-### Limitations
-
-- Liability
-- Warranty
-
-For more information, please refer the the [official website](https://spdx.org/licenses/AGPL-3.0-or-later.html).
-
-## Commons Clause
-
-The Commons Clause comme in addition to an existing license.
-
-### Limitations
-
-- Commercial use
-
-For more information, please refer to the [official website](https://commonsclause.com/).
+- [SPDX](https://spdx.org/licenses/MIT.html)
+- [Open Source Initiative](https://opensource.org/licenses/MIT)

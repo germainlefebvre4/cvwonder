@@ -5,7 +5,7 @@ hide:
 ---
 # CV Wonder
 
-![Crossplane Assistant](./logo.svg){: style="width: 100%; max-width: 60%; margin: 0 20%;"}
+![CV Wonder](./logo.svg){: style="width: 100%; max-width: 60%; margin: 0 20%;"}
 
 !!! quote
 
