@@ -55,10 +55,8 @@ nav:
     - Use a theme: themes/use-theme.md
     - Write your theme: themes/write-theme.md
   - Contributing:
-    - Support: contributing/support.md
     - How to contribute:
         - Issues: contributing/issues.md
-        - Discussions: contributing/discussions.md
         - Pull Requests: contributing/pull-requests.md
         - Development: contributing/development.md
         - Code of Conduct: contributing/code-of-conduct.md
@@ -87,6 +85,11 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
 extra:
   generator: false

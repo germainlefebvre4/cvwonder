@@ -88,7 +88,7 @@ The Tag is a way to identified a version and ensure that the related code is sta
 
 Tags must have the following format:
 
-- `v<3-digits_semantic-version>
+- `v<3-digits_semantic-version>`
 
 Here are some examples:
 

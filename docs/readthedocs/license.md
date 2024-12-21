@@ -4,9 +4,7 @@ hide:
 ---
 # License
 
-Crossplane Assistant is released under [MIT](https://spdx.org/licenses/MIT.html).
-
-To really understand what the license mean.
+CV Wonder is released under [MIT](https://spdx.org/licenses/MIT.html) license.
 
 ## MIT
 
