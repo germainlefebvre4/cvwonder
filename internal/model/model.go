@@ -1,8 +1,7 @@
 package model
 
 type CV struct {
-	LiveReload any `yaml:"liveReload"`
-	Site       struct {
+	Site struct {
 		URL string `yaml:"url"`
 	} `yaml:"site"`
 	Company struct {
