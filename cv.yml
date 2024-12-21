@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=schema/cv.jsonschema.json
 site:
   url: germainlefebvre.fr
 
