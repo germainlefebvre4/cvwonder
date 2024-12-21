@@ -66,7 +66,7 @@ Enable the watcher to automatically generate your CV when any involved file is m
 * `<input-cv>.yml`: Your CV in YAML format
 
 ```bash
-cvwonder render --input=cv.yml --output=generated/ --theme=default --watch
+cvwonder serve --input=cv.yml --output=generated/ --theme=default --watch
 ```
 
 ## Development
