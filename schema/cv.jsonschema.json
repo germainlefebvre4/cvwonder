@@ -1,0 +1,314 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "CV Wonder",
+    "description": "CV Wonder CV JSON Schema",
+    "type": "object",  
+    "properties": {
+        "Abstract": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "tr": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "tr"
+            ],
+            "title": "Abstract"
+        },
+        "Career": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "companyName": {
+                    "type": "string"
+                },
+                "companyLogo": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "string"
+                },
+                "missions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Mission"
+                    }
+                }
+            },
+            "required": [
+                "missions"
+            ],
+            "title": "Career"
+        },
+        "Mission": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "position": {
+                    "type": "string"
+                },
+                "company": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "dates": {
+                    "type": "string"
+                },
+                "summary": {
+                    "type": "string"
+                },
+                "technologies": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "project": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "summary"
+            ],
+            "title": "Mission"
+        },
+        "Certification": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "companyName": {
+                    "type": "string"
+                },
+                "certificationName": {
+                    "type": "string"
+                },
+                "issuer": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string",
+                    "format": "uri",
+                    "qt-uri-protocols": [
+                        "https"
+                    ]
+                },
+                "badge": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "certificationName",
+            ],
+            "title": "Certification"
+        },
+        "Company": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "logo": {
+                    "type": "string"
+                }
+            },
+            "title": "Company"
+        },
+        "Education": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "schoolName": {
+                    "type": "string"
+                },
+                "schoolLogo": {
+                    "type": "string"
+                },
+                "degree": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "dates": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string",
+                    "format": "uri",
+                    "qt-uri-protocols": [
+                        "https"
+                    ]
+                }
+            },
+            "required": [
+                "schoolName"
+            ],
+            "title": "Education"
+        },
+        "Person": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "depiction": {
+                    "type": "string"
+                },
+                "profession": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "citizenship": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "site": {
+                    "type": "string",
+                    "format": "uri",
+                    "qt-uri-protocols": [
+                        "http"
+                    ]
+                },
+                "phone": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "Person"
+        },
+        "SideProject": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "langs": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "SideProject"
+        },
+        "Site": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            },
+            "title": "Site"
+        },
+        "SocialNetworks": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "github": {
+                    "type": "string"
+                },
+                "stackoverflow": {
+                    "type": "string"
+                },
+                "linkedin": {
+                    "type": "string"
+                },
+                "twitter": {
+                    "type": "string"
+                }
+            },
+            "title": "SocialNetworks"
+        },
+        "TechnicalSkills": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {}
+                },
+                "domains": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Domain"
+                    }
+                }
+            },
+            "title": "TechnicalSkills"
+        },
+        "Domain": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "competencies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Competency"
+                    }
+                }
+            },
+            "required": [
+                "competencies",
+                "name"
+            ],
+            "title": "Domain"
+        },
+        "Competency": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "Competency"
+        }
+    }
+}
