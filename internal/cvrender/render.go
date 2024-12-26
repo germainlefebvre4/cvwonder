@@ -18,14 +18,14 @@ func Render(cv model.CV, outputDirectory string, inputFilePath string, themeName
 	inputFilename := inputFilenameExt[:len(inputFilenameExt)-len(path.Ext(inputFilenameExt))]
 
 	// Generate HTML
-	if exportFormat == "html" {
-		err := render_html.RenderFormatHTML(cv, outputDirectory, inputFilename, themeName)
-		utils.CheckError(err)
-	} else if exportFormat == "pdf" {
+	err := render_html.RenderFormatHTML(cv, outputDirectory, inputFilename, themeName)
+	utils.CheckError(err)
+
+	if exportFormat == "pdf" {
 		// Generate PDF
 		err := render_pdf.RenderFormatPDF(cv, outputDirectory, inputFilename, themeName)
 		utils.CheckError(err)
-	} else {
-		logrus.Fatal("Unsupported format")
 	}
+
+	logrus.Info("CV rendered successfully")
 }
