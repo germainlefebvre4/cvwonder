@@ -35,7 +35,8 @@ func GenerateFormatHTML(cv model.CV, outputDirectory string, inputFilename strin
 	// Output file
 	outputDirectory, err = filepath.Abs(outputDirectory)
 	utils.CheckError(err)
-	outputFilePath := outputDirectory + "/" + "index.html"
+	outputFilename := filepath.Base(inputFilename) + ".html"
+	outputFilePath := outputDirectory + "/" + outputFilename
 	outputTmpFilePath := outputFilePath + ".tmp"
 
 	// Create output file and directory
@@ -45,13 +46,16 @@ func GenerateFormatHTML(cv model.CV, outputDirectory string, inputFilename strin
 	}
 	outputFile, err := os.Create(outputFilePath)
 	utils.CheckError(err)
+	defer outputFile.Close()
 	var outputTmpFile *os.File
 	if _, err := os.Stat(outputTmpFilePath); errors.Is(err, os.ErrNotExist) {
 		outputTmpFile, err = os.Create(outputTmpFilePath)
 		utils.CheckError(err)
+		defer outputTmpFile.Close()
 	} else {
 		outputTmpFile, err = os.OpenFile(outputTmpFilePath, os.O_WRONLY, 0644)
 		utils.CheckError(err)
+		defer outputTmpFile.Close()
 	}
 
 	// Generate output
