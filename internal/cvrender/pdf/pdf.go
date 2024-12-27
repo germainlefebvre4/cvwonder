@@ -18,7 +18,8 @@ func RenderFormatPDF(cv model.CV, outputDirectory string, inputFilename string, 
 	// Output file
 	outputDirectory, err := filepath.Abs(outputDirectory)
 	utils.CheckError(err)
-	outputFilePath := outputDirectory + "/cv.pdf"
+	outputFilename := filepath.Base(inputFilename) + ".pdf"
+	outputFilePath := outputDirectory + "/" + outputFilename
 	w, err := os.Create(outputFilePath)
 	utils.CheckError(err)
 	defer w.Close()
