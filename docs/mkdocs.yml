@@ -50,6 +50,10 @@ nav:
   - Getting Started:
     - Write your CV : getting-started/write-cv.md
     - Generate your CV: getting-started/generate-cv.md
+  - Format:
+    - HTML: format/html.md
+    - PDF: format/pdf.md
+    - Others: format/missing-format.md
   - Themes:
     - Overview: themes/overview.md
     - Use a theme: themes/use-theme.md

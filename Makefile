@@ -17,4 +17,4 @@ doc-install:
 	poetry --directory docs/ lock && poetry --directory docs/ install
 
 doc:
-	poetry --directory docs/ run python -m mkdocs serve --config-file docs/mkdocs.yml
+	poetry --directory docs/ run mkdocs serve --config-file docs/mkdocs.yml
