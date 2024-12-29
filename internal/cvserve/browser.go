@@ -1,10 +1,11 @@
 package cvserve
 
 import (
-	"cvwonder/internal/utils"
 	"fmt"
 	"os/exec"
 	"runtime"
+
+	"github.com/germainlefebvre4/cvwonder/internal/utils"
 
 	"github.com/sirupsen/logrus"
 )

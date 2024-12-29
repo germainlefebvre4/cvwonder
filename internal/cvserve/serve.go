@@ -1,10 +1,11 @@
 package cvserve
 
 import (
-	"cvwonder/internal/utils"
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/germainlefebvre4/cvwonder/internal/utils"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/jaschaephraim/lrserver"
