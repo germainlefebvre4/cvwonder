@@ -24,3 +24,5 @@ cv.html
 
 # Documentation
 .venv/
+
+dist/

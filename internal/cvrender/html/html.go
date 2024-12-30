@@ -1,13 +1,14 @@
 package render_html
 
 import (
-	"cvwonder/internal/model"
-	utils "cvwonder/internal/utils"
 	"errors"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/germainlefebvre4/cvwonder/internal/model"
+	utils "github.com/germainlefebvre4/cvwonder/internal/utils"
 
 	"github.com/sirupsen/logrus"
 )

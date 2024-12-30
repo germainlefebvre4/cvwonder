@@ -1,10 +1,11 @@
 package cvrender
 
 import (
-	render_html "cvwonder/internal/cvrender/html"
-	"cvwonder/internal/model"
-	"cvwonder/internal/utils"
 	"path"
+
+	render_html "github.com/germainlefebvre4/cvwonder/internal/cvrender/html"
+	"github.com/germainlefebvre4/cvwonder/internal/model"
+	"github.com/germainlefebvre4/cvwonder/internal/utils"
 
 	"github.com/sirupsen/logrus"
 )

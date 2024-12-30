@@ -1,10 +1,11 @@
 package model
 
 import (
-	"cvwonder/internal/utils"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/germainlefebvre4/cvwonder/internal/utils"
 )
 
 type InputFile struct {

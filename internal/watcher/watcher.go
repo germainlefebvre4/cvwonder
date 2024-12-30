@@ -1,11 +1,12 @@
 package watcher
 
 import (
-	"cvwonder/internal/cvparser"
-	"cvwonder/internal/cvrender"
-	"cvwonder/internal/utils"
 	"fmt"
 	"log"
+
+	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
+	"github.com/germainlefebvre4/cvwonder/internal/cvrender"
+	"github.com/germainlefebvre4/cvwonder/internal/utils"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/sirupsen/logrus"
