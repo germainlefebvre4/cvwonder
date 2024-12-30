@@ -1,14 +1,15 @@
 package main
 
 import (
-	"cvwonder/internal/cvparser"
-	"cvwonder/internal/cvrender"
-	"cvwonder/internal/cvserve"
-	"cvwonder/internal/model"
-	"cvwonder/internal/utils"
-	"cvwonder/internal/watcher"
 	"fmt"
 	"os"
+
+	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
+	"github.com/germainlefebvre4/cvwonder/internal/cvrender"
+	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
+	"github.com/germainlefebvre4/cvwonder/internal/model"
+	"github.com/germainlefebvre4/cvwonder/internal/utils"
+	"github.com/germainlefebvre4/cvwonder/internal/watcher"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -24,8 +25,8 @@ func main() {
 	var rootCmd = &cobra.Command{
 		PreRun: utils.ToggleDebug,
 		Use:    "cvwonder [COMMAND] [OPTIONS]",
-		Short:  "CVRender",
-		Long:   `CVRender - Launch CVRender CLI`,
+		Short:  "CV Wonder",
+		Long:   `CV Wonder - Generate your CV with Wonder!`,
 	}
 
 	var generateCmd = &cobra.Command{

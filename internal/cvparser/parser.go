@@ -1,9 +1,10 @@
 package cvparser
 
 import (
-	"cvwonder/internal/model"
-	"cvwonder/internal/utils"
 	"os"
+
+	"github.com/germainlefebvre4/cvwonder/internal/model"
+	"github.com/germainlefebvre4/cvwonder/internal/utils"
 
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
