@@ -5,13 +5,19 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path"
+	"path/filepath"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/jaschaephraim/lrserver"
 	"github.com/sirupsen/logrus"
 )
 
-func StartLiveReloader(outputDirectory string) {
+func StartLiveReloader(outputDirectory string, inputFilePath string) {
+	// Input file
+	inputFilenameExt := path.Base(inputFilePath)
+	inputFilename := inputFilenameExt[:len(inputFilenameExt)-len(path.Ext(inputFilenameExt))]
+
 	// Create file watcher
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -20,7 +26,8 @@ func StartLiveReloader(outputDirectory string) {
 	defer watcher.Close()
 
 	// Add dir to watcher
-	err = watcher.AddWith(outputDirectory+"/index.html", fsnotify.WithBufferSize(65536*2))
+	outputFilename := filepath.Base(inputFilename) + ".html"
+	err = watcher.AddWith(outputDirectory+"/"+outputFilename, fsnotify.WithBufferSize(65536*2))
 	if err != nil {
 		log.Fatalln(err)
 	}

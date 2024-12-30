@@ -4,14 +4,24 @@ import (
 	"cvwonder/internal/utils"
 	"fmt"
 	"os/exec"
+	"path"
+	"path/filepath"
 	"runtime"
 
 	"github.com/sirupsen/logrus"
 )
 
-func OpenBrowser() {
+func OpenBrowser(outputDirectory string, inputFilePath string) {
 	logrus.Debug("Opening browser")
-	url := fmt.Sprintf("http://localhost:%d", utils.CliArgs.Port)
+
+	// Input file
+	inputFilenameExt := path.Base(inputFilePath)
+	inputFilename := inputFilenameExt[:len(inputFilenameExt)-len(path.Ext(inputFilenameExt))]
+
+	// Output file
+	outputFilename := filepath.Base(inputFilename) + ".html"
+
+	url := fmt.Sprintf("http://localhost:%d/%s", utils.CliArgs.Port, outputFilename)
 	var err error
 	switch runtime.GOOS {
 	case "linux":

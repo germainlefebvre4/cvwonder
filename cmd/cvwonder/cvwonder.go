@@ -92,8 +92,8 @@ func main() {
 			if utils.CliArgs.Watch {
 				go watcher.ObserveFileEvents(outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName)
 			}
-			cvserve.OpenBrowser()
-			cvserve.StartLiveReloader(outputDir.FullPath)
+			cvserve.OpenBrowser(outputDir.FullPath, inputFile.FullPath)
+			cvserve.StartLiveReloader(outputDir.FullPath, inputFile.FullPath)
 		},
 	}
 
