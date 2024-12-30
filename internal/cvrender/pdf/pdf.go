@@ -1,12 +1,13 @@
 package render_pdf
 
 import (
-	"cvwonder/internal/cvserve"
-	"cvwonder/internal/model"
-	"cvwonder/internal/utils"
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
+	"github.com/germainlefebvre4/cvwonder/internal/model"
+	"github.com/germainlefebvre4/cvwonder/internal/utils"
 
 	"github.com/go-rod/rod"
 	"github.com/sirupsen/logrus"

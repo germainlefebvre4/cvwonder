@@ -4,6 +4,7 @@ import (
 	"path"
 
 	render_html "github.com/germainlefebvre4/cvwonder/internal/cvrender/html"
+	render_pdf "github.com/germainlefebvre4/cvwonder/internal/cvrender/pdf"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
 
