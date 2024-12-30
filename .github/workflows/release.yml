@@ -10,6 +10,17 @@ permissions:
   contents: write
 
 jobs:
+  pkggodev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update pkg.go.dev endpoint
+        run: curl "https://proxy.golang.org/github.com/germainlefebvre4/cvwonder/@v/${{ github.ref_name }}.info"
+
   goreleaser:
     runs-on: ubuntu-latest
     steps:
@@ -35,6 +46,3 @@ jobs:
         with:
             name: cvwonder
             path: dist/*
-
-      - name: Update pkg.go.dev endpoint
-        run: curl "https://proxy.golang.org/github.com/germainlefebvre4/cvwonder/@v/${{ github.ref_name }}.info"

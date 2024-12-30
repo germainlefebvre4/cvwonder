@@ -1,4 +1,4 @@
-module cvwonder
+module github.com/germainlefebvre4/cvwonder
 
 go 1.23.4
 
