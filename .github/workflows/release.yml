@@ -35,3 +35,6 @@ jobs:
         with:
             name: cvwonder
             path: dist/*
+
+      - name: Update pkg.go.dev endpoint
+        run: curl "https://proxy.golang.org/github.com/germainlefebvre4/cvwonder/@v/${{ github.ref_name }}.info"
