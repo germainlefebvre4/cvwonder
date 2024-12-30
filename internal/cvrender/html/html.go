@@ -19,26 +19,47 @@ func RenderFormatHTML(cv model.CV, outputDirectory string, inputFilename string,
 	// Theme directory
 	currentDirectory, err := os.Getwd()
 	utils.CheckError(err)
-	themeDirectory := currentDirectory + "/themes"
-
-	// Inject custom functions in template
-	funcMap := template.FuncMap{
-		"dec":     func(i int) int { return i - 1 },
-		"replace": strings.ReplaceAll,
-		"join":    strings.Join,
-	}
-
-	// Template file
-	tmplFile := themeDirectory + "/" + themeName + "/index.html"
-	tmpl, err := template.New("index.html").Funcs(funcMap).ParseFiles(tmplFile)
-	utils.CheckError(err)
+	themeDirectory := filepath.Join(currentDirectory, "themes", themeName)
 
 	// Output file
 	outputDirectory, err = filepath.Abs(outputDirectory)
 	utils.CheckError(err)
 	outputFilename := filepath.Base(inputFilename) + ".html"
-	outputFilePath := outputDirectory + "/" + outputFilename
+	outputFilePath := filepath.Join(outputDirectory, outputFilename)
 	outputTmpFilePath := outputFilePath + ".tmp"
+
+	// Generate template file
+	err = generateTemplateFile(themeDirectory, outputDirectory, outputFilePath, outputTmpFilePath, cv)
+	utils.CheckError(err)
+
+	// Copy template file to output directory
+	err = copyFileContent(outputTmpFilePath, outputFilePath)
+	utils.CheckError(err)
+
+	// Copy theme assets to output directory
+	err = utils.CopyDirectory(themeDirectory, outputDirectory)
+	utils.CheckError(err)
+
+	return err
+}
+
+func getTemplateFunctions() template.FuncMap {
+	funcMap := template.FuncMap{
+		"dec":     func(i int) int { return i - 1 },
+		"replace": strings.ReplaceAll,
+		"join":    strings.Join,
+	}
+	return funcMap
+}
+
+func generateTemplateFile(themeDirectory string, outputDirectory string, outputFilePath string, outputTmpFilePath string, cv model.CV) error {
+	// Inject custom functions in template
+	funcMap := getTemplateFunctions()
+
+	// Template file
+	tmplFile := themeDirectory + "/index.html"
+	tmpl, err := template.New("index.html").Funcs(funcMap).ParseFiles(tmplFile)
+	utils.CheckError(err)
 
 	// Create output file and directory
 	if _, err := os.Stat(outputDirectory); errors.Is(err, os.ErrNotExist) {
@@ -53,18 +74,19 @@ func RenderFormatHTML(cv model.CV, outputDirectory string, inputFilename string,
 		outputTmpFile, err = os.Create(outputTmpFilePath)
 		utils.CheckError(err)
 		defer outputTmpFile.Close()
-	} else {
-		outputTmpFile, err = os.OpenFile(outputTmpFilePath, os.O_WRONLY, 0644)
-		utils.CheckError(err)
-		defer outputTmpFile.Close()
 	}
 
 	// Generate output
 	err = tmpl.ExecuteTemplate(outputTmpFile, "index.html", cv)
 	utils.CheckError(err)
 
-	// Copy file content from tmp to final
-	// This approach avoid flooding file events in the watcher
+	logrus.Debug("HTML file generated at:", outputFilePath)
+
+	return nil
+}
+
+func copyFileContent(outputTmpFilePath string, outputFilePath string) error {
+	// Note: Copy file content from tmp to final to avoid flooding file events in the watcher
 	input, err := os.ReadFile(outputTmpFilePath)
 	utils.CheckError(err)
 	err = os.WriteFile(outputFilePath, input, 0644)
@@ -74,8 +96,5 @@ func RenderFormatHTML(cv model.CV, outputDirectory string, inputFilename string,
 	err = os.Remove(outputTmpFilePath)
 	utils.CheckError(err)
 
-	logrus.Debug("HTML file generated at:", outputFile)
-	logrus.Debug("HTML file generated at:", outputFilePath)
-
-	return err
+	return nil
 }
