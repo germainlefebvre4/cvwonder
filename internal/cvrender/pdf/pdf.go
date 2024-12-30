@@ -25,10 +25,10 @@ func RenderFormatPDF(cv model.CV, outputDirectory string, inputFilename string, 
 	utils.CheckError(err)
 	defer w.Close()
 
-	localServerUrl := fmt.Sprintf("http://localhost:%d", utils.CliArgs.Port)
+	localServerUrl := fmt.Sprintf("http://localhost:%d/%s.html", utils.CliArgs.Port, inputFilename)
 
 	// Run the server to output the HTML
-	logrus.Info("Starting a temporary server at address ", localServerUrl)
+	logrus.Info("Serve temporary the CV on server at address ", localServerUrl)
 	go func() {
 		cvserve.StartServer(outputDirectory)
 
