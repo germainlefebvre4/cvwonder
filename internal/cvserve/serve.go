@@ -54,6 +54,10 @@ func StartLiveReloader(outputDirectory string, inputFilePath string) {
 	}
 
 	// Start serving html
+	StartServer(outputDirectory)
+}
+
+func StartServer(outputDirectory string) {
 	logrus.Debug(fmt.Sprintf("Listening on: http://localhost:%d", utils.CliArgs.Port))
 	http.Handle("/", http.FileServer(http.Dir(outputDirectory)))
 	listeningPort := fmt.Sprintf(":%d", utils.CliArgs.Port)
