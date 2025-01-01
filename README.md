@@ -8,12 +8,16 @@
 
 Download the latest release from the [releases page](https://github.com/germainlefebvre4/cvwonder/releases).
 
+Requirements:
+
+* [jq](https://stedolan.github.io/jq/)
+* [curl](https://curl.se/)
+
 ```bash
 DISTRIBUTION=Linux
 CPU_ARCH=amd64
 VERSION=$(curl -s "https://api.github.com/repos/germainlefebvre4/cvwonder/releases/latest" | jq -r '.tag_name')
-curl -L -o cvwonder.tar.gz "https://github.com/germainlefebvre4/cvwonder/releases/download/${VERSION}/cvwonder_${DISTRIBUTION}_${CPU_ARCH}.tar.gz"
-tar -xzf cvwonder.tar.gz
+curl -L -o cvwonder "https://github.com/germainlefebvre4/cvwonder/releases/download/${VERSION}/cvwonder_${DISTRIBUTION}_${CPU_ARCH}"
 chmod +x cvwonder
 sudo mv cvwonder /usr/local/bin/
 ```
