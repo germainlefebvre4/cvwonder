@@ -13,6 +13,9 @@ test.y*ml
 test.html
 test.pdf
 
+# Themes
+/themes/
+
 # Generated directory
 /generated/
 
@@ -24,4 +27,5 @@ cv.html
 # Documentation
 .venv/
 
+# Goreleaser
 dist/

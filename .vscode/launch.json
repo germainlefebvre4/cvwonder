@@ -9,14 +9,21 @@
             "cwd": "${workspaceFolder}",
             "program": "./cmd/cvwonder",
             "args": [
-                "generate",
+                // "generate",
                 // "serve",
-                "--input=cv.yml",
-                "--output=generated/",
-                "--theme=default",
-                "--format=pdf",
+                // "--input=cv.yml",
+                // "--output=generated/",
+                // "--theme=default",
+                // "--format=pdf",
                 // "--watch",
                 // "--verbose",
+
+                // "themes",
+                // "list",
+
+                "themes",
+                "install",
+                "github.com/germainlefebvre4/cvwonder-theme-default",
             ],
             "debugAdapter": "dlv-dap",
             "env": {
