@@ -12,7 +12,7 @@ themes
 
 The templated file is `themes/<my-theme-name>/index.html` and stands as the entry point for the theme.
 
-The templating engine is the [`template/html` go package](https://pkg.go.dev/html/template).
+The templating engine is the [`template/html` go package](https://pkg.go.dev/html/template){:target="_blank"}.
 
 The input CV data is formerly structured to make it easy to use in the template. In order to help you write the data, a JSON Schema is provided in the `schema` directory.
 

@@ -1,7 +1,7 @@
 # CV Wonder
 
 <p align="center">
-    <img src="./docs/readthedocs/logo.svg" alt="CvWonder" width="400px" style="display: block; margin: 0 auto;" />
+    <img src="./docs/readthedocs/logo.svg" alt="cvwonder" width="400px" style="display: block; margin: 0 auto;" />
 </p>
 
 ## Getting started

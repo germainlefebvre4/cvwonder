@@ -9,3 +9,10 @@ themes
 └── <my-theme-name>
     └── index.html
 ```
+
+Themes offer these abilities:
+
+* Easily switch between themes
+* Write your own theme
+* Publish yours to share them with the community
+* Download themes from the community

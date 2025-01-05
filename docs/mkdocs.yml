@@ -58,6 +58,8 @@ nav:
     - Overview: themes/overview.md
     - Use a theme: themes/use-theme.md
     - Write your theme: themes/write-theme.md
+    - Publish your theme: themes/publish-theme.md
+    - Download a theme: themes/download-theme.md
   - Contributing:
     - How to contribute:
         - Issues: contributing/issues.md

@@ -11,7 +11,7 @@ Thank you for taking interest in contributing to CV Wonder!
 
 ## Pull Request Title
 
-The pull request title must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format.
+The pull request title must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/){:target="_blank"} format.
 
 Format of the title:
 

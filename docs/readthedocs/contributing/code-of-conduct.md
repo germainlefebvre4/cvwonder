@@ -1,7 +1,7 @@
 # Contributor Covenant Code of Conduct
 
 !!! note
-    This Code of Conduct is following the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/).
+    This Code of Conduct is following the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/){:target="_blank"}.
 
 ## Our Pledge
 
@@ -62,7 +62,7 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement on [CV Wonder Slack](https://crossplaneassistant.slack.com) on channel [#report-abuse](https://crossplaneassistant.slack.com/archives/C07PQUZMU75).
+reported to the community leaders responsible for enforcement on Github Discussions.
 All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the
