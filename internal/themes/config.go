@@ -3,6 +3,7 @@ package themes
 import (
 	"context"
 	"io"
+	"os"
 
 	"github.com/google/go-github/github"
 	"github.com/sirupsen/logrus"
@@ -16,7 +17,7 @@ type ThemeConfig struct {
 	Author      string `yaml:"author"`
 }
 
-func GetThemeConfig(githubRepo GithubRepo) ThemeConfig {
+func GetThemeConfigFromURL(githubRepo GithubRepo) ThemeConfig {
 	// Download theme.yaml
 	client := github.NewClient(nil)
 	file, err := client.Repositories.DownloadContents(context.TODO(), githubRepo.Owner, githubRepo.Name, "theme.yaml", nil)
@@ -26,6 +27,24 @@ func GetThemeConfig(githubRepo GithubRepo) ThemeConfig {
 
 	// Read theme.yaml
 	config, err := io.ReadAll(file)
+	if err != nil {
+		logrus.Fatal("Error reading theme.yaml: ", err)
+	}
+
+	// Parse theme.yaml
+	themeConfig := ThemeConfig{}
+	err = yaml.Unmarshal(config, &themeConfig)
+	if err != nil {
+		logrus.Fatal("Error parsing theme.yaml: ", err)
+	}
+
+	return themeConfig
+}
+
+func GetThemeConfigFromDir(dir string) ThemeConfig {
+	// Read theme.yaml
+	config, err := os.ReadFile(dir + "/theme.yaml")
+
 	if err != nil {
 		logrus.Fatal("Error reading theme.yaml: ", err)
 	}

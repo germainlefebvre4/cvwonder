@@ -12,6 +12,7 @@ run:
 
 build: ## Build
 	go build -o cvwonder ./cmd/cvwonder
+	chmod +x cvwonder
 
 doc-install:
 	poetry --directory docs/ lock && poetry --directory docs/ install

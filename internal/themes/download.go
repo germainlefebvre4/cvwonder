@@ -74,7 +74,7 @@ func createThemeDir() {
 func downloadTheme(githubRepo GithubRepo) {
 	logrus.Debug("Download theme")
 
-	themeConfig := GetThemeConfig(githubRepo)
+	themeConfig := GetThemeConfigFromURL(githubRepo)
 
 	themeDirectory := fmt.Sprintf("themes/%s", themeConfig.Slug)
 	if _, err := os.Stat(themeDirectory); !os.IsNotExist(err) {
