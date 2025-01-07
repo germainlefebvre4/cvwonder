@@ -390,7 +390,6 @@ career:
           - Migration des données entre les bases Oracle (11g et 12c)
 
 technicalSkills:
-  list: []
   domains:
     - name: Cloud
       competencies:

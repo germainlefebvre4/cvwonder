@@ -1,0 +1,66 @@
+---
+company:
+  name: Zatsit
+  logo: images/zatsit-logo.webp
+
+person:
+  name: Germain
+  depiction: profile.png
+  profession: Bâtisseur de Plateformes et de Nuages
+  location: Lille
+  citizenship: FR
+
+career:
+  - companyName: Zatsit
+    companyLogo: images/zatsit-logo.webp
+    duration: 10 mois, aujourd'hui
+    missions:
+      - position: Platform Engineer
+        company: Adeo
+        location: Ronchin, France
+        dates: 2024, mars - 2024, décembre
+        summary: Construire une Internal Development Platform.
+        technologies:
+          - ArgoCD
+          - Kubernetes
+          - ...
+        description:
+          - Développement d'operator Kubernetes
+          - Développement des Compositions Crossplane
+          - ...
+
+technicalSkills:
+  domains:
+    - name: Cloud
+      competencies:
+        - name: AWS
+          level: 80
+        - name: GCP
+          level: 70
+        - name: Azure
+          level: 40
+
+sideProjects:
+  - name: cvwonder
+    position: maintainer
+    description: A CLI to render your CV from a YAML file.
+    link: germainlefebvre4/cvwonder
+    type: github
+    langs: Go
+    color: 3572A5
+
+certifications:
+  - companyName: AWS
+    certificationName: Solutions Architect Associate
+    issuer: Coursera
+    date: Mars 2018
+    link: https://www.credly.com/badges/dd09dc40-9ef8-43a4-addb-d861d4dadf26/public_url
+    badge: images/aws-certified-solutions-architect-associate.png
+
+education:
+  - schoolName: IG2I - Centrale
+    schoolLogo: images/centrale-lille-logo.webp
+    degree: Titre d'ingénieur (BAC+5)
+    location: Lens, France
+    dates: 2019 - 2014
+    link: https://ig2i.centralelille.fr
