@@ -1,6 +1,6 @@
-# Download a theme
+# Install a remote theme
 
-Download a theme from Github to customize the look and feel of your CV.
+Download and install a theme from Github to customize the look and feel of your CV.
 
 !!! warning
 
