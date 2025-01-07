@@ -28,9 +28,8 @@ func verifyTheme(themeURL string) {
 }
 
 func isGitHubURL(input string) bool {
-	URL2 := strings.ReplaceAll(input, "https://", "")
-	URL3 := fmt.Sprintf("%s%s", "https://", URL2)
-	u, err := url.Parse(URL3)
+	formattedURL := fmt.Sprintf("%s%s", "https://", strings.ReplaceAll(input, "https://", ""))
+	u, err := url.Parse(formattedURL)
 	if err != nil {
 		return false
 	}
@@ -46,9 +45,8 @@ func isGitHubURL(input string) bool {
 
 func parseGitHubURL(themeURL string) GithubRepo {
 	logrus.Debug("Parse GitHub URL")
-	URL2 := strings.ReplaceAll(themeURL, "https://", "")
-	URL3 := fmt.Sprintf("%s%s", "https://", URL2)
-	URL, err := url.Parse(URL3)
+	formattedURL := fmt.Sprintf("%s%s", "https://", strings.ReplaceAll(themeURL, "https://", ""))
+	URL, err := url.Parse(formattedURL)
 	if err != nil {
 		logrus.Error("Error parsing URL")
 	}
