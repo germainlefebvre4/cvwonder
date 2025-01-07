@@ -52,7 +52,7 @@ fix(api): handle dependencies in the claim view
 docs: add the contribution guide
 ```
 
-The typoe/scope `chore(deps)` is generally used by Dependabot for dependencies updates. You can also use this pattern if needed. Dependencies updates should be contained in a single Pull Request to ensure that the changes are properly tested and reviewed.
+The type/scope `chore(deps)` is generally used by Dependabot for dependencies updates. You can also use this pattern if needed. Dependencies updates should be contained in a single Pull Request to ensure that the changes are properly tested and reviewed.
 
 ```raw
 chore(deps): bump gorm.io/gorm from 1.25.4 to 1.25.12

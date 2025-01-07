@@ -26,7 +26,7 @@ For example, the theme `cvwonder-theme-default` is available at [https://github.
 
 In the desired theme with the `cvwonder` command.
 
-```bash
+```bash <!-- markdownlint-disable MD046 -->
 cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
 # or
 # cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default

@@ -18,9 +18,9 @@ For example, if your theme is named `my-wonderful`, the repository name would be
 
 Add a `theme.yaml` file at the root of the repository which contains the theme metadata.
 
-```yaml
-name: My Wonderful
-slug: my-wonderful
+```yaml <!-- markdownlint-disable MD046 -->
+name: My Wonderful Theme
+slug: my-wonderful-theme
 description: A wonderful theme for your CV
 author: Germain
 ```

@@ -37,7 +37,7 @@ gitGraph LR:
 
 ## Branches
 
-Git branches should have a meaningful name that reflects the purpose of the branch. It **can** follow the `type/description` pattern for lisibility but it is not a obligation.
+Git branches should have a meaningful name that reflects the purpose of the branch. It **can** follow the `type/description` pattern for readability but it is not a obligation.
 
 The stable source code is hosted on `main` branch.
 

@@ -11,7 +11,8 @@ hide:
 
     "Generate your CV with Wonder!"
 
-CV Wonder is a tool to generate your CV in a simple and easy way. It is based on a YAML file that describes your CV and a theme that defines the look and feel of your CV.
+CV Wonder is a tool to generate your CV in a simple and easy way.
+It is based on a YAML file that describes your CV and a theme that defines the look and feel of your CV.
 
 ## Features
 
