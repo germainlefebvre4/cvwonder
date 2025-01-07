@@ -19,7 +19,7 @@ You can initialize a new theme with the following command:
 cvwonder theme create --name=my-theme-name
 ```
 
-This command creates a new directory in the `themes/` folder with the name `my-theme-name` and initializes the theme configuration file.
+This command creates a new directory in the `themes/` folder with the name `my-theme-name` and initializes the theme configuration file `theme.yaml`.
 
 ## Theme metadata
 
