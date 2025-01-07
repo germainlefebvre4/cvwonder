@@ -28,7 +28,7 @@ Add a `theme.yaml` file at the root of the theme directory which contains the th
 !!! important
     The `theme.yaml` file is **required** to define the theme metadata.
 
-```yaml <!-- markdownlint-disable MD046 -->
+```yaml
 name: My Wonderful Theme
 slug: my-wonderful-theme
 description: A wonderful theme for your CV
