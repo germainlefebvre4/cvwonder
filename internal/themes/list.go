@@ -3,6 +3,7 @@ package themes
 import (
 	"fmt"
 	"os"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/sirupsen/logrus"
@@ -17,10 +18,12 @@ func List() {
 		logrus.Fatal("Error reading themes directory: ", err)
 	}
 
-	// Print directories
+	// Print directories in a table
 	output := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	defer output.Flush()
-	fmt.Fprintf(output, "Directory\tName\tDescription\tAuthor\n")
+	// Table header
+	fmt.Fprintf(output, "%s", strings.ToUpper("Directory\tName\tDescription\tAuthor\n"))
+	// Table body
 	for _, dir := range dirs {
 		if dir.IsDir() {
 			themeConfig := GetThemeConfigFromDir("themes/" + dir.Name())

@@ -11,19 +11,3 @@ type Configuration struct {
 }
 
 var CliArgs Configuration
-
-// func LoadConfig(path string) (config Configuration, err error) {
-// 	// viper.AddConfigPath(path)
-// 	// viper.SetConfigName("app")
-// 	// viper.SetConfigType("env")
-
-// 	viper.AutomaticEnv()
-
-// 	err = viper.ReadInConfig()
-// 	if err != nil {
-// 		return
-// 	}
-
-// 	err = viper.Unmarshal(&config)
-// 	return
-// }

@@ -11,17 +11,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type GithubRepo struct {
-	URL   *url.URL
-	Owner string
-	Name  string
-}
-
 func Install(themeURL string) {
 	logrus.Debug("Install")
 	verifyTheme(themeURL)
 	githubRepo := parseGitHubURL(themeURL)
-	createThemeDir()
+	createThemesDir()
 	downloadTheme(githubRepo)
 }
 
@@ -62,15 +56,6 @@ func parseGitHubURL(themeURL string) GithubRepo {
 	return GithubRepo{URL: URL, Owner: path[1], Name: path[2]}
 }
 
-func createThemeDir() {
-	if _, err := os.Stat("themes"); os.IsNotExist(err) {
-		err := os.Mkdir("themes", 0755)
-		if err != nil {
-			logrus.Error("Error creating themes directory")
-		}
-	}
-}
-
 func downloadTheme(githubRepo GithubRepo) {
 	logrus.Debug("Download theme")
 
@@ -78,7 +63,7 @@ func downloadTheme(githubRepo GithubRepo) {
 
 	themeDirectory := fmt.Sprintf("themes/%s", themeConfig.Slug)
 	if _, err := os.Stat(themeDirectory); !os.IsNotExist(err) {
-		logrus.Error("Theme already exists")
+		logrus.Error("Theme '" + themeConfig.Name + "' already exists in " + themeDirectory + "/")
 		return
 	}
 	_, err := git.PlainClone(themeDirectory, false, &git.CloneOptions{
@@ -90,5 +75,5 @@ func downloadTheme(githubRepo GithubRepo) {
 		logrus.Error("Error cloning theme")
 	}
 
-	logrus.Info("Theme installed at ", themeDirectory)
+	logrus.Info("Theme '" + themeConfig.Name + "' successfully installed in " + themeDirectory + "/")
 }

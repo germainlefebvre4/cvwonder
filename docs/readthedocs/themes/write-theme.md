@@ -8,6 +8,14 @@ themes
     └── index.html
 ```
 
+## Initialize the theme
+
+You can initialize a new theme with the following command:
+
+```bash
+cvwonder theme create --name=my-theme-name
+```
+
 ## Build the theme
 
 The templated file is `themes/<my-theme-name>/index.html` and stands as the entry point for the theme.

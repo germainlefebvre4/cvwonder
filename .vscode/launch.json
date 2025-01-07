@@ -18,12 +18,18 @@
                 // "--watch",
                 // "--verbose",
 
+                // "themes",
+                // "list",
+
                 "themes",
-                "list",
+                "install",
+                "github.com/germainlefebvre4/cvwonder-theme-default",
 
                 // "themes",
-                // "install",
-                // "github.com/germainlefebvre4/cvwonder-theme-default",
+                // "create",
+                // "--name=default-theme",
+                // "--name='My New Theme'",
+                // "--name=\"My New Theme\"",
             ],
             "debugAdapter": "dlv-dap",
             "env": {
