@@ -15,7 +15,8 @@ The theme must be located in the `themes` directory in the current working direc
 ```tree
 themes
 └── default
-    └── index.html
+    ├── theme.yaml  # Theme metadata
+    └── index.html  # Theme template
 ```
 
 ```bash

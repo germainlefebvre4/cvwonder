@@ -14,7 +14,7 @@ Usually, the repository name is prefixed with `cvwonder-theme-` to make it easy 
 
 For example, if your theme is named `my-wonderful`, the repository name would be `cvwonder-theme-my-wonderful`.
 
-## Config theme
+## Theme metadata
 
 Add a `theme.yaml` file at the root of the repository which contains the theme metadata.
 
