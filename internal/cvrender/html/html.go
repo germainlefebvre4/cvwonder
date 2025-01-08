@@ -78,7 +78,11 @@ func generateTemplateFile(themeDirectory string, outputDirectory string, outputF
 
 	// Generate output
 	err = tmpl.ExecuteTemplate(outputTmpFile, "index.html", cv)
-	utils.CheckError(err)
+	if err != nil {
+		errFile := os.Remove(outputTmpFilePath)
+		utils.CheckError(errFile)
+		logrus.Fatal(err)
+	}
 
 	logrus.Debug("HTML file generated at:", outputFilePath)
 
