@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CmdManage() *cobra.Command {
+func ThemesCmd() *cobra.Command {
 	var cobraCmd = &cobra.Command{
 		PreRun:  utils.ToggleDebug,
 		Use:     "themes",
@@ -63,13 +63,13 @@ func CmdCreate() *cobra.Command {
 		Short:   "Create a new theme",
 		Long:    `Create a new theme`,
 		Run: func(cmd *cobra.Command, args []string) {
-			themeName := strings.ReplaceAll(utils.CliArgs.ThemeName, "'", "")
+			themeName := strings.ReplaceAll(utils.CliArgs.CreateThemeName, "'", "")
 			themeName = strings.ReplaceAll(themeName, "\"", "")
 			themes.Create(themeName)
 		},
 	}
 
-	cobraCmd.PersistentFlags().StringVarP(&utils.CliArgs.ThemeName, "name", "n", "New Theme", "Name of the new theme (required). Default is 'New Theme'")
+	cobraCmd.Flags().StringVarP(&utils.CliArgs.CreateThemeName, "name", "n", "New Theme", "Name of the new theme (required). Default is 'New Theme'")
 
 	return cobraCmd
 }

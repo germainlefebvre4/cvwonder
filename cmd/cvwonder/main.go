@@ -110,7 +110,8 @@ func main() {
 	rootCmd.AddCommand(serveCmd)
 	serveCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Watch, "watch", "w", false, "Watch for file changes")
 	serveCmd.PersistentFlags().IntVarP(&utils.CliArgs.Port, "port", "p", 3000, "Listening port")
-	rootCmd.AddCommand(cmdThemes.CmdManage())
+
+	rootCmd.AddCommand(cmdThemes.ThemesCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "There was an error while executing your CLI '%s'", err)

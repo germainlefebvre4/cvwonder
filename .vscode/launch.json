@@ -9,7 +9,7 @@
             "cwd": "${workspaceFolder}",
             "program": "./cmd/cvwonder",
             "args": [
-                // "generate",
+                "generate",
                 // "serve",
                 // "--input=cv.yml",
                 // "--output=generated/",
@@ -21,9 +21,9 @@
                 // "themes",
                 // "list",
 
-                "themes",
-                "install",
-                "github.com/germainlefebvre4/cvwonder-theme-default",
+                // "themes",
+                // "install",
+                // "github.com/germainlefebvre4/cvwonder-theme-default",
 
                 // "themes",
                 // "create",
