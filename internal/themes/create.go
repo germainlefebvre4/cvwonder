@@ -3,9 +3,9 @@ package themes
 import (
 	"os"
 
+	"github.com/goccy/go-yaml"
 	"github.com/mozillazg/go-slugify"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
 )
 
 func Create(themeName string) {

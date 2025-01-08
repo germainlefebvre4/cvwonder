@@ -6,8 +6,8 @@ import (
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
 
+	"github.com/goccy/go-yaml"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
 )
 
 func ParseFile(filePath string) (model.CV, error) {

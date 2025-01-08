@@ -5,9 +5,9 @@ import (
 	"io"
 	"os"
 
+	"github.com/goccy/go-yaml"
 	"github.com/google/go-github/github"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
 )
 
 type ThemeConfig struct {

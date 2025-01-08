@@ -6,12 +6,12 @@ require (
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/go-git/go-git/v5 v5.13.1
 	github.com/go-rod/rod v0.116.2
+	github.com/goccy/go-yaml v1.15.13
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/jaschaephraim/lrserver v0.0.0-20240306232639-afed386b3640
 	github.com/mozillazg/go-slugify v0.2.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.1
-	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
