@@ -19,3 +19,9 @@ doc-install:
 
 doc:
 	poetry --directory docs/ run mkdocs serve --config-file docs/mkdocs.yml
+
+goreleser-check:
+	goreleaser check
+
+goreleser-release:
+	goreleaser release --snapshot --clean

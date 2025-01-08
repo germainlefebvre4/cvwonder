@@ -52,7 +52,7 @@ func createThemeConfigFile(filePath string, themeConfig ThemeConfig) error {
 	if err != nil {
 		logrus.Error("fail to marshal credentials")
 	}
-	err = os.WriteFile(filePath, configYaml, 0755)
+	err = os.WriteFile(filePath, configYaml, 0600)
 
 	return nil
 }

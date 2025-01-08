@@ -66,7 +66,7 @@ func CopyDirectory(scrDir string, dest string) error {
 
 		switch fileInfo.Mode() & os.ModeType {
 		case os.ModeDir:
-			if err := CreateIfNotExists(destPath, 0755); err != nil {
+			if err := CreateIfNotExists(destPath, 0750); err != nil {
 				return err
 			}
 			if err := CopyDirectory(sourcePath, destPath); err != nil {
