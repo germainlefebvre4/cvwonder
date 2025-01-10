@@ -42,7 +42,6 @@ type CV struct {
 		} `yaml:"missions"`
 	} `yaml:"career"`
 	TechnicalSkills struct {
-		List    []interface{} `yaml:"list"`
 		Domains []struct {
 			Name         string `yaml:"name"`
 			Competencies []struct {
