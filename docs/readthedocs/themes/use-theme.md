@@ -12,11 +12,16 @@ The theme must be located in the `themes` directory in the current working direc
 
 ## Default theme
 
+Themes have a specific structure including a `theme.yaml` and an `index.html` file.
+
 ```tree
 themes
 └── default
-    └── index.html
+    ├── theme.yaml  # Theme metadata
+    └── index.html  # Theme template
 ```
+
+To use you theme, specify the theme name with the `--theme` flag.
 
 ```bash
 cvwonder generate --input=cv.yml --output=generated/ --theme=default
@@ -24,9 +29,13 @@ cvwonder generate --input=cv.yml --output=generated/ --theme=default
 
 ### Render
 
+The default theme renders the CV with a simple and clean design.
+
 ![CVWonder Default Theme Render](./theme-default.png)
 
 ### CV input
+
+Here is the content of the `cv.yml` file for the rendered CV.
 
 ```yaml
 {!getting-started/cv.yml!}

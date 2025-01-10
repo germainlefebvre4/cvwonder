@@ -57,7 +57,9 @@ nav:
   - Themes:
     - Overview: themes/overview.md
     - Use a theme: themes/use-theme.md
+    - Install a remote theme: themes/install-theme.md
     - Write your theme: themes/write-theme.md
+    - Publish your theme: themes/publish-theme.md
   - Contributing:
     - How to contribute:
         - Issues: contributing/issues.md

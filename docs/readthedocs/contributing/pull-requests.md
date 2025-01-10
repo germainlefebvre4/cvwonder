@@ -11,7 +11,7 @@ Thank you for taking interest in contributing to CV Wonder!
 
 ## Pull Request Title
 
-The pull request title must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format.
+The pull request title must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/){:target="_blank"} format.
 
 Format of the title:
 
@@ -52,7 +52,7 @@ fix(api): handle dependencies in the claim view
 docs: add the contribution guide
 ```
 
-The typoe/scope `chore(deps)` is generally used by Dependabot for dependencies updates. You can also use this pattern if needed. Dependencies updates should be contained in a single Pull Request to ensure that the changes are properly tested and reviewed.
+The type/scope `chore(deps)` is generally used by Dependabot for dependencies updates. You can also use this pattern if needed. Dependencies updates should be contained in a single Pull Request to ensure that the changes are properly tested and reviewed.
 
 ```raw
 chore(deps): bump gorm.io/gorm from 1.25.4 to 1.25.12

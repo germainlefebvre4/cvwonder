@@ -22,7 +22,7 @@ type CV struct {
 		Stackoverflow string `yaml:"stackoverflow"`
 		Linkedin      string `yaml:"linkedin"`
 		Twitter       string `yaml:"twitter"`
-	} `yaml:"social_networks"`
+	} `yaml:"socialNetworks"`
 	Abstract []struct {
 		Tr string `yaml:"tr"`
 	} `yaml:"abstract"`

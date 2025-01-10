@@ -11,12 +11,25 @@
             "args": [
                 "generate",
                 // "serve",
-                "--input=cv.yml",
-                "--output=generated/",
-                "--theme=default",
-                "--format=pdf",
+                // "--input=cv.yml",
+                // "--output=generated/",
+                // "--theme=default",
+                // "--format=pdf",
                 // "--watch",
                 // "--verbose",
+
+                // "themes",
+                // "list",
+
+                // "themes",
+                // "install",
+                // "github.com/germainlefebvre4/cvwonder-theme-default",
+
+                // "themes",
+                // "create",
+                // "--name=default-theme",
+                // "--name='My New Theme'",
+                // "--name=\"My New Theme\"",
             ],
             "debugAdapter": "dlv-dap",
             "env": {

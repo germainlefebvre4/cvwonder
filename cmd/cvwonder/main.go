@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	cmdThemes "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/themes"
 	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
 	"github.com/germainlefebvre4/cvwonder/internal/cvrender"
 	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
@@ -109,6 +110,8 @@ func main() {
 	rootCmd.AddCommand(serveCmd)
 	serveCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Watch, "watch", "w", false, "Watch for file changes")
 	serveCmd.PersistentFlags().IntVarP(&utils.CliArgs.Port, "port", "p", 3000, "Listening port")
+
+	rootCmd.AddCommand(cmdThemes.ThemesCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "There was an error while executing your CLI '%s'", err)

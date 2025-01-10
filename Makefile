@@ -12,9 +12,16 @@ run:
 
 build: ## Build
 	go build -o cvwonder ./cmd/cvwonder
+	chmod +x cvwonder
 
 doc-install:
 	poetry --directory docs/ lock && poetry --directory docs/ install
 
 doc:
 	poetry --directory docs/ run mkdocs serve --config-file docs/mkdocs.yml
+
+goreleser-check:
+	goreleaser check
+
+goreleser-release:
+	goreleaser release --snapshot --clean

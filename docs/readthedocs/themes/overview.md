@@ -7,5 +7,13 @@ The theme must be located in the `themes` directory in the current working direc
 ```tree
 themes
 └── <my-theme-name>
-    └── index.html
-```
+    ├── theme.yaml     # Theme metadata (required)
+    └── index.html     # Theme template (required)
+``` 
+
+Themes offer these abilities:
+
+* Easily switch between themes
+* Write your own theme
+* Publish yours to share them with the community
+* Download themes from the community

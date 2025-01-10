@@ -37,7 +37,7 @@ gitGraph LR:
 
 ## Branches
 
-Git branches should have a meaningful name that reflects the purpose of the branch. It **can** follow the `type/description` pattern for lisibility but it is not a obligation.
+Git branches should have a meaningful name that reflects the purpose of the branch. It **can** follow the `type/description` pattern for readability but it is not a obligation.
 
 The stable source code is hosted on `main` branch.
 
@@ -50,7 +50,7 @@ Here are some examples for other types of branches:
 
 ## Commits
 
-The commit message must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format.
+The commit message must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/){:target="_blank"} format.
 
 Format of the commit message:
 
@@ -84,7 +84,7 @@ A commit introducing a breaking API change needs to append a ! after the type/sc
 
 ## Tags
 
-The Tag is a way to identified a version and ensure that the related code is stable and deserve a release. The tag revision must follows the [Semantic Versioning 2.0.0](https://semver.org/) (or SemVer) convention.
+The Tag is a way to identified a version and ensure that the related code is stable and deserve a release. The tag revision must follows the [Semantic Versioning 2.0.0](https://semver.org/){:target="_blank"} (or SemVer) convention.
 
 Tags must have the following format:
 
@@ -96,4 +96,4 @@ Here are some examples:
 - `v1.2.3`
 - `v1.0.0-alpha.1`
 
-The SemVer website provides a [Regex101 Online Validator](https://regex101.com/r/Ly7O1x/3/) to check the compliance of the version.
+The SemVer website provides a [Regex101 Online Validator](https://regex101.com/r/Ly7O1x/3/){:target="_blank"} to check the compliance of the version.
