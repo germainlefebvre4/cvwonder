@@ -78,6 +78,7 @@ markdown_extensions:
   - tables
   - footnotes
   - extra
+  - pymdownx.details
   - toc:
       permalink: true
   - markdown.extensions.codehilite:
