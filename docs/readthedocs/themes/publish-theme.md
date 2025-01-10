@@ -10,9 +10,27 @@
 
 Create a new repository on GitHub with the name of your theme.
 
-Usually, the repository name is prefixed with `cvwonder-theme-` to make it easy to find.
+!!! question
 
-For example, if your theme is named `my-wonderful`, the repository name would be `cvwonder-theme-my-wonderful`.
+    Why only GitHub is referenced? Please see the [Hosting](#hosting) section.
+
+### Name
+
+The repository name is usually prefixed with `cvwonder-theme-` to make it easy to find.
+
+!!! example
+
+    Your theme named `my-wonderful` would be hosted on repository named `cvwonder-theme-my-wonderful`.
+
+### Visibility
+
+Your repository must be **public** to be shared with the community.
+
+### Topics
+
+Add the following topics to your repository to make it easy to find:
+
+* `cvwonder-theme`
 
 ## Theme metadata
 
@@ -34,7 +52,7 @@ author: Germain
 
 ## Publish theme
 
-Push your theme to the GitHub repository.
+Push your changes to the GitHub repository.
 
 ```bash
 git add .
@@ -42,4 +60,16 @@ git commit -m "Add theme"
 git push origin main
 ```
 
-Here is an example of a theme repository: [cvwonder-theme-default](https://github.com/germainlefebvre4/cvwonder-theme-default){:target="_blank"}.
+!!! example
+
+    The default theme [cvwonder-theme-default](https://github.com/germainlefebvre4/cvwonder-theme-default){:target="_blank"} is a good example to follow.
+
+## Hosting
+
+!!! warning
+
+    For now, only GitHub is supported.
+    This will probably change in the future.
+
+    If you want to use another hosting platform, please open an issue on the [Github repository](https://github.com/germainlefebvre4/cvwonder/issues).
+

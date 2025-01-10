@@ -2,10 +2,6 @@
 
 Download and install a theme from Github to customize the look and feel of your CV.
 
-!!! warning
-
-    For now, the theme must be hosted on Github.
-
 ## Find your theme
 
 Find a theme on Github.
@@ -17,17 +13,33 @@ To make it easy to find, the CV Wonder Themes repositories should contain at lea
 
 ### Search on Github
 
-* [Keyword `cvwonder-theme-`](https://github.com/search?q=cvwonder-theme-&type=repositories){:target="_blank"}
-* [Topic `cvwonder-theme`](https://github.com/topics/cvwonder-theme){:target="_blank"}
+Look for CVWonder themes on Github based on the Search and Topics.
 
-For example, the theme `cvwonder-theme-default` is available at [https://github.com/germainlefebvre4/cvwonder-theme-default](https://github.com/germainlefebvre4/cvwonder-theme-default){:target="_blank"}.
+* [Keyword](https://github.com/search?q=cvwonder-theme-&type=repositories){:target="_blank"}: `cvwonder-theme-`
+* [Topic](https://github.com/topics/cvwonder-theme){:target="_blank"}: `cvwonder-theme`
 
 ## Download and install the theme
 
-In the desired theme with the `cvwonder` command.
+Download and install the desired theme with the `cvwonder` command.
+
+Here is an example with the theme [`cvwonder-theme-default`](https://github.com/germainlefebvre4/cvwonder-theme-default){:target="_blank"}:
 
 ```bash
 cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
 # or
 # cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
 ```
+
+!!! info "Theme version"
+
+    The downloaded theme is the latest version from the `main` branch.
+
+## Download a specific version
+
+*Theme versioning is supported yet.*
+
+## Hosting
+
+Only **Github** is supported for now.
+
+If you want to use another hosting platform, please open an issue on the [Github repository](https://github.com/germainlefebvre4/cvwonder/issues).

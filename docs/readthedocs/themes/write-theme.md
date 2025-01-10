@@ -44,7 +44,11 @@ author: Germain
 
 ## Build the theme
 
-The templated file is `themes/<my-theme-name>/index.html` and stands as the entry point for the theme. By default, the templating file is named `index.html` but you can change it to any name you want.
+The templated file is located at `themes/<my-theme-name>/index.html` and stands as the entry point for the theme.
+
+!!! note "Main template file"
+
+    The main template file must be named `index.html`.
 
 The templating engine is the [`template/html` go package](https://pkg.go.dev/html/template){:target="_blank"}.
 
