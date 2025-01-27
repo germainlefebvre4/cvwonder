@@ -5,8 +5,11 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
+	"time"
 
 	"github.com/sirupsen/logrus"
+	"golang.org/x/exp/rand"
 )
 
 func CheckError(err error) {
@@ -55,6 +58,10 @@ func CopyDirectory(scrDir string, dest string) error {
 	if err != nil {
 		return err
 	}
+	// Cleanup the .git/ dir
+	if ok, _ := regexp.MatchString(".git", scrDir); ok {
+		return nil
+	}
 	for _, entry := range entries {
 		sourcePath := filepath.Join(scrDir, entry.Name())
 		destPath := filepath.Join(dest, entry.Name())
@@ -77,8 +84,11 @@ func CopyDirectory(scrDir string, dest string) error {
 				return err
 			}
 		default:
-			// Exclude the templated index.html theme file from copying
+			// Exclude the templated index.html theme file and path with .git/ dir from copying
 			if destPath == filepath.Join(dest, "index.html") {
+				continue
+			}
+			if ok, _ := regexp.MatchString(".git", destPath); ok {
 				continue
 			}
 			if err := Copy(sourcePath, destPath); err != nil {
@@ -127,4 +137,16 @@ func CopySymLink(source, dest string) error {
 		return err
 	}
 	return os.Symlink(link, dest)
+}
+
+func GenerateRandomString(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	seed := rand.NewSource(uint64(time.Now().UnixNano()))
+	random := rand.New(seed)
+
+	result := make([]byte, length)
+	for i := range result {
+		result[i] = charset[random.Intn(len(charset))]
+	}
+	return string(result)
 }
