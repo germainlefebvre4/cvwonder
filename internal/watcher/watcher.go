@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
 	"github.com/germainlefebvre4/cvwonder/internal/cvrender"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
 
@@ -12,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func ObserveFileEvents(outputDirectory string, inputFilePath string, themeName string, exportFormat string) {
+func (w *WatcherServices) ObserveFileEvents(renderService cvrender.RenderInterface, baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string) {
 	// setup watcher
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -29,10 +28,10 @@ func ObserveFileEvents(outputDirectory string, inputFilePath string, themeName s
 				// monitor only for write events
 				if event.Op&fsnotify.Write == fsnotify.Write {
 					logrus.Debug("Modification detected on template:", event.Name)
-					content, err := cvparser.ParseFile(inputFilePath)
+					content, err := w.ParserService.ParseFile(inputFilePath)
 					utils.CheckError(err)
 
-					cvrender.Render(content, outputDirectory, inputFilePath, themeName, exportFormat)
+					renderService.Render(content, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat)
 					utils.CheckError(err)
 				}
 			case err := <-watcher.Errors:

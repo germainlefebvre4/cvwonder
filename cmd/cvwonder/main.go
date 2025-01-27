@@ -7,6 +7,8 @@ import (
 	cmdThemes "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/themes"
 	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
 	"github.com/germainlefebvre4/cvwonder/internal/cvrender"
+	render_html "github.com/germainlefebvre4/cvwonder/internal/cvrender/html"
+	render_pdf "github.com/germainlefebvre4/cvwonder/internal/cvrender/pdf"
 	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
@@ -52,13 +54,31 @@ func main() {
 			logrus.Info("  Output directory: ", outputDir.RelativePath)
 			logrus.Info("  Theme: ", utils.CliArgs.ThemeName)
 			logrus.Info("  Format: ", utils.CliArgs.Format)
-			logrus.Info()
+			logrus.Info("")
 
-			content, err := cvparser.ParseFile(inputFile.FullPath)
+			// Parse the CV
+			perserService, err := cvparser.NewParserServices()
+			utils.CheckError(err)
+			content, err := perserService.ParseFile(inputFile.FullPath)
 			utils.CheckError(err)
 
-			cvrender.Render(content, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
+			// Create render services
+			serveService, err := cvserve.NewServeServices()
 			utils.CheckError(err)
+			renderHTMLService, err := render_html.NewRenderHTMLServices()
+			utils.CheckError(err)
+			renderPDFService, err := render_pdf.NewRenderPDFServices(serveService)
+			utils.CheckError(err)
+			renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService)
+			utils.CheckError(err)
+
+			// Render the CV
+			baseDirectory, err := os.Getwd()
+			utils.CheckError(err)
+			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
+			utils.CheckError(err)
+
+			logrus.Info("CV generated successfully")
 		},
 	}
 
@@ -87,17 +107,36 @@ func main() {
 			logrus.Info("  Watch: ", utils.CliArgs.Watch)
 			logrus.Info()
 
-			content, err := cvparser.ParseFile(inputFile.FullPath)
+			// Parse the CV
+			perserService, err := cvparser.NewParserServices()
+			utils.CheckError(err)
+			content, err := perserService.ParseFile(inputFile.FullPath)
 			utils.CheckError(err)
 
-			cvrender.Render(content, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
+			// Create render services
+			serveService, err := cvserve.NewServeServices()
+			utils.CheckError(err)
+			renderHTMLService, err := render_html.NewRenderHTMLServices()
+			utils.CheckError(err)
+			renderPDFService, err := render_pdf.NewRenderPDFServices(serveService)
+			utils.CheckError(err)
+			renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService)
+			utils.CheckError(err)
+
+			// Render the CV
+			baseDirectory, err := os.Getwd()
+			utils.CheckError(err)
+			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
 			utils.CheckError(err)
 
 			if utils.CliArgs.Watch {
-				go watcher.ObserveFileEvents(outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
+				watcherService, err := watcher.NewWatcherServices()
+				utils.CheckError(err)
+				go watcherService.ObserveFileEvents(renderService, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
 			}
-			cvserve.OpenBrowser(outputDir.FullPath, inputFile.FullPath)
-			cvserve.StartLiveReloader(outputDir.FullPath, inputFile.FullPath)
+			// Serve the CV
+			serveService.OpenBrowser(outputDir.FullPath, inputFile.FullPath)
+			serveService.StartLiveReloader(utils.CliArgs.Port, outputDir.FullPath, inputFile.FullPath)
 		},
 	}
 
