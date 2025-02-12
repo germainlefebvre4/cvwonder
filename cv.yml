@@ -472,6 +472,12 @@ certifications:
     link: https://www.credly.com/badges/f0054964-7101-47a0-82b2-16d351eb08f2/public_url
     badge: images/aws-certified-sysops-administrator-associate.png
 
+languages:
+  - name: Francais
+    level: Maternelle
+  - name: Anglais
+    level: Aisance professionnelle
+
 education:
   - schoolName: IG2I - Centrale
     schoolLogo: images/centrale-lille-logo.webp

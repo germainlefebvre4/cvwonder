@@ -57,6 +57,12 @@ certifications:
     link: https://www.credly.com/badges/dd09dc40-9ef8-43a4-addb-d861d4dadf26/public_url
     badge: images/aws-certified-solutions-architect-associate.png
 
+languages:
+  - name: Francais
+    level: Maternelle
+  - name: Anglais
+    level: Aisance professionnelle
+
 education:
   - schoolName: IG2I - Centrale
     schoolLogo: images/centrale-lille-logo.webp

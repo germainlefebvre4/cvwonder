@@ -1,9 +1,6 @@
 package model
 
 type CV struct {
-	// Site struct {
-	// 	URL string `yaml:"url"`
-	// } `yaml:"site"`
 	Company         Company         `yaml:"company"`
 	Person          Person          `yaml:"person"`
 	SocialNetworks  SocialNetworks  `yaml:"socialNetworks"`
@@ -12,6 +9,7 @@ type CV struct {
 	TechnicalSkills TechnicalSkills `yaml:"technicalSkills"`
 	SideProjects    []SideProject   `yaml:"sideProjects"`
 	Certifications  []Certification `yaml:"certifications"`
+	Languages       []Language      `yaml:"languages"`
 	Education       []Education     `yaml:"education"`
 }
 
@@ -100,4 +98,9 @@ type Education struct {
 	Location   string `yaml:"location"`
 	Dates      string `yaml:"dates"`
 	Link       string `yaml:"link"`
+}
+
+type Language struct {
+	Name  string `yaml:"name"`
+	Level string `yaml:"level"`
 }
