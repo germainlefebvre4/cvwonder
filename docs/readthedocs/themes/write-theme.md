@@ -76,3 +76,11 @@ Which can be used in the template like this:
 !!! note "Go template variable name"
     Every key in the yaml file is capitalized in the Go template.
     Even though the yaml file uses `person`, the Go template variable name is `Person`.
+
+## Enable the watch feature
+
+To enable the watch feature on CV Wonder, you have to inject an internal js script in the template. This script will automatically reload the page when the CV data or the Theme is updated.
+
+```html
+<script src="http://localhost:35729/livereload.js"></script>
+```
