@@ -26,6 +26,14 @@ You can automatically regenerate your CV when updating either the YAML file or t
 cvwonder generate --input=cv.yml --output=generated/ --watch
 ```
 
+??? info "Only on supported themes"
+
+    The watch feature is available on themes that have included the `livereload.js` script.
+
+    ```html
+    <script src="http://localhost:35729/livereload.js"></script>
+    ```
+
 ## Serve the generated CV
 
 You can render and serve your CV on a simple HTTP server which will automatically refresh the page when updating either the YAML file or the theme.
