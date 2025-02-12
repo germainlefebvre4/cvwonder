@@ -6,28 +6,62 @@
 
 ## Getting started
 
-Download the latest release from the [releases page](https://github.com/germainlefebvre4/cvwonder/releases).
-
-Requirements:
-
-* [jq](https://stedolan.github.io/jq/)
-* [curl](https://curl.se/)
+1) Download the latest release from the [releases page](https://github.com/germainlefebvre4/cvwonder/releases) OR in your terminal.
 
 ```bash
-DISTRIBUTION=Linux
-CPU_ARCH=amd64
+apt install curl jq
+
+DISTRIBUTION=linux   # linux, darwin, windows
+CPU_ARCH=amd64       # amd64, arm64, i386
+
 VERSION=$(curl -s "https://api.github.com/repos/germainlefebvre4/cvwonder/releases/latest" | jq -r '.tag_name')
 curl -L -o cvwonder "https://github.com/germainlefebvre4/cvwonder/releases/download/${VERSION}/cvwonder_${DISTRIBUTION}_${CPU_ARCH}"
 chmod +x cvwonder
 sudo mv cvwonder /usr/local/bin/
 ```
 
-Write your CV in a YAML file (i.e; `cv.yml`):
-
-Generate your CV using the following command:
+2) Write your CV in a YAML file
 
 ```bash
+# i.e. cv.yml
+vim cv.yml
+```
+
+3) Generate your CV using the following command:
+
+```bash
+cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-default
 cvwonder generate --input=cv.yml --output=generated/ --theme=default
+```
+
+## Generate your CV
+
+Generate your CV in HTML format:
+
+```bash
+cvwonder generate
+# cvwonder generate --input=cv.yml --output=generated/ --theme=default
+```
+
+## Serve your CV
+
+Serve your CV on a local server to preview it in your browser:
+
+```bash
+cvwonder serve
+# cvwonder serve --input=cv.yml --output=generated/ --theme=default
+```
+
+### Watch for changes
+
+Enable the watcher to automatically generate your CV when any involved file is modified:
+
+* `themes/<theme-name>/index.html`: The main template of the theme
+* `<input-cv>.yml`: Your CV in YAML format
+
+```bash
+cvwonder serve -w
+# cvwonder serve --input=cv.yml --output=generated/ --theme=default --watch
 ```
 
 ## Themes
@@ -60,25 +94,6 @@ To allow basic string manipulation, here are the functions available in the temp
 | `replace` | Replace a substring by another | `{{ replace "Hello World" "World" "Universe" }}` | `Hello Universe` |
 | `join` | Join a list of strings with a separator | `{{ join ["one", "two", "three"] ", " }}` | `one, two, three` |
 
-## Serve your CV
-
-Serve your CV on a local server to preview it in your browser:
-
-```bash
-cvwonder serve --input=cv.yml --output=generated/ --theme=default
-```
-
-## Watch for changes
-
-Enable the watcher to automatically generate your CV when any involved file is modified:
-
-* `themes/<theme-name>/index.html`: The main template of the theme
-* `<input-cv>.yml`: Your CV in YAML format
-
-```bash
-cvwonder serve --input=cv.yml --output=generated/ --theme=default --watch
-```
-
 ## Development
 
 ### Run
@@ -93,6 +108,13 @@ go run ./cmd/cvwonder/cvwonder.go --input=cv.yml --output=generated/ --theme=def
 ```bash
 go build -o cvwonder ./cmd/cvwonder/cvwonder.go
 # make build
+```
+
+### Test
+
+```bash
+go test -v ./...
+# make test
 ```
 
 ### VSCode
