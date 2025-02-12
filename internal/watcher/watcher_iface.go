@@ -6,13 +6,20 @@ import (
 )
 
 type WatcherInterface interface {
-	ObserveFileEvents(renderService cvrender.RenderInterface, baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string)
+	ObserveFileEvents(baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string)
 }
 
 type WatcherServices struct {
 	ParserService cvparser.ParserInterface
+	RenderService cvrender.RenderInterface
 }
 
-func NewWatcherServices() (WatcherInterface, error) {
-	return &WatcherServices{}, nil
+func NewWatcherServices(
+	parserService cvparser.ParserInterface,
+	renderService cvrender.RenderInterface,
+) (WatcherInterface, error) {
+	return &WatcherServices{
+		ParserService: parserService,
+		RenderService: renderService,
+	}, nil
 }

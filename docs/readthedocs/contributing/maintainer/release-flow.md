@@ -13,7 +13,7 @@ Here are the basic rules that we follow:
 
 ## Testing
 
-The release process embedded a testing workflow to ensure everything's developped is stable and tested on several kind of environments (proc arch, kubernetes versions, crossplane versions, managed kubernetes versions, etc).
+The release process embedded a testing workflow to ensure everything's developed is stable and tested on several kind of environments.
 
 ## Release
 

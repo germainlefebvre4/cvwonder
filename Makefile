@@ -10,15 +10,18 @@ help: ## Display this help.
 run:
 	go run ./cmd/cvwonder $(filter-out $@,$(MAKECMDGOALS))
 
-build: ## Build
+build:
 	go build -o cvwonder ./cmd/cvwonder
 	chmod +x cvwonder
+
+test:
+	go test ./...
 
 doc-install:
 	poetry --directory docs/ lock && poetry --directory docs/ install
 
 doc:
-	poetry --directory docs/ run mkdocs serve --config-file docs/mkdocs.yml
+	poetry --directory docs/ run mkdocs serve --config-file mkdocs.yml
 
 goreleser-check:
 	goreleaser check

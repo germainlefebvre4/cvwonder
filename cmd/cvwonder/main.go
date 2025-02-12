@@ -57,9 +57,9 @@ func main() {
 			logrus.Info("")
 
 			// Parse the CV
-			perserService, err := cvparser.NewParserServices()
+			parserService, err := cvparser.NewParserServices()
 			utils.CheckError(err)
-			content, err := perserService.ParseFile(inputFile.FullPath)
+			content, err := parserService.ParseFile(inputFile.FullPath)
 			utils.CheckError(err)
 
 			// Create render services
@@ -108,9 +108,9 @@ func main() {
 			logrus.Info()
 
 			// Parse the CV
-			perserService, err := cvparser.NewParserServices()
+			parserService, err := cvparser.NewParserServices()
 			utils.CheckError(err)
-			content, err := perserService.ParseFile(inputFile.FullPath)
+			content, err := parserService.ParseFile(inputFile.FullPath)
 			utils.CheckError(err)
 
 			// Create render services
@@ -130,9 +130,9 @@ func main() {
 			utils.CheckError(err)
 
 			if utils.CliArgs.Watch {
-				watcherService, err := watcher.NewWatcherServices()
+				watcherService, err := watcher.NewWatcherServices(parserService, renderService)
 				utils.CheckError(err)
-				go watcherService.ObserveFileEvents(renderService, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
+				go watcherService.ObserveFileEvents(baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
 			}
 			// Serve the CV
 			serveService.OpenBrowser(outputDir.FullPath, inputFile.FullPath)
