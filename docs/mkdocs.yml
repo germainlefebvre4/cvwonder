@@ -60,6 +60,7 @@ nav:
     - Install a remote theme: themes/install-theme.md
     - Write your theme: themes/write-theme.md
     - Publish your theme: themes/publish-theme.md
+    - Library: themes/library.md
   - Contributing:
     - How to contribute:
         - Issues: contributing/issues.md

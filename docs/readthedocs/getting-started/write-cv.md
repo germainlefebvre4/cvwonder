@@ -275,6 +275,30 @@ The certifications section is used to describe the certifications you have.
           badge: images/aws-certified-solutions-architect-associate.png
     ```
 
+### Languages
+
+The languages section is used to describe the languages you speak.
+
+| Field | Description |
+| --- | --- |
+| Name | The name of the language. |
+| Level | The level of the language. |
+
+??? example "Example"
+
+    Add your languages in the languages section:
+
+    ```yaml
+    languages:
+      - name: French
+        level: Native
+      - name: English
+        level: Fluent
+    ```
+  
+!!! abstract "Level"
+    The `Level` field is a text field. It represents your level of the language in the way that you want to show.
+
 ### Education
 
 The education section is used to describe your school and education.

@@ -72,4 +72,3 @@ git push origin main
     This will probably change in the future.
 
     If you want to use another hosting platform, please open an issue on the [Github repository](https://github.com/germainlefebvre4/cvwonder/issues).
-
