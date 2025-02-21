@@ -99,14 +99,14 @@ To allow basic string manipulation, here are the functions available in the temp
 ### Run
 
 ```bash
-go run ./cmd/cvwonder/cvwonder.go --input=cv.yml --output=generated/ --theme=default 
+go run ./cmd/cvwonder/main.go --input=cv.yml --output=generated/ --theme=default 
 # make run
 ```
 
 ### Build
 
 ```bash
-go build -o cvwonder ./cmd/cvwonder/cvwonder.go
+go build -o cvwonder ./cmd/cvwonder/main.go
 # make build
 ```
 
