@@ -8,7 +8,7 @@ on:
       tag:
         description: 'Tag to push'
         required: true
-        default: 'latest'
+        default: latest
 
 env:
   DOCKERHUB_REPO: germainlefebvre4/cvwonder
@@ -90,6 +90,7 @@ jobs:
           repository: ${{ env.DOCKERHUB_REPO }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+          short-description: ${{ github.event.repository.description }}
           readme-filepath: ./docs/dockerhub/README.md
 
   # merge:
