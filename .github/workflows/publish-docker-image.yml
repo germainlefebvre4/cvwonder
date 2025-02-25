@@ -14,6 +14,7 @@ on:
 env:
   DOCKERHUB_REPO: germainlefebvre4/cvwonder
   GHCR_REPO: ghcr.io/germainlefebvre4/cvwonder
+  version: 'v0.2.0'
 
 jobs:
   build:
@@ -66,10 +67,10 @@ jobs:
           outputs: type=image,"name=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}",push-by-digest=true,name-canonical=true,push=true
           build-args: |
             CPU_ARCH=${{ matrix.platform }}
-            CVWONDER_VERSION=${{ inputs.version }}
+            CVWONDER_VERSION=${{ env.version }}
           tags: |
-            ${{ env.DOCKERHUB_REPO }}:${{ inputs.version }}
-            ${{ env.GHCR_REPO }}:${{ inputs.version }}
+            ${{ env.DOCKERHUB_REPO }}:${{ env.version }}
+            ${{ env.GHCR_REPO }}:${{ env.version }}
 
       - name: Export digest
         run: |
