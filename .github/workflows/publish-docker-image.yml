@@ -93,7 +93,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           short-description: ${{ github.event.repository.description }}
-          readme-filepath: docs/dockerhub/README.md
+          # readme-filepath: README.md
 
   # merge:
   #   runs-on: ubuntu-latest
