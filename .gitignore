@@ -31,3 +31,6 @@ cv.html
 
 # Goreleaser
 dist/
+
+# Env
+.env
