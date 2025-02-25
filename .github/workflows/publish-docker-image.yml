@@ -5,10 +5,11 @@ on:
   push:
   workflow_dispatch:
     inputs:
-      tag:
+      version:
         description: 'Tag to push'
         required: true
-        default: latest
+        type: string
+        default: 'latest'
 
 env:
   DOCKERHUB_REPO: germainlefebvre4/cvwonder
@@ -65,10 +66,10 @@ jobs:
           outputs: type=image,"name=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}",push-by-digest=true,name-canonical=true,push=true
           build-args: |
             CPU_ARCH=${{ matrix.platform }}
-            CVWONDER_VERSION=${{ inputs.tag }}
+            CVWONDER_VERSION=${{ inputs.version }}
           tags: |
-            ${{ env.DOCKERHUB_REPO }}:${{ inputs.tag }}
-            ${{ env.GHCR_REPO }}:${{ inputs.tag }}
+            ${{ env.DOCKERHUB_REPO }}:${{ inputs.version }}
+            ${{ env.GHCR_REPO }}:${{ inputs.version }}
 
       - name: Export digest
         run: |
