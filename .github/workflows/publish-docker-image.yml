@@ -66,6 +66,9 @@ jobs:
           build-args: |
             CPU_ARCH=${{ matrix.platform }}
             CVWONDER_VERSION=${{ inputs.tag }}
+          tags: |
+            ${{ env.DOCKERHUB_REPO }}:${{ inputs.tag }}
+            ${{ env.GHCR_REPO }}:${{ inputs.tag }}
 
       - name: Export digest
         run: |
