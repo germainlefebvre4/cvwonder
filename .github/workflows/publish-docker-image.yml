@@ -2,6 +2,7 @@
 name: Push to DockerHub & GHCR
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       tag:
