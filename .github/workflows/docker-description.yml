@@ -12,6 +12,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - shell: bash
+        run: |
+          ls -la .
+          ls -la docs/dockerhub/README.md
+
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v4
         with:
