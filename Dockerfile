@@ -17,9 +17,12 @@ RUN VERSION=$(curl -s "https://api.github.com/repos/germainlefebvre4/cvwonder/re
     curl -L -o /app/cvwonder "https://github.com/germainlefebvre4/cvwonder/releases/download/${VERSION}/cvwonder_${DISTRIBUTION}_${CPU_ARCH}" && \
     chmod +x cvwonder
 
+
 FROM alpine:latest
 
 COPY --from=build /app/cvwonder /usr/local/bin/cvwonder
 
-ENTRYPOINT ["/app/cvwonder"]
-CMD ["serve", "--input=cv.yaml", "--output=generated/", "--theme=default", "--watch"]
+WORKDIR /cv
+
+ENTRYPOINT ["cvwonder"]
+CMD ["serve", "--input=cv.yml", "--output=generated/", "--theme=default", "--watch"]
