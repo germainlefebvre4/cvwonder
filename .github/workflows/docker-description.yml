@@ -1,0 +1,29 @@
+---
+name: test
+
+on:
+  push:
+
+env:
+  DOCKERHUB_REPO: germainlefebvre4/cvwonder
+  GHCR_REPO: ghcr.io/germainlefebvre4/cvwonder
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          ls -la .
+          ls -la docs/dockerhub/README.md
+          pwd
+
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          repository: ${{ env.DOCKERHUB_REPO }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          short-description: ${{ github.event.repository.description }}
+          readme-filepath: docs/dockerhub/README.md
