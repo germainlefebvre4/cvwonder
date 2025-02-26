@@ -29,9 +29,68 @@ The Theme system allows you to use community themes and create your own for your
 
 Don't waste any more time formatting your CV, let CV Wonder do it for you and just **focus** on the content.
 
+## Features
+
+* **Generate CVs** in HTML, PDF formats
+* **Serve** the CVs in a local server
+* **Manage** themes
+
 # How to use this image
 
-Generate your CV in HTML format:
+CV Wonder helper.
+
+```raw
+CV Wonder - Generate your CV with Wonder!
+
+Usage:
+  cvwonder [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  generate    Generate the CV
+  help        Help about any command
+  serve       Generate and serve the CV
+  themes      Manage themes
+
+Flags:
+  -f, --format string   Format for the export (optional). Default is 'html'. (default "html")
+  -h, --help            help for cvwonder
+  -i, --input string    Input file in YAML format (required). Default is 'cv.yml' (default "cv.yml")
+  -o, --output string   Output directory (optional). Default is 'generated/' (default "generated/")
+  -t, --theme string    Name of the theme (optional). Default is 'default'. (default "default")
+  -v, --verbose         Verbose mode.
+
+Use "cvwonder [command] --help" for more information about a command.
+```
+
+## Generate your CV
+
+### HTML format
+
+Generate your CV in HTML format is the easiest way to start.
 
 ```bash
-docker run --rm -v $(pwd):/app germainlefebvre4/cvwonder generate
+docker run --rm -v $(pwd):/cv germainlefebvre4/cvwonder:v0.2.0 generate
+```
+
+### PDF format
+
+*This section is in work in progress. The following commands are not working yet.*
+
+Generate your CV in PDF format.
+
+To generate a PDF, CV Wonder needs to download (on its own like a good boy) a headless browser library (called `rod`) to render the HTML in PDF. This library is quite heavy and can take a few minutes to download. If you want to avoid this download on next generation, you can cache the directory `/root/.cache` on your host.
+
+```bash
+docker run --rm -v $(pwd):/cv -v $(pwd)/.cache:/root/.cache germainlefebvre4/cvwonder:v0.2.0 generate --format=pdf
+```
+
+## Serve your CV
+
+*This section is in work in progress. The following commands are not working yet.*
+
+Serve your CV in a local server. By default, CV Wonder is listening on port `3000`.
+
+```bash
+docker run --rm -v $(pwd):/cv -p 3000:3000 germainlefebvre4/cvwonder:v0.2.0 serve
+```

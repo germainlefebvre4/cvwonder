@@ -49,7 +49,7 @@ func main() {
 			// Build OutputDirectory object
 			outputDir := model.BuildOutputDirectory(utils.CliArgs.OutputDirectory)
 
-			logrus.Info("CVRender")
+			logrus.Info("CV Wonder")
 			logrus.Info("  Input file: ", inputFile.RelativePath)
 			logrus.Info("  Output directory: ", outputDir.RelativePath)
 			logrus.Info("  Theme: ", utils.CliArgs.ThemeName)
@@ -99,7 +99,7 @@ func main() {
 			// Build OutputDirectory object
 			outputDir := model.BuildOutputDirectory(utils.CliArgs.OutputDirectory)
 
-			logrus.Info("CVRender")
+			logrus.Info("CV Wonder")
 			logrus.Info("  Input file: ", inputFile.RelativePath)
 			logrus.Info("  Output directory: ", outputDir.RelativePath)
 			logrus.Info("  Theme: ", utils.CliArgs.ThemeName)
