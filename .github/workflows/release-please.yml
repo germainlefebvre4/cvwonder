@@ -1,5 +1,5 @@
 ---
-name: release-please
+name: Release Please
 
 on:
   push:

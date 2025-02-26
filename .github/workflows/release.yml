@@ -1,5 +1,5 @@
 ---
-name: goreleaser
+name: Go Release
 
 on:
   push:
@@ -46,3 +46,9 @@ jobs:
         with:
             name: cvwonder
             path: dist/*
+
+  docker-publish:
+    uses: ./.github/workflows/docker-publish.yml
+    with:
+      version: ${{ github.ref_name }}
+    secrets: inherit
