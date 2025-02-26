@@ -2,6 +2,13 @@
 name: Push to DockerHub & GHCR
 
 on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'Version to publish (release tag)'
+        required: true
+        type: string
+        default: 'latest'
   workflow_dispatch:
     inputs:
       version:
