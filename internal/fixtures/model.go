@@ -242,3 +242,30 @@ var CvModelError01 = model.CV{}
 var CvHtmlTemplate01 = []byte(`{{ .Person.Name }}`)
 
 var CvHtmlGood01 = []byte(`John Doe`)
+
+var CvHtmlTemplateFunctionsTemplateInc01 = []byte(`{{ inc 1 }}`)
+var CvHtmlTemplateFunctionsGeneratedInc01 = []byte(`2`)
+
+var CvHtmlTemplateFunctionsTemplateDec01 = []byte(`{{ dec 2 }}`)
+var CvHtmlTemplateFunctionsGeneratedDec01 = []byte(`1`)
+
+var CvHtmlTemplateFunctionsTemplateList01 = []byte(`{{ list "a" "b" "c" }}`)
+var CvHtmlTemplateFunctionsGeneratedList01 = []byte(`[a b c]`)
+
+var CvHtmlTemplateFunctionsTemplateJoin01 = []byte(`{{ join (list "a" "b" "c") " " }}`)
+var CvHtmlTemplateFunctionsGeneratedJoin01 = []byte(`a b c`)
+
+var CvHtmlTemplateFunctionsTemplateSplit01 = []byte(`{{ split "a b c" " " }}`)
+var CvHtmlTemplateFunctionsGeneratedSplit01 = []byte(`[a b c]`)
+
+var CvHtmlTemplateFunctionsTemplateTrim01 = []byte(`{{ trim "  a b c  " }}`)
+var CvHtmlTemplateFunctionsGeneratedTrim01 = []byte(`a b c`)
+
+var CvHtmlTemplateFunctionsTemplateLower01 = []byte(`{{ lower "A B C" }}`)
+var CvHtmlTemplateFunctionsGeneratedLower01 = []byte(`a b c`)
+
+var CvHtmlTemplateFunctionsTemplateUpper01 = []byte(`{{ upper "a b c" }}`)
+var CvHtmlTemplateFunctionsGeneratedUpper01 = []byte(`A B C`)
+
+var CvHtmlTemplateFunctionsTemplateReplace01 = []byte(`{{ replace "a b c" " " "-" }}`)
+var CvHtmlTemplateFunctionsGeneratedReplace01 = []byte(`a-b-c`)
