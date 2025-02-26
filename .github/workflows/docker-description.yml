@@ -16,6 +16,7 @@ jobs:
         run: |
           ls -la .
           ls -la docs/dockerhub/README.md
+          pwd
 
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v4
