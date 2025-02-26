@@ -20,16 +20,11 @@ on:
 env:
   DOCKERHUB_REPO: germainlefebvre4/cvwonder
   GHCR_REPO: ghcr.io/germainlefebvre4/cvwonder
+  PLATFORMS: linux/amd64,linux/arm64
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
     steps:
       - uses: actions/checkout@v4
 
@@ -69,7 +64,8 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
-          platforms: ${{ matrix.platform }}
+          platforms: ${{ env.PLATFORMS }}
+          load: true
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,"name=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}",name-canonical=true,push=true
           build-args: |
