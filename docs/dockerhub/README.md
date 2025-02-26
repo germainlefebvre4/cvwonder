@@ -1,9 +1,9 @@
-# CV Wonder
+# Quick reference
 
-## Quick reference
+* 
 
-## Supported tags and respective Dockerfile links
+# Supported tags and respective Dockerfile links
 
-## What is CV Wonder?
+# What is CV Wonder?
 
-## How to use this image
+# How to use this image
