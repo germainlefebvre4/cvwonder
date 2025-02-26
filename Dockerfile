@@ -21,5 +21,7 @@ FROM alpine:latest
 
 COPY --from=build /app/cvwonder /usr/local/bin/cvwonder
 
-ENTRYPOINT ["/app/cvwonder"]
+WORKDIR /cv
+
+ENTRYPOINT ["cvwonder"]
 CMD ["serve", "--input=cv.yaml", "--output=generated/", "--theme=default", "--watch"]
