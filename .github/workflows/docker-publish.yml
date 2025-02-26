@@ -31,6 +31,8 @@ jobs:
           - linux/amd64
           - linux/arm64
     steps:
+      - uses: actions/checkout@v4
+
       - name: Prepare
         run: |
           platform=${{ matrix.platform }}
@@ -91,7 +93,6 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-      - uses: actions/checkout@v4
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v4
         with:
