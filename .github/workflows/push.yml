@@ -12,6 +12,6 @@ jobs:
   docker-publish:
     uses: ./.github/workflows/docker-publish.yml
     with:
-      version: ${{ github.ref_name }}
+      version: v0.2.0
     secrets: inherit
     
