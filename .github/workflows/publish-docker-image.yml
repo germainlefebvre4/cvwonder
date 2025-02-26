@@ -84,11 +84,12 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-      # - name: Docker Hub Description
-      #   uses: peter-evans/dockerhub-description@v4
-      #   with:
-      #     repository: ${{ env.DOCKERHUB_REPO }}
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
-      #     short-description: ${{ github.event.repository.description }}
-      #     readme-filepath: docs/dockerhub/README.md
+      - uses: actions/checkout@v4
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          repository: ${{ env.DOCKERHUB_REPO }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          short-description: ${{ github.event.repository.description }}
+          readme-filepath: ./docs/dockerhub/README.md
