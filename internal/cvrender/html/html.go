@@ -46,9 +46,15 @@ func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string,
 
 func getTemplateFunctions() template.FuncMap {
 	funcMap := template.FuncMap{
+		"inc":     func(i int) int { return i + 1 },
 		"dec":     func(i int) int { return i - 1 },
-		"replace": strings.ReplaceAll,
+		"list":    func(items ...string) []string { return items },
 		"join":    strings.Join,
+		"split":   strings.Split,
+		"trim":    strings.TrimSpace,
+		"lower":   strings.ToLower,
+		"upper":   strings.ToUpper,
+		"replace": strings.ReplaceAll,
 	}
 	return funcMap
 }

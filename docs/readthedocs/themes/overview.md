@@ -9,7 +9,7 @@ themes
 └── <my-theme-name>
     ├── theme.yaml     # Theme metadata (required)
     └── index.html     # Theme template (required)
-``` 
+```
 
 Themes offer these abilities:
 
