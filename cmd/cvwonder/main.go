@@ -105,6 +105,7 @@ func main() {
 			logrus.Info("  Theme: ", utils.CliArgs.ThemeName)
 			logrus.Info("  Format: ", utils.CliArgs.Format)
 			logrus.Info("  Watch: ", utils.CliArgs.Watch)
+			logrus.Info("  Open browser: ", utils.CliArgs.Browser)
 			logrus.Info()
 
 			// Parse the CV
@@ -135,7 +136,9 @@ func main() {
 				go watcherService.ObserveFileEvents(baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
 			}
 			// Serve the CV
-			serveService.OpenBrowser(outputDir.FullPath, inputFile.FullPath)
+			if utils.CliArgs.Browser {
+				serveService.OpenBrowser(outputDir.FullPath, inputFile.FullPath)
+			}
 			serveService.StartLiveReloader(utils.CliArgs.Port, outputDir.FullPath, inputFile.FullPath)
 		},
 	}
@@ -144,6 +147,7 @@ func main() {
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.OutputDirectory, "output", "o", "generated/", "Output directory (optional). Default is 'generated/'")
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.ThemeName, "theme", "t", "default", "Name of the theme (optional). Default is 'default'.")
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.Format, "format", "f", "html", "Format for the export (optional). Default is 'html'.")
+	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Browser, "browser", "b", false, "Format for the export (optional). Default is 'false'.")
 	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Verbose, "verbose", "v", false, "Verbose mode.")
 	rootCmd.AddCommand(generateCmd)
 	rootCmd.AddCommand(serveCmd)
