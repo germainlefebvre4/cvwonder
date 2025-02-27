@@ -17,6 +17,7 @@
                 // "--format=pdf",
                 // "--watch",
                 // "--verbose",
+                // "--browser",
 
                 // "themes",
                 // "list",

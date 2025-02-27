@@ -45,6 +45,7 @@ The person section is used to describe "you".
 | Citizenship | Your citizenship. |
 | Email | Your email. |
 | Site | Your site. |
+| Phone | Your phone number. |
 
 ??? example "Example"
 
@@ -55,9 +56,11 @@ The person section is used to describe "you".
       name: Germain Lefebvre
       depiction: Software Engineer
       profession: Software Engineer
-      location: Paris, France
+      location: Lille, France
       citizenship: French
       email: germain@lefebvre.fr
+      site: https://germainlefebvre.fr
+      phone: +33 6 12 34 56 78
     ```
 
 ### Social Networks
@@ -126,7 +129,7 @@ The career section is used to describe your multiple career paths and experience
         missions:
           - position: Software Engineer
             company: zatsit
-            location: Paris, France
+            location: Lille, France
             dates: 2020-2022
             summary: Developed a web application using React and Node.js.
             description:
@@ -166,7 +169,7 @@ The missions sub-section is used to describe your missions in detail.
         missions:
           - position: Software Engineer
             company: zatsit
-            location: Paris, France
+            location: Lille, France
             dates: 2020-2022
             summary: Developed a web application using React and Node.js.
             description:
@@ -318,12 +321,12 @@ The education section is used to describe your school and education.
 
     ```yaml
     education:
-      - schoolName: University of Paris
-        schoolLogo: images/university-of-paris-logo.webp
+      - schoolName: University of Lille
+        schoolLogo: images/university-of-lille-logo.webp
         degree: Master's degree in Computer Science
-        location: Paris, France
+        location: Lille, France
         dates: 2015-2018
-        link: https://www.univ-paris.fr/
+        link: https://www.univ-lille.fr/
     ```
 
 !!! abstract "Date format"

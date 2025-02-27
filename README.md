@@ -1,5 +1,9 @@
 # CV Wonder
 
+CV Wonder is a tool that allows you to create a CV in a few minutes. It allows you to massively generate CVs, base on a theme, for thousands of people in a few seconds without friction. The Theme system allows you to use community themes and create your own for your purposes.
+
+Don't waste any more time formatting your CV, let CV Wonder do it for you and just focus on the content.
+
 <p align="center">
     <img src="./docs/readthedocs/logo.svg" alt="cvwonder" width="400px" style="display: block; margin: 0 auto;" />
 </p>
@@ -93,6 +97,14 @@ To allow basic string manipulation, here are the functions available in the temp
 | `dec` | Decrement a number | `{{ dec 2 }}` | `1` |
 | `replace` | Replace a substring by another | `{{ replace "Hello World" "World" "Universe" }}` | `Hello Universe` |
 | `join` | Join a list of strings with a separator | `{{ join ["one", "two", "three"] ", " }}` | `one, two, three` |
+
+## Docker
+
+CV Wonder is also available as a Docker image on [Docker Hub](https://hub.docker.com/r/germainlefebvre4/cvwonder).
+
+```bash
+docker run -v $(pwd):/cv germainlefebvre4/cvwonder:latest generate --input=cv.yml --output=generated/ --theme=default
+```
 
 ## Development
 

@@ -7,6 +7,7 @@ type Configuration struct {
 	CreateThemeName string
 	Format          string `mapstructure:"FORMAT"`
 	Watch           bool   `mapstructure:"WATCH"`
+	Browser         bool   `mapstructure:"BROWSER"`
 	Verbose         bool   `mapstructure:"VERBOSE"`
 	Port            int    `mapstructure:"PORT"`
 }
