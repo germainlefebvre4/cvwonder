@@ -8,8 +8,8 @@ Here is a non-exhaustive list of themes available for CVWonder.
 
 | Theme | Description | Author | Link |
 |-------|-------------|--------|------|
-| Default | A default theme for CVWonder | [Germain LEFEBVRE](https://github.com/germainlefebvre4) | [cvwonder-theme-default](https://github.com/germainlefebvre4/cvwonder-theme-default) |
-| Basic | A basic theme for CVWonder | [Germain LEFEBVRE](https://github.com/germainlefebvre4) | [cvwonder-theme-basic](https://github.com/germainlefebvre4/cvwonder-theme-basic) |
+| Default | A default theme for CVWonder | [Germain LEFEBVRE](https://github.com/germainlefebvre4){:target="_blank"} | [cvwonder-theme-default](https://github.com/germainlefebvre4/cvwonder-theme-default){:target="_blank"} |
+| Basic | A basic theme for CVWonder | [Germain LEFEBVRE](https://github.com/germainlefebvre4){:target="_blank"} | [cvwonder-theme-basic](https://github.com/germainlefebvre4/cvwonder-theme-basic){:target="_blank"} |
 
 Share your theme with the community by following the [Publish theme](publish-theme.md) section.
 

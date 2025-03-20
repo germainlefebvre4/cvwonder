@@ -5,7 +5,7 @@ hide:
 ---
 # CV Wonder
 
-![CV Wonder](./logo.svg){: style="width: 100%; max-width: 60%; margin: 0 20%;"}
+![CV Wonder](./logo.svg){: style="max-width: 40%; margin: 0 30%;"}
 
 !!! quote
 

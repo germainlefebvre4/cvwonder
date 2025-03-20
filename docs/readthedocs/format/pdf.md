@@ -17,3 +17,6 @@ cvwonder generate --input=cv.yml --output=generated/ --format=pdf
 The PDF format is generated using the `rod` Go package. The package is a high-level API for the Chrome DevTools Protocol. Formerly it opens a headless browser, load the HTML file, and save the PDF file.
 
 To generate the PDF, `cvwonder` generates the HTML file then the PDF file.
+
+* [GitHub go-rod/rod](https://github.com/go-rod/rod){:target="_blank"}
+* [Go Package](https://pkg.go.dev/github.com/go-rod/rod){:target="_blank"}

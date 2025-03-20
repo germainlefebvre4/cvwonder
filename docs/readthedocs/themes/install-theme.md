@@ -42,4 +42,4 @@ cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
 
 Only **Github** is supported for now.
 
-If you want to use another hosting platform, please open an issue on the [Github repository](https://github.com/germainlefebvre4/cvwonder/issues).
+If you want to use another hosting platform, please open an issue on the [Github repository](https://github.com/germainlefebvre4/cvwonder/issues){:target="_blank"}.
