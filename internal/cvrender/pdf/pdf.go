@@ -9,6 +9,7 @@ import (
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
 
 	"github.com/go-rod/rod"
+	"github.com/go-rod/rod/lib/launcher"
 	"github.com/sirupsen/logrus"
 )
 
@@ -27,7 +28,13 @@ func (r *RenderPDFServices) RenderFormatPDF(cv model.CV, outputDirectory string,
 
 func (r *RenderPDFServices) convertPageToPDF(localServerUrl string, outputFilePath string) {
 	err := rod.Try(func() {
-		rod.New().MustConnect().MustPage(localServerUrl).MustWaitLoad().MustPDF(outputFilePath)
+		var u string
+		if utils.CliArgs.Verbose {
+			u = launcher.New().NoSandbox(true).Logger(os.Stdout).MustLaunch()
+		} else {
+			u = launcher.New().NoSandbox(true).MustLaunch()
+		}
+		rod.New().ControlURL(u).MustConnect().MustPage(localServerUrl).MustWaitLoad().MustPDF(outputFilePath)
 	})
 	if err != nil {
 		message := fmt.Sprintf("ERROR: Failed to connect to the server %s", localServerUrl)

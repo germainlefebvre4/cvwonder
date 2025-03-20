@@ -71,4 +71,4 @@ git push origin main
     For now, only GitHub is supported.
     This will probably change in the future.
 
-    If you want to use another hosting platform, please open an issue on the [Github repository](https://github.com/germainlefebvre4/cvwonder/issues).
+    If you want to use another hosting platform, please open an issue on the [Github repository](https://github.com/germainlefebvre4/cvwonder/issues){:target="_blank"}.

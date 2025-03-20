@@ -84,3 +84,7 @@ To enable the watch feature on CV Wonder, you have to inject an internal js scri
 ```html
 <script src="http://localhost:35729/livereload.js"></script>
 ```
+
+!!! note
+
+    Starting CV WOnder version 0.3.0, the livereload script is automatically injected in the template.

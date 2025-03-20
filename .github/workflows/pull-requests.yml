@@ -17,8 +17,29 @@ jobs:
         with:
           go-version: '1.23'
 
+      - name: Cache Golang dependencies
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-go-rod
+        with:
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.event.number }}-${{ hashFiles('go.sum') }}
+          path: |
+            ~/.cache/rod
+            ~/go/pkg/
+
       - name: Build
         run: go build -v -o cvwonder ./cmd/cvwonder
 
       - name: Test with the Go CLI
         run: go test ./...
+
+      - name: Test with cvwonder
+        run: |
+          ./cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-basic
+          ./cvwonder generate --theme=basic --format=html
+          ./cvwonder generate --theme=basic --format=pdf --port=3030
+
+          ./cvwonder serve --theme=basic &
+          PID=$!
+          sleep 5
+          kill $PID

@@ -21,5 +21,5 @@ CV Wonder is released under [MIT](https://spdx.org/licenses/MIT.html) license.
 
 For more information, please refer the following links:
 
-- [SPDX](https://spdx.org/licenses/MIT.html)
-- [Open Source Initiative](https://opensource.org/licenses/MIT)
+- [SPDX](https://spdx.org/licenses/MIT.html){:target="_blank"}
+- [Open Source Initiative](https://opensource.org/licenses/MIT){:target="_blank"}

@@ -6,6 +6,7 @@
 # Golang
 /cmd/cvwonder/__*
 /cvwonder
+/cvwonder_linux_amd64
 
 # Test
 test_CV.y*ml
