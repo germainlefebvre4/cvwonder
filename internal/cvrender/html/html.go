@@ -32,6 +32,9 @@ func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string,
 	// Generate template file
 	r.generateTemplateFile(themeDirectory, outputDirectory, outputFilePath, outputTmpFilePath, cv)
 
+	// Add livereload script to the end of the tmp file
+	appendLivereloaderScript(outputTmpFilePath)
+
 	// Copy template file to output directory
 	copyTemplateFileContent(outputTmpFilePath, outputFilePath)
 
@@ -42,6 +45,22 @@ func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string,
 	}
 
 	return err
+}
+
+func appendLivereloaderScript(outputTmpFilePath string) {
+	livereloadScript := "<script src=\"http://localhost:35729/livereload.js\"></script>\n"
+	file, err := os.OpenFile(outputTmpFilePath, os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		logrus.Fatal(fmt.Sprintf("Error opening tmp file for appending: %s", outputTmpFilePath), err)
+	}
+	_, _ = file.WriteString(livereloadScript)
+	if err != nil {
+		logrus.Fatal(fmt.Sprintf("Error appending livereload script to tmp file: "))
+	}
+	err = file.Close()
+	if err != nil {
+		logrus.Fatal(fmt.Sprintf("Error closing tmp file: %s", outputTmpFilePath), err)
+	}
 }
 
 func getTemplateFunctions() template.FuncMap {

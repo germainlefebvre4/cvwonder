@@ -488,3 +488,47 @@ func TestCopyTemplateFileContent(t *testing.T) {
 		}
 	}
 }
+func TestAppendLivereloaderScript(t *testing.T) {
+	testDirectory, _ := os.Getwd()
+	baseDirectory, err := filepath.Abs(testDirectory + "/../../..")
+	randomString := utils.GenerateRandomString(5)
+	outputDirectory := baseDirectory + "/generated-test-" + randomString
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Prepare
+	if _, err := os.Stat(outputDirectory); os.IsNotExist(err) {
+		err := os.Mkdir(outputDirectory, os.ModePerm)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	tmpFilePath := filepath.Join(outputDirectory, "test.tmp")
+	err = os.WriteFile(tmpFilePath, []byte("Initial content\n"), os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Run test
+	t.Run("Should append livereload script", func(t *testing.T) {
+		appendLivereloaderScript(tmpFilePath)
+
+		// Verify the file exists
+		assert.FileExists(t, tmpFilePath)
+
+		// Verify the content
+		content, err := os.ReadFile(tmpFilePath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		expectedContent := "Initial content\n<script src=\"http://localhost:35729/livereload.js\"></script>\n"
+		assert.Equal(t, expectedContent, string(content))
+	})
+
+	// Clean
+	err = os.RemoveAll(outputDirectory)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
