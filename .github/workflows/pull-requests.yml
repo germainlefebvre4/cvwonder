@@ -22,3 +22,14 @@ jobs:
 
       - name: Test with the Go CLI
         run: go test ./...
+
+      - name: Test with cvwonder
+        run: |
+          ./cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
+          ./cvwonder generate --theme default --format=html
+          # ./cvwonder generate --theme default --format=pdf
+
+          ./cvwonder serve --theme=default &
+          PID=$!
+          sleep 5
+          kill $PID
