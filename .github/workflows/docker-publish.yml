@@ -86,14 +86,14 @@ jobs:
           build-args: |
             CVWONDER_VERSION=${{ inputs.version }}
           tags: |
-            ${{ env.DOCKERHUB_REPO }}:latest
             ${{ env.DOCKERHUB_REPO }}:${{ inputs.version }}
             ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.VERSION_TWO_DIGIT }}
             ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.VERSION_ONE_DIGIT }}
-            ${{ env.GHCR_REPO }}:latest
+            ${{ env.DOCKERHUB_REPO }}:latest
             ${{ env.GHCR_REPO }}:${{ inputs.version }}
             ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.VERSION_TWO_DIGIT }}
             ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.VERSION_ONE_DIGIT }}
+            ${{ env.GHCR_REPO }}:latest
 
       - name: Export digest
         run: |

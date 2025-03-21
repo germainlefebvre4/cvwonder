@@ -8,7 +8,7 @@
 
 # Supported tags and respective Dockerfile links
 
-* `latest`, `v0`, `v0.2`, `v0.2.0` ([Dockerfile](https://github.com/germainlefebvre4/cvwonder/blob/v0.2.0/Dockerfile)
+* [`latest`, `v0`, `v0.3`, `v0.3.0`](https://github.com/germainlefebvre4/cvwonder/blob/v0.3.0/Dockerfile)
 
 # Quick reference (cont.)
 
