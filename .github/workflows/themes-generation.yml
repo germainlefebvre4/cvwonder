@@ -1,0 +1,43 @@
+---
+name: Check Themes Generation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-theme:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        theme: 
+          - default
+          - basic
+          - horizon-timeline
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+      - name: Cache Golang dependencies
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-go-rod
+        with:
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.event.number }}-${{ hashFiles('go.sum') }}
+          path: |
+            ~/.cache/rod
+            ~/go/pkg/
+      - name: Build
+        run: go build -v -o cvwonder ./cmd/cvwonder
+
+      - name: Download CV Wonder Themes
+        run: |
+          ./cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-${{ matrix.theme }}
+          ./cvwonder theme list
+          THEME_NAME=$(./cvwonder theme list | tail -n +2 | head -1 | awk '{print $1}')
+          ./cvwonder generate --theme=${THEME_NAME} --format=html
