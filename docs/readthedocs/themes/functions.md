@@ -106,3 +106,43 @@ The `replace` function is used to replace a substring in a string.
 ## Missing functions
 
 If you need a function that is not available in CV Wonder, you can ask us to add it on [Github Issues](https://github.com/germainlefebvre4/cvwonder/issues/new?template=feature_request.md&title=Theme%20function%20-%20What%20should%20be%20done). We will be happy to help you.
+
+## `odd` - Check if a number is odd
+
+The `odd` function is used to check if a number is odd.
+
+| Code | Output |
+|-------|--------|
+| `{{ odd 1 }}` | true |
+| `{{ odd 2 }}` | false |
+| `{{ odd 3 }}` | true |
+
+## `even` - Check if a number is even
+
+The `even` function is used to check if a number is even.
+
+| Code | Output |
+|-------|--------|
+| `{{ even 1 }}` | false |
+| `{{ even 2 }}` | true |
+| `{{ even 3 }}` | false |
+
+## `add` - Add two numbers
+
+The `add` function is used to add two numbers.
+
+| Code | Output |
+|-------|--------|
+| `{{ add 1 2 }}` | 3 |
+| `{{ add 2 3 }}` | 5 |
+| `{{ add 10 2 }}` | 12 |
+
+## `sub` - Subtract two numbers
+
+The `sub` function is used to subtract two numbers.
+
+| Code | Output |
+|-------|--------|
+| `{{ sub 1 2 }}` | -1 |
+| `{{ sub 2 3 }}` | -1 |
+| `{{ sub 10 2 }}` | 8 |
