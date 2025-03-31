@@ -20,6 +20,7 @@ func ThemesCmd() *cobra.Command {
 	cobraCmd.AddCommand(CmdList())
 	cobraCmd.AddCommand(CmdInstall())
 	cobraCmd.AddCommand(CmdCreate())
+	cobraCmd.AddCommand(CmdCheck())
 
 	return cobraCmd
 }
@@ -76,6 +77,24 @@ func CmdCreate() *cobra.Command {
 	}
 
 	cobraCmd.Flags().StringVarP(&utils.CliArgs.CreateThemeName, "name", "n", "New Theme", "Name of the new theme (required). Default is 'New Theme'")
+
+	return cobraCmd
+}
+
+func CmdCheck() *cobra.Command {
+	var cobraCmd = &cobra.Command{
+		PreRun:  utils.ToggleDebug,
+		Use:     "verify",
+		Aliases: []string{"v"},
+		Args:    cobra.ExactArgs(1),
+		Short:   "Check themes",
+		Long:    `Check themes`,
+		Run: func(cmd *cobra.Command, args []string) {
+			themesService, err := themes.NewThemesService()
+			utils.CheckError(err)
+			themesService.Verify(args[0])
+		},
+	}
 
 	return cobraCmd
 }

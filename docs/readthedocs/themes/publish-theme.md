@@ -37,10 +37,11 @@ Add the following topics to your repository to make it easy to find:
 Add a `theme.yaml` file at the root of the repository which contains the theme metadata.
 
 ```yaml
-name: My Wonderful Theme
-slug: my-wonderful-theme
+name: My Wonderful
+slug: my-wonderful
 description: A wonderful theme for your CV
 author: Germain
+minimumVersion: 0.3.1
 ```
 
 | Key | Description |
@@ -49,6 +50,7 @@ author: Germain
 | `slug` | The slug of the theme. It is used to **name your directory** in the `themes/` folder. |
 | `description`| A short description of the theme |
 | `author` | The author of the theme |
+| `minimumVersion` | The minimum version of cvwonder required to use the theme. |
 
 ## Publish theme
 
