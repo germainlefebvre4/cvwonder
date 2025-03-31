@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/germainlefebvre4/cvwonder/compare/v0.3.0...v0.3.1) (2025-03-31)
+
+
+### Bug Fixes
+
+* **themes:** Add template functions odd, even, add, sub ([#27](https://github.com/germainlefebvre4/cvwonder/issues/27)) ([0043a4d](https://github.com/germainlefebvre4/cvwonder/commit/0043a4d913f0bc636d6c64a5dd7fcf4f41723194))
+
 ## [0.3.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.2.0...v0.3.0) (2025-03-20)
 
 
