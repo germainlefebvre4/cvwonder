@@ -5,6 +5,7 @@ import (
 	"os"
 
 	cmdThemes "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/themes"
+	cmdVersion "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/version"
 	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
 	"github.com/germainlefebvre4/cvwonder/internal/cvrender"
 	render_html "github.com/germainlefebvre4/cvwonder/internal/cvrender/html"
@@ -55,6 +56,8 @@ func main() {
 			logrus.Info("  Theme: ", utils.CliArgs.ThemeName)
 			logrus.Info("  Format: ", utils.CliArgs.Format)
 			logrus.Info("")
+
+			// Check template requirements
 
 			// Parse the CV
 			parserService, err := cvparser.NewParserServices()
@@ -155,6 +158,7 @@ func main() {
 	serveCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Watch, "watch", "w", false, "Watch for file changes")
 
 	rootCmd.AddCommand(cmdThemes.ThemesCmd())
+	rootCmd.AddCommand(cmdVersion.VersionCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "There was an error while executing your CLI '%s'", err)
