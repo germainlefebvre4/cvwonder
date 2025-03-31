@@ -41,6 +41,7 @@ author: Germain
 | `slug` | The slug of the theme. It is used to **name your directory** in the `themes/` folder. |
 | `description`| A short description of the theme |
 | `author` | The author of the theme |
+| `minimumVersion` | The minimum version of cvwonder required to use the theme. |
 
 ## Build the theme
 

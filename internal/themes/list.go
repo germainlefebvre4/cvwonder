@@ -34,7 +34,7 @@ func listThemes(baseDirectory string, themeDir string) {
 	output := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	defer output.Flush()
 	// Table header
-	fmt.Fprintf(output, "%s", strings.ToUpper("Directory\tName\tDescription\tAuthor\n"))
+	fmt.Fprintf(output, "%s", strings.ToUpper("Directory\tName\tDescription\tAuthor\tMin Version\n"))
 	// Table body
 	for _, dir := range dirs {
 		if dir.IsDir() {
@@ -54,5 +54,5 @@ func listThemes(baseDirectory string, themeDir string) {
 
 func printRow(baseDirectory string, themeDir string, dir os.DirEntry, output *tabwriter.Writer) {
 	themeConfig := theme_config.GetThemeConfigFromDir(filepath.Join(baseDirectory, themeDir, dir.Name()))
-	fmt.Fprintf(output, "%s\t%s\t%s\t%s\n", themeConfig.Slug, themeConfig.Name, themeConfig.Description, themeConfig.Author)
+	fmt.Fprintf(output, "%s\t%s\t%s\t%s\t%s\n", themeConfig.Slug, themeConfig.Name, themeConfig.Description, themeConfig.Author, themeConfig.MinimumVersion)
 }

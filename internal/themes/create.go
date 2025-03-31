@@ -30,10 +30,11 @@ func (t *ThemesService) Create(themeName string) {
 
 func createThemeConfig(themeName string, themeSlugName string) {
 	themeConfig := theme_config.ThemeConfig{
-		Name:        themeName,
-		Slug:        themeSlugName,
-		Description: "Description of the new theme.",
-		Author:      "Anonymous",
+		Name:           themeName,
+		Slug:           themeSlugName,
+		Description:    "Description of the new theme.",
+		Author:         "Anonymous",
+		MinimumVersion: "0.3.1",
 	}
 	err := createThemeConfigFile("themes/"+themeSlugName+"/theme.yaml", themeConfig)
 	if err != nil {
