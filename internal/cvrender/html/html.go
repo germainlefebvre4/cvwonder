@@ -74,6 +74,10 @@ func getTemplateFunctions() template.FuncMap {
 		"lower":   strings.ToLower,
 		"upper":   strings.ToUpper,
 		"replace": strings.ReplaceAll,
+		"odd":     func(i int) bool { return i%2 != 0 },
+		"even":    func(i int) bool { return i%2 == 0 },
+		"add":     func(a, b int) int { return a + b },
+		"sub":     func(a, b int) int { return a - b },
 	}
 	return funcMap
 }
