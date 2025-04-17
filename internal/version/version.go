@@ -4,7 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var CVWONDER_VERSION = "0.3.1"
+var CVWONDER_VERSION = "dev"
 
 func (t *VersionService) GetVersion() {
 	logrus.Debug("GetVersion")
