@@ -1,35 +1,30 @@
 ---
-issue-845-fix: True
-disable-version-string: true
-with-expecter: true
-all: True
-dir: "{{.InterfaceDir}}"
-mockname: "{{.InterfaceName}}Mock"
-outpkg: "{{.PackageName}}"
+all: true
+dir: '{{.InterfaceDir}}'
+structname: '{{.InterfaceName}}Mock'
+pkgname: '{{.SrcPackageName}}'
 filename: "mocks/mock_{{.InterfaceName}}.go"
-inpackage: True
+template: testify
+# inpackage: True
 packages:
   github.com/germainlefebvre4/cvwonder/internal/cvparser:
     interfaces:
-      ParserInterface:
+      ParserInterface: {}
   github.com/germainlefebvre4/cvwonder/internal/cvrender:
     interfaces:
-      RenderInterface:
+      RenderInterface: {}
   github.com/germainlefebvre4/cvwonder/internal/cvrender/html:
     interfaces:
-      RenderHTMLInterface:
+      RenderHTMLInterface: {}
   github.com/germainlefebvre4/cvwonder/internal/cvrender/pdf:
     interfaces:
-      RenderPDFInterface:
+      RenderPDFInterface: {}
   github.com/germainlefebvre4/cvwonder/internal/cvserve:
     interfaces:
-      ServeInterface:
-  github.com/germainlefebvre4/cvwonder/internal/watcher:
-    interfaces:
-      WatcherInterface:
+      ServeInterface: {}
   github.com/germainlefebvre4/cvwonder/internal/themes:
     interfaces:
-      ThemesInterface:
-  # github.com/germainlefebvre4/cvwonder/internal/themes/config:
-  #   interfaces:
-  #     ThemeConfigInterface:
+      ThemesInterface: {}
+  github.com/germainlefebvre4/cvwonder/internal/watcher:
+    interfaces:
+      WatcherInterface: {}
