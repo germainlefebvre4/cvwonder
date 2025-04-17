@@ -7,9 +7,9 @@ repos:
     hooks:
       - id: mockery
         name: mockery
-        entry: bash -c 'mockery || true'
+        entry: bash -c 'mockery'
         language: system
-        # verbose: true
+        verbose: false
       - id: cvwonder-helper
         name: cvwonder-helper
         entry: bash -c 'go run ./cmd/cvwonder > docs/readthedocs/cli/helper.out'
