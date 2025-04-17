@@ -153,3 +153,59 @@ invalid_yaml:
 		t.Fatal(err)
 	}
 }
+func TestVerifyThemeMinimumVersion(t *testing.T) {
+	tests := []struct {
+		name             string
+		themeConfig      ThemeConfig
+		cvwonderVersion  string
+		expectedValidity bool
+	}{
+		{
+			name: "Valid version - minimum version met",
+			themeConfig: ThemeConfig{
+				MinimumVersion: "1.0.0",
+			},
+			cvwonderVersion:  "1.0.0",
+			expectedValidity: true,
+		},
+		{
+			name: "Valid version - higher version",
+			themeConfig: ThemeConfig{
+				MinimumVersion: "1.0.0",
+			},
+			cvwonderVersion:  "1.1.0",
+			expectedValidity: true,
+		},
+		{
+			name: "Invalid version - lower version",
+			themeConfig: ThemeConfig{
+				MinimumVersion: "1.2.0",
+			},
+			cvwonderVersion:  "1.0.0",
+			expectedValidity: false,
+		},
+		{
+			name: "Invalid version - empty minimum version",
+			themeConfig: ThemeConfig{
+				MinimumVersion: "",
+			},
+			cvwonderVersion:  "1.0.0",
+			expectedValidity: true,
+		},
+		// {
+		// 	name: "Valid version - empty CV Wonder version",
+		// 	themeConfig: ThemeConfig{
+		// 		MinimumVersion: "1.0.0",
+		// 	},
+		// 	cvwonderVersion:  "",
+		// 	expectedValidity: false,
+		// },
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := tt.themeConfig.VerifyThemeMinimumVersion(tt.cvwonderVersion)
+			assert.Equal(t, tt.expectedValidity, result)
+		})
+	}
+}
