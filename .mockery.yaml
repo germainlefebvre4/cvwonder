@@ -30,6 +30,6 @@ packages:
   github.com/germainlefebvre4/cvwonder/internal/themes:
     interfaces:
       ThemesInterface:
-  github.com/germainlefebvre4/cvwonder/internal/themes/config:
-    interfaces:
-      ThemeConfigInterface:
+  # github.com/germainlefebvre4/cvwonder/internal/themes/config:
+  #   interfaces:
+  #     ThemeConfigInterface:
