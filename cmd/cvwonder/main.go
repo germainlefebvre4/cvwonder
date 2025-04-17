@@ -30,10 +30,9 @@ func main() {
 	var rootCmd = &cobra.Command{
 		PreRun:  utils.ToggleDebug,
 		Version: version.CVWONDER_VERSION,
-		// Version: version.Version(),
-		Use:   "cvwonder [COMMAND] [OPTIONS]",
-		Short: "CV Wonder",
-		Long:  `CV Wonder - Generate your CV with Wonder!`,
+		Use:     "cvwonder [COMMAND] [OPTIONS]",
+		Short:   "CV Wonder",
+		Long:    `CV Wonder - Generate your CV with Wonder!`,
 	}
 
 	var generateCmd = &cobra.Command{
