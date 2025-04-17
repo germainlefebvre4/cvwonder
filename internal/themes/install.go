@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
+	"github.com/germainlefebvre4/cvwonder/internal/version"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/sirupsen/logrus"
@@ -17,6 +18,7 @@ func (t *ThemesService) Install(themeURL string) {
 	logrus.Debug("Install")
 	verifyTheme(themeURL)
 	githubRepo := parseGitHubURL(themeURL)
+	verifyThemeConfig(githubRepo)
 	createThemesDir()
 	downloadTheme(githubRepo)
 }
@@ -27,6 +29,11 @@ func verifyTheme(themeURL string) {
 	if !isGitHubURL(themeURL) {
 		logrus.Error("Not a GitHub URL: ", themeURL)
 	}
+}
+
+func verifyThemeConfig(githubRepo theme_config.GithubRepo) {
+	themeConfig := theme_config.GetThemeConfigFromURL(githubRepo)
+	themeConfig.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
 }
 
 func isGitHubURL(input string) bool {

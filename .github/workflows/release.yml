@@ -32,6 +32,11 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
 
+      - name: Update binary version
+        shell: bash
+        run: |
+          sed -i 's/\(var CVWONDER_VERSION =\).*/\1 "${{ github.ref_name }}"/' internal/version/version.go
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:

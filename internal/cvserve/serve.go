@@ -67,7 +67,8 @@ func (s *ServeServices) StartServer(port int, outputDirectory string) {
 		port = 8080
 	}
 
-	logrus.Debug(fmt.Sprintf("Listening on: http://localhost:%d", port))
+	logrus.Info(fmt.Sprintf("Listening on: http://localhost:%d", port))
+	logrus.Info("")
 	http.Handle("/", http.FileServer(http.Dir(outputDirectory)))
 	listeningPort := fmt.Sprintf(":%d", port)
 	http.ListenAndServe(listeningPort, nil)

@@ -11,10 +11,11 @@ import (
 )
 
 type ThemeConfig struct {
-	Name        string `yaml:"name"`
-	Slug        string `yaml:"slug"`
-	Description string `yaml:"description"`
-	Author      string `yaml:"author"`
+	Name           string `yaml:"name"`
+	Slug           string `yaml:"slug"`
+	Description    string `yaml:"description"`
+	Author         string `yaml:"author"`
+	MinimumVersion string `yaml:"minimumVersion"`
 }
 
 func GetThemeConfigFromURL(githubRepo GithubRepo) ThemeConfig {
@@ -46,15 +47,31 @@ func GetThemeConfigFromDir(dir string) ThemeConfig {
 	config, err := os.ReadFile(dir + "/theme.yaml")
 
 	if err != nil {
-		logrus.Fatal("Error reading theme.yaml: ", err)
+		logrus.Panic("Error reading theme.yaml")
 	}
 
 	// Parse theme.yaml
 	themeConfig := ThemeConfig{}
 	err = yaml.Unmarshal(config, &themeConfig)
 	if err != nil {
-		logrus.Fatal("Error parsing theme.yaml: ", err)
+		logrus.Panic("Error parsing theme.yaml")
 	}
 
 	return themeConfig
+}
+
+func GetThemeConfigFromThemeName(themeName string) ThemeConfig {
+	return GetThemeConfigFromDir("themes/" + themeName)
+}
+
+func (tc *ThemeConfig) VerifyThemeMinimumVersion(cvwonderVersion string) bool {
+	// Check if the minimum version is less than or equal to the current version
+	if tc.MinimumVersion <= cvwonderVersion {
+		return true
+	}
+	logrus.Error("CV Wonder version: ", cvwonderVersion)
+	logrus.Error("Theme minimum version: ", tc.MinimumVersion)
+	logrus.Error("The theme minimum version not met. You might encounter issues with this theme.")
+	logrus.Error("")
+	return false
 }

@@ -5,13 +5,17 @@ import (
 	"os"
 
 	cmdThemes "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/themes"
+	cmdVersion "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/version"
 	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
 	"github.com/germainlefebvre4/cvwonder/internal/cvrender"
 	render_html "github.com/germainlefebvre4/cvwonder/internal/cvrender/html"
 	render_pdf "github.com/germainlefebvre4/cvwonder/internal/cvrender/pdf"
 	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
+	"github.com/germainlefebvre4/cvwonder/internal/themes"
+	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
+	"github.com/germainlefebvre4/cvwonder/internal/version"
 	"github.com/germainlefebvre4/cvwonder/internal/watcher"
 
 	"github.com/sirupsen/logrus"
@@ -26,10 +30,11 @@ var (
 
 func main() {
 	var rootCmd = &cobra.Command{
-		PreRun: utils.ToggleDebug,
-		Use:    "cvwonder [COMMAND] [OPTIONS]",
-		Short:  "CV Wonder",
-		Long:   `CV Wonder - Generate your CV with Wonder!`,
+		PreRun:  utils.ToggleDebug,
+		Version: version.CVWONDER_VERSION,
+		Use:     "cvwonder [COMMAND] [OPTIONS]",
+		Short:   "CV Wonder",
+		Long:    `CV Wonder - Generate your CV with Wonder!`,
 	}
 
 	var generateCmd = &cobra.Command{
@@ -55,6 +60,14 @@ func main() {
 			logrus.Info("  Theme: ", utils.CliArgs.ThemeName)
 			logrus.Info("  Format: ", utils.CliArgs.Format)
 			logrus.Info("")
+
+			// Check Theme exists
+			err := themes.CheckThemeExists(utils.CliArgs.ThemeName)
+			utils.CheckError(err)
+
+			// Check Theme version compatibility
+			themeConfig := theme_config.GetThemeConfigFromThemeName(utils.CliArgs.ThemeName)
+			themeConfig.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
 
 			// Parse the CV
 			parserService, err := cvparser.NewParserServices()
@@ -108,6 +121,14 @@ func main() {
 			logrus.Info("  Open browser: ", utils.CliArgs.Browser)
 			logrus.Info()
 
+			// Check Theme exists
+			err := themes.CheckThemeExists(utils.CliArgs.ThemeName)
+			utils.CheckError(err)
+
+			// Check Theme version compatibility
+			themeConfig := theme_config.GetThemeConfigFromThemeName(utils.CliArgs.ThemeName)
+			themeConfig.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
+
 			// Parse the CV
 			parserService, err := cvparser.NewParserServices()
 			utils.CheckError(err)
@@ -147,14 +168,15 @@ func main() {
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.OutputDirectory, "output", "o", "generated/", "Output directory (optional). Default is 'generated/'")
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.ThemeName, "theme", "t", "default", "Name of the theme (optional). Default is 'default'.")
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.Format, "format", "f", "html", "Format for the export (optional). Default is 'html'.")
-	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Browser, "browser", "b", false, "Format for the export (optional). Default is 'false'.")
-	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Verbose, "verbose", "v", false, "Verbose mode.")
+	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Debug, "debug", "d", false, "Debug mode: more verbose.")
 	rootCmd.PersistentFlags().IntVarP(&utils.CliArgs.Port, "port", "p", 3000, "Listening port")
 	rootCmd.AddCommand(generateCmd)
 	rootCmd.AddCommand(serveCmd)
+	serveCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Browser, "browser", "b", false, "Open the browser (optional). Default is 'false'.")
 	serveCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Watch, "watch", "w", false, "Watch for file changes")
 
 	rootCmd.AddCommand(cmdThemes.ThemesCmd())
+	rootCmd.AddCommand(cmdVersion.VersionCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "There was an error while executing your CLI '%s'", err)

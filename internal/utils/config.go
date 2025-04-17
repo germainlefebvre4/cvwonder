@@ -8,7 +8,7 @@ type Configuration struct {
 	Format          string `mapstructure:"FORMAT"`
 	Watch           bool   `mapstructure:"WATCH"`
 	Browser         bool   `mapstructure:"BROWSER"`
-	Verbose         bool   `mapstructure:"VERBOSE"`
+	Debug           bool   `mapstructure:"VERBOSE"`
 	Port            int    `mapstructure:"PORT"`
 }
 
