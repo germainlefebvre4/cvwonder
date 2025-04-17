@@ -58,7 +58,7 @@ Flags:
   -i, --input string    Input file in YAML format (required). Default is 'cv.yml' (default "cv.yml")
   -o, --output string   Output directory (optional). Default is 'generated/' (default "generated/")
   -t, --theme string    Name of the theme (optional). Default is 'default'. (default "default")
-  -v, --verbose         Verbose mode.
+  -v, --verbose         Debug mode.
 
 Use "cvwonder [command] --help" for more information about a command.
 ```
