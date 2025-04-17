@@ -169,7 +169,7 @@ func main() {
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.ThemeName, "theme", "t", "default", "Name of the theme (optional). Default is 'default'.")
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.Format, "format", "f", "html", "Format for the export (optional). Default is 'html'.")
 	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Browser, "browser", "b", false, "Format for the export (optional). Default is 'false'.")
-	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Verbose, "debug", "d", false, "Debug mode: more verbose.")
+	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Debug, "debug", "d", false, "Debug mode: more verbose.")
 	rootCmd.PersistentFlags().IntVarP(&utils.CliArgs.Port, "port", "p", 3000, "Listening port")
 	rootCmd.AddCommand(generateCmd)
 	rootCmd.AddCommand(serveCmd)

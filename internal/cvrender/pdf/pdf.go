@@ -29,7 +29,7 @@ func (r *RenderPDFServices) RenderFormatPDF(cv model.CV, outputDirectory string,
 func (r *RenderPDFServices) convertPageToPDF(localServerUrl string, outputFilePath string) {
 	err := rod.Try(func() {
 		var u string
-		if utils.CliArgs.Verbose {
+		if utils.CliArgs.Debug {
 			u = launcher.New().NoSandbox(true).Logger(os.Stdout).MustLaunch()
 		} else {
 			u = launcher.New().NoSandbox(true).MustLaunch()
