@@ -10,14 +10,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type ThemeConfig struct {
-	Name           string `yaml:"name"`
-	Slug           string `yaml:"slug"`
-	Description    string `yaml:"description"`
-	Author         string `yaml:"author"`
-	MinimumVersion string `yaml:"minimumVersion"`
-}
-
 func GetThemeConfigFromURL(githubRepo GithubRepo) ThemeConfig {
 	// Download theme.yaml
 	client := github.NewClient(nil)
@@ -47,14 +39,14 @@ func GetThemeConfigFromDir(dir string) ThemeConfig {
 	config, err := os.ReadFile(dir + "/theme.yaml")
 
 	if err != nil {
-		logrus.Fatal("Error reading theme.yaml: ", err)
+		logrus.Panic("Error reading theme.yaml")
 	}
 
 	// Parse theme.yaml
 	themeConfig := ThemeConfig{}
 	err = yaml.Unmarshal(config, &themeConfig)
 	if err != nil {
-		logrus.Fatal("Error parsing theme.yaml: ", err)
+		logrus.Panic("Error parsing theme.yaml")
 	}
 
 	return themeConfig
