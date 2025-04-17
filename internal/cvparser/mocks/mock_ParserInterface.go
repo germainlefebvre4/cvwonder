@@ -77,7 +77,7 @@ func (_c *ParserInterfaceMock_ParseFile_Call) RunAndReturn(run func(string) (mod
 }
 
 // convertFileContentToStruct provides a mock function with given fields: content
-func (_m *ParserInterfaceMock) convertFileContentToStruct(content []byte) (model.CV, error) {
+func (_m *ParserInterfaceMock) convertFileContentToStruct(content []byte) model.CV {
 	ret := _m.Called(content)
 
 	if len(ret) == 0 {
@@ -85,23 +85,13 @@ func (_m *ParserInterfaceMock) convertFileContentToStruct(content []byte) (model
 	}
 
 	var r0 model.CV
-	var r1 error
-	if rf, ok := ret.Get(0).(func([]byte) (model.CV, error)); ok {
-		return rf(content)
-	}
 	if rf, ok := ret.Get(0).(func([]byte) model.CV); ok {
 		r0 = rf(content)
 	} else {
 		r0 = ret.Get(0).(model.CV)
 	}
 
-	if rf, ok := ret.Get(1).(func([]byte) error); ok {
-		r1 = rf(content)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
 // ParserInterfaceMock_convertFileContentToStruct_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'convertFileContentToStruct'
@@ -122,18 +112,18 @@ func (_c *ParserInterfaceMock_convertFileContentToStruct_Call) Run(run func(cont
 	return _c
 }
 
-func (_c *ParserInterfaceMock_convertFileContentToStruct_Call) Return(_a0 model.CV, _a1 error) *ParserInterfaceMock_convertFileContentToStruct_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *ParserInterfaceMock_convertFileContentToStruct_Call) Return(_a0 model.CV) *ParserInterfaceMock_convertFileContentToStruct_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *ParserInterfaceMock_convertFileContentToStruct_Call) RunAndReturn(run func([]byte) (model.CV, error)) *ParserInterfaceMock_convertFileContentToStruct_Call {
+func (_c *ParserInterfaceMock_convertFileContentToStruct_Call) RunAndReturn(run func([]byte) model.CV) *ParserInterfaceMock_convertFileContentToStruct_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // readFile provides a mock function with given fields: filePath
-func (_m *ParserInterfaceMock) readFile(filePath string) ([]byte, error) {
+func (_m *ParserInterfaceMock) readFile(filePath string) []byte {
 	ret := _m.Called(filePath)
 
 	if len(ret) == 0 {
@@ -141,10 +131,6 @@ func (_m *ParserInterfaceMock) readFile(filePath string) ([]byte, error) {
 	}
 
 	var r0 []byte
-	var r1 error
-	if rf, ok := ret.Get(0).(func(string) ([]byte, error)); ok {
-		return rf(filePath)
-	}
 	if rf, ok := ret.Get(0).(func(string) []byte); ok {
 		r0 = rf(filePath)
 	} else {
@@ -153,13 +139,7 @@ func (_m *ParserInterfaceMock) readFile(filePath string) ([]byte, error) {
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(filePath)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
 // ParserInterfaceMock_readFile_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'readFile'
@@ -180,12 +160,12 @@ func (_c *ParserInterfaceMock_readFile_Call) Run(run func(filePath string)) *Par
 	return _c
 }
 
-func (_c *ParserInterfaceMock_readFile_Call) Return(_a0 []byte, _a1 error) *ParserInterfaceMock_readFile_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *ParserInterfaceMock_readFile_Call) Return(_a0 []byte) *ParserInterfaceMock_readFile_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *ParserInterfaceMock_readFile_Call) RunAndReturn(run func(string) ([]byte, error)) *ParserInterfaceMock_readFile_Call {
+func (_c *ParserInterfaceMock_readFile_Call) RunAndReturn(run func(string) []byte) *ParserInterfaceMock_readFile_Call {
 	_c.Call.Return(run)
 	return _c
 }

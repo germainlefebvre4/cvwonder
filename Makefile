@@ -28,3 +28,6 @@ goreleser-check:
 
 goreleser-release:
 	goreleaser release --snapshot --clean
+
+mockery:
+	mockery

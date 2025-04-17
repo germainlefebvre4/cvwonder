@@ -71,21 +71,8 @@ func (_c *RenderHTMLInterfaceMock_RenderFormatHTML_Call) RunAndReturn(run func(m
 }
 
 // generateTemplateFile provides a mock function with given fields: themeDirectory, outputDirectory, outputFilePath, outputTmpFilePath, cv
-func (_m *RenderHTMLInterfaceMock) generateTemplateFile(themeDirectory string, outputDirectory string, outputFilePath string, outputTmpFilePath string, cv model.CV) error {
-	ret := _m.Called(themeDirectory, outputDirectory, outputFilePath, outputTmpFilePath, cv)
-
-	if len(ret) == 0 {
-		panic("no return value specified for generateTemplateFile")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(string, string, string, string, model.CV) error); ok {
-		r0 = rf(themeDirectory, outputDirectory, outputFilePath, outputTmpFilePath, cv)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
+func (_m *RenderHTMLInterfaceMock) generateTemplateFile(themeDirectory string, outputDirectory string, outputFilePath string, outputTmpFilePath string, cv model.CV) {
+	_m.Called(themeDirectory, outputDirectory, outputFilePath, outputTmpFilePath, cv)
 }
 
 // RenderHTMLInterfaceMock_generateTemplateFile_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'generateTemplateFile'
@@ -110,13 +97,13 @@ func (_c *RenderHTMLInterfaceMock_generateTemplateFile_Call) Run(run func(themeD
 	return _c
 }
 
-func (_c *RenderHTMLInterfaceMock_generateTemplateFile_Call) Return(_a0 error) *RenderHTMLInterfaceMock_generateTemplateFile_Call {
-	_c.Call.Return(_a0)
+func (_c *RenderHTMLInterfaceMock_generateTemplateFile_Call) Return() *RenderHTMLInterfaceMock_generateTemplateFile_Call {
+	_c.Call.Return()
 	return _c
 }
 
-func (_c *RenderHTMLInterfaceMock_generateTemplateFile_Call) RunAndReturn(run func(string, string, string, string, model.CV) error) *RenderHTMLInterfaceMock_generateTemplateFile_Call {
-	_c.Call.Return(run)
+func (_c *RenderHTMLInterfaceMock_generateTemplateFile_Call) RunAndReturn(run func(string, string, string, string, model.CV)) *RenderHTMLInterfaceMock_generateTemplateFile_Call {
+	_c.Run(run)
 	return _c
 }
 
