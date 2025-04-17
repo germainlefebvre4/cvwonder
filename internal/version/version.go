@@ -8,10 +8,5 @@ var CVWONDER_VERSION = "0.3.1"
 
 func (t *VersionService) GetVersion() {
 	logrus.Debug("GetVersion")
-	logrus.Info(Version())
-}
-
-func Version() string {
-	version := "Version: " + CVWONDER_VERSION
-	return version
+	logrus.Info("Version: " + CVWONDER_VERSION)
 }
