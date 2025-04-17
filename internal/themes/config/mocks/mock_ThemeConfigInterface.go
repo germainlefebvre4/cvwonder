@@ -5,7 +5,6 @@
 package theme_config
 
 import (
-	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -36,137 +35,47 @@ func (_m *ThemeConfigInterfaceMock) EXPECT() *ThemeConfigInterfaceMock_Expecter 
 	return &ThemeConfigInterfaceMock_Expecter{mock: &_m.Mock}
 }
 
-// GetThemeConfigFromDir provides a mock function for the type ThemeConfigInterfaceMock
-func (_mock *ThemeConfigInterfaceMock) GetThemeConfigFromDir(dir string) theme_config.ThemeConfig {
-	ret := _mock.Called(dir)
+// VerifyThemeMinimumVersion provides a mock function for the type ThemeConfigInterfaceMock
+func (_mock *ThemeConfigInterfaceMock) VerifyThemeMinimumVersion(cvwonderVersion string) bool {
+	ret := _mock.Called(cvwonderVersion)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetThemeConfigFromDir")
+		panic("no return value specified for VerifyThemeMinimumVersion")
 	}
 
-	var r0 theme_config.ThemeConfig
-	if returnFunc, ok := ret.Get(0).(func(string) theme_config.ThemeConfig); ok {
-		r0 = returnFunc(dir)
+	var r0 bool
+	if returnFunc, ok := ret.Get(0).(func(string) bool); ok {
+		r0 = returnFunc(cvwonderVersion)
 	} else {
-		r0 = ret.Get(0).(theme_config.ThemeConfig)
+		r0 = ret.Get(0).(bool)
 	}
 	return r0
 }
 
-// ThemeConfigInterfaceMock_GetThemeConfigFromDir_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetThemeConfigFromDir'
-type ThemeConfigInterfaceMock_GetThemeConfigFromDir_Call struct {
+// ThemeConfigInterfaceMock_VerifyThemeMinimumVersion_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'VerifyThemeMinimumVersion'
+type ThemeConfigInterfaceMock_VerifyThemeMinimumVersion_Call struct {
 	*mock.Call
 }
 
-// GetThemeConfigFromDir is a helper method to define mock.On call
-//   - dir
-func (_e *ThemeConfigInterfaceMock_Expecter) GetThemeConfigFromDir(dir interface{}) *ThemeConfigInterfaceMock_GetThemeConfigFromDir_Call {
-	return &ThemeConfigInterfaceMock_GetThemeConfigFromDir_Call{Call: _e.mock.On("GetThemeConfigFromDir", dir)}
+// VerifyThemeMinimumVersion is a helper method to define mock.On call
+//   - cvwonderVersion
+func (_e *ThemeConfigInterfaceMock_Expecter) VerifyThemeMinimumVersion(cvwonderVersion interface{}) *ThemeConfigInterfaceMock_VerifyThemeMinimumVersion_Call {
+	return &ThemeConfigInterfaceMock_VerifyThemeMinimumVersion_Call{Call: _e.mock.On("VerifyThemeMinimumVersion", cvwonderVersion)}
 }
 
-func (_c *ThemeConfigInterfaceMock_GetThemeConfigFromDir_Call) Run(run func(dir string)) *ThemeConfigInterfaceMock_GetThemeConfigFromDir_Call {
+func (_c *ThemeConfigInterfaceMock_VerifyThemeMinimumVersion_Call) Run(run func(cvwonderVersion string)) *ThemeConfigInterfaceMock_VerifyThemeMinimumVersion_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(string))
 	})
 	return _c
 }
 
-func (_c *ThemeConfigInterfaceMock_GetThemeConfigFromDir_Call) Return(themeConfig theme_config.ThemeConfig) *ThemeConfigInterfaceMock_GetThemeConfigFromDir_Call {
-	_c.Call.Return(themeConfig)
+func (_c *ThemeConfigInterfaceMock_VerifyThemeMinimumVersion_Call) Return(b bool) *ThemeConfigInterfaceMock_VerifyThemeMinimumVersion_Call {
+	_c.Call.Return(b)
 	return _c
 }
 
-func (_c *ThemeConfigInterfaceMock_GetThemeConfigFromDir_Call) RunAndReturn(run func(dir string) theme_config.ThemeConfig) *ThemeConfigInterfaceMock_GetThemeConfigFromDir_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetThemeConfigFromThemeName provides a mock function for the type ThemeConfigInterfaceMock
-func (_mock *ThemeConfigInterfaceMock) GetThemeConfigFromThemeName(themeName string) theme_config.ThemeConfig {
-	ret := _mock.Called(themeName)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetThemeConfigFromThemeName")
-	}
-
-	var r0 theme_config.ThemeConfig
-	if returnFunc, ok := ret.Get(0).(func(string) theme_config.ThemeConfig); ok {
-		r0 = returnFunc(themeName)
-	} else {
-		r0 = ret.Get(0).(theme_config.ThemeConfig)
-	}
-	return r0
-}
-
-// ThemeConfigInterfaceMock_GetThemeConfigFromThemeName_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetThemeConfigFromThemeName'
-type ThemeConfigInterfaceMock_GetThemeConfigFromThemeName_Call struct {
-	*mock.Call
-}
-
-// GetThemeConfigFromThemeName is a helper method to define mock.On call
-//   - themeName
-func (_e *ThemeConfigInterfaceMock_Expecter) GetThemeConfigFromThemeName(themeName interface{}) *ThemeConfigInterfaceMock_GetThemeConfigFromThemeName_Call {
-	return &ThemeConfigInterfaceMock_GetThemeConfigFromThemeName_Call{Call: _e.mock.On("GetThemeConfigFromThemeName", themeName)}
-}
-
-func (_c *ThemeConfigInterfaceMock_GetThemeConfigFromThemeName_Call) Run(run func(themeName string)) *ThemeConfigInterfaceMock_GetThemeConfigFromThemeName_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string))
-	})
-	return _c
-}
-
-func (_c *ThemeConfigInterfaceMock_GetThemeConfigFromThemeName_Call) Return(themeConfig theme_config.ThemeConfig) *ThemeConfigInterfaceMock_GetThemeConfigFromThemeName_Call {
-	_c.Call.Return(themeConfig)
-	return _c
-}
-
-func (_c *ThemeConfigInterfaceMock_GetThemeConfigFromThemeName_Call) RunAndReturn(run func(themeName string) theme_config.ThemeConfig) *ThemeConfigInterfaceMock_GetThemeConfigFromThemeName_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetThemeConfigFromURL provides a mock function for the type ThemeConfigInterfaceMock
-func (_mock *ThemeConfigInterfaceMock) GetThemeConfigFromURL(githubRepo theme_config.GithubRepo) theme_config.ThemeConfig {
-	ret := _mock.Called(githubRepo)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetThemeConfigFromURL")
-	}
-
-	var r0 theme_config.ThemeConfig
-	if returnFunc, ok := ret.Get(0).(func(theme_config.GithubRepo) theme_config.ThemeConfig); ok {
-		r0 = returnFunc(githubRepo)
-	} else {
-		r0 = ret.Get(0).(theme_config.ThemeConfig)
-	}
-	return r0
-}
-
-// ThemeConfigInterfaceMock_GetThemeConfigFromURL_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetThemeConfigFromURL'
-type ThemeConfigInterfaceMock_GetThemeConfigFromURL_Call struct {
-	*mock.Call
-}
-
-// GetThemeConfigFromURL is a helper method to define mock.On call
-//   - githubRepo
-func (_e *ThemeConfigInterfaceMock_Expecter) GetThemeConfigFromURL(githubRepo interface{}) *ThemeConfigInterfaceMock_GetThemeConfigFromURL_Call {
-	return &ThemeConfigInterfaceMock_GetThemeConfigFromURL_Call{Call: _e.mock.On("GetThemeConfigFromURL", githubRepo)}
-}
-
-func (_c *ThemeConfigInterfaceMock_GetThemeConfigFromURL_Call) Run(run func(githubRepo theme_config.GithubRepo)) *ThemeConfigInterfaceMock_GetThemeConfigFromURL_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(theme_config.GithubRepo))
-	})
-	return _c
-}
-
-func (_c *ThemeConfigInterfaceMock_GetThemeConfigFromURL_Call) Return(themeConfig theme_config.ThemeConfig) *ThemeConfigInterfaceMock_GetThemeConfigFromURL_Call {
-	_c.Call.Return(themeConfig)
-	return _c
-}
-
-func (_c *ThemeConfigInterfaceMock_GetThemeConfigFromURL_Call) RunAndReturn(run func(githubRepo theme_config.GithubRepo) theme_config.ThemeConfig) *ThemeConfigInterfaceMock_GetThemeConfigFromURL_Call {
+func (_c *ThemeConfigInterfaceMock_VerifyThemeMinimumVersion_Call) RunAndReturn(run func(cvwonderVersion string) bool) *ThemeConfigInterfaceMock_VerifyThemeMinimumVersion_Call {
 	_c.Call.Return(run)
 	return _c
 }
