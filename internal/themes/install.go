@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
-	cvwonder_version "github.com/germainlefebvre4/cvwonder/internal/version"
+	"github.com/germainlefebvre4/cvwonder/internal/version"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/sirupsen/logrus"
@@ -33,7 +33,7 @@ func verifyTheme(themeURL string) {
 
 func verifyThemeConfig(githubRepo theme_config.GithubRepo) {
 	themeConfig := theme_config.GetThemeConfigFromURL(githubRepo)
-	themeConfig.VerifyThemeMinimumVersion(cvwonder_version.CVWONDER_VERSION)
+	themeConfig.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
 }
 
 func isGitHubURL(input string) bool {

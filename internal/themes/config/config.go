@@ -60,6 +60,10 @@ func GetThemeConfigFromDir(dir string) ThemeConfig {
 	return themeConfig
 }
 
+func GetThemeConfigFromThemeName(themeName string) ThemeConfig {
+	return GetThemeConfigFromDir("themes/" + themeName)
+}
+
 func (tc *ThemeConfig) VerifyThemeMinimumVersion(cvwonderVersion string) bool {
 	// Check if the minimum version is less than or equal to the current version
 	if tc.MinimumVersion <= cvwonderVersion {
@@ -68,5 +72,6 @@ func (tc *ThemeConfig) VerifyThemeMinimumVersion(cvwonderVersion string) bool {
 	logrus.Error("CV Wonder version: ", cvwonderVersion)
 	logrus.Error("Theme minimum version: ", tc.MinimumVersion)
 	logrus.Error("The theme minimum version not met. You might encounter issues with this theme.")
+	logrus.Error("")
 	return false
 }
