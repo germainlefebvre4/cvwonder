@@ -27,3 +27,9 @@ packages:
   github.com/germainlefebvre4/cvwonder/internal/watcher:
     interfaces:
       WatcherInterface:
+  github.com/germainlefebvre4/cvwonder/internal/themes:
+    interfaces:
+      ThemesInterface:
+  github.com/germainlefebvre4/cvwonder/internal/themes/config:
+    interfaces:
+      ThemeConfigInterface:

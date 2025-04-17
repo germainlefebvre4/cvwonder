@@ -21,21 +21,8 @@ func (_m *RenderPDFInterfaceMock) EXPECT() *RenderPDFInterfaceMock_Expecter {
 }
 
 // RenderFormatPDF provides a mock function with given fields: cv, outputDirectory, inputFilename, themeName
-func (_m *RenderPDFInterfaceMock) RenderFormatPDF(cv model.CV, outputDirectory string, inputFilename string, themeName string) error {
-	ret := _m.Called(cv, outputDirectory, inputFilename, themeName)
-
-	if len(ret) == 0 {
-		panic("no return value specified for RenderFormatPDF")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(model.CV, string, string, string) error); ok {
-		r0 = rf(cv, outputDirectory, inputFilename, themeName)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
+func (_m *RenderPDFInterfaceMock) RenderFormatPDF(cv model.CV, outputDirectory string, inputFilename string, themeName string) {
+	_m.Called(cv, outputDirectory, inputFilename, themeName)
 }
 
 // RenderPDFInterfaceMock_RenderFormatPDF_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'RenderFormatPDF'
@@ -59,13 +46,13 @@ func (_c *RenderPDFInterfaceMock_RenderFormatPDF_Call) Run(run func(cv model.CV,
 	return _c
 }
 
-func (_c *RenderPDFInterfaceMock_RenderFormatPDF_Call) Return(_a0 error) *RenderPDFInterfaceMock_RenderFormatPDF_Call {
-	_c.Call.Return(_a0)
+func (_c *RenderPDFInterfaceMock_RenderFormatPDF_Call) Return() *RenderPDFInterfaceMock_RenderFormatPDF_Call {
+	_c.Call.Return()
 	return _c
 }
 
-func (_c *RenderPDFInterfaceMock_RenderFormatPDF_Call) RunAndReturn(run func(model.CV, string, string, string) error) *RenderPDFInterfaceMock_RenderFormatPDF_Call {
-	_c.Call.Return(run)
+func (_c *RenderPDFInterfaceMock_RenderFormatPDF_Call) RunAndReturn(run func(model.CV, string, string, string)) *RenderPDFInterfaceMock_RenderFormatPDF_Call {
+	_c.Run(run)
 	return _c
 }
 
