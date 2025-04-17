@@ -62,6 +62,10 @@ nav:
     - Publish your theme: themes/publish-theme.md
     - Theme Functions: themes/functions.md
     - Library: themes/library.md
+  - CLI:
+    - Overview: cli/overview.md
+    - Commands: cli/commands.md
+    - Options: cli/options.md
   - Contributing:
     - How to contribute:
         - Issues: contributing/issues.md
