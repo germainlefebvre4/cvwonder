@@ -13,6 +13,7 @@ import (
 	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
+	"github.com/germainlefebvre4/cvwonder/internal/version"
 	"github.com/germainlefebvre4/cvwonder/internal/watcher"
 
 	"github.com/sirupsen/logrus"
@@ -27,10 +28,12 @@ var (
 
 func main() {
 	var rootCmd = &cobra.Command{
-		PreRun: utils.ToggleDebug,
-		Use:    "cvwonder [COMMAND] [OPTIONS]",
-		Short:  "CV Wonder",
-		Long:   `CV Wonder - Generate your CV with Wonder!`,
+		PreRun:  utils.ToggleDebug,
+		Version: version.CVWONDER_VERSION,
+		// Version: version.Version(),
+		Use:   "cvwonder [COMMAND] [OPTIONS]",
+		Short: "CV Wonder",
+		Long:  `CV Wonder - Generate your CV with Wonder!`,
 	}
 
 	var generateCmd = &cobra.Command{
@@ -151,7 +154,7 @@ func main() {
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.ThemeName, "theme", "t", "default", "Name of the theme (optional). Default is 'default'.")
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.Format, "format", "f", "html", "Format for the export (optional). Default is 'html'.")
 	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Browser, "browser", "b", false, "Format for the export (optional). Default is 'false'.")
-	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Verbose, "verbose", "v", false, "Verbose mode.")
+	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Verbose, "debug", "d", false, "Debug mode: more verbose.")
 	rootCmd.PersistentFlags().IntVarP(&utils.CliArgs.Port, "port", "p", 3000, "Listening port")
 	rootCmd.AddCommand(generateCmd)
 	rootCmd.AddCommand(serveCmd)
