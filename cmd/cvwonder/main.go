@@ -12,6 +12,8 @@ import (
 	render_pdf "github.com/germainlefebvre4/cvwonder/internal/cvrender/pdf"
 	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
+	"github.com/germainlefebvre4/cvwonder/internal/themes"
+	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
 	"github.com/germainlefebvre4/cvwonder/internal/version"
 	"github.com/germainlefebvre4/cvwonder/internal/watcher"
@@ -59,7 +61,13 @@ func main() {
 			logrus.Info("  Format: ", utils.CliArgs.Format)
 			logrus.Info("")
 
-			// Check template requirements
+			// Check Theme exists
+			err := themes.CheckThemeExists(utils.CliArgs.ThemeName)
+			utils.CheckError(err)
+
+			// Check Theme version compatibility
+			themeConfig := theme_config.GetThemeConfigFromThemeName(utils.CliArgs.ThemeName)
+			themeConfig.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
 
 			// Parse the CV
 			parserService, err := cvparser.NewParserServices()
@@ -112,6 +120,14 @@ func main() {
 			logrus.Info("  Watch: ", utils.CliArgs.Watch)
 			logrus.Info("  Open browser: ", utils.CliArgs.Browser)
 			logrus.Info()
+
+			// Check Theme exists
+			err := themes.CheckThemeExists(utils.CliArgs.ThemeName)
+			utils.CheckError(err)
+
+			// Check Theme version compatibility
+			themeConfig := theme_config.GetThemeConfigFromThemeName(utils.CliArgs.ThemeName)
+			themeConfig.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
 
 			// Parse the CV
 			parserService, err := cvparser.NewParserServices()

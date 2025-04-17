@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
-	cvwonder_version "github.com/germainlefebvre4/cvwonder/internal/version"
+	"github.com/germainlefebvre4/cvwonder/internal/version"
 )
 
 func (t *ThemesService) Verify(themeName string) {
@@ -18,7 +18,7 @@ func (t *ThemesService) Verify(themeName string) {
 	themeSlugName := slugify.Slugify(themeName)
 	themeConfig := theme_config.GetThemeConfigFromDir(filepath.Join(baseDirectory, themeDir, themeSlugName))
 
-	valid01 := themeConfig.VerifyThemeMinimumVersion(cvwonder_version.CVWONDER_VERSION)
+	valid01 := themeConfig.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
 
 	if valid01 {
 		logrus.Info("Your theme '" + themeName + "' is valid.")
