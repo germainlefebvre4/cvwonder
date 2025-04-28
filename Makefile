@@ -20,7 +20,7 @@ test:
 doc-install:
 	poetry --directory docs/ lock && poetry --directory docs/ install
 
-doc:
+doc-serve:
 	poetry --directory docs/ run mkdocs serve --config-file mkdocs.yml
 
 goreleser-check:
