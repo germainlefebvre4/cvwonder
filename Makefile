@@ -20,6 +20,9 @@ test:
 doc-install:
 	poetry --directory docs/ lock && poetry --directory docs/ install
 
+doc-build:
+	poetry --directory docs/ run mkdocs build --config-file mkdocs.yml
+
 doc-serve:
 	poetry --directory docs/ run mkdocs serve --config-file mkdocs.yml
 
