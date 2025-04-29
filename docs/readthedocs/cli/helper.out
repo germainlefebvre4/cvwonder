@@ -17,7 +17,6 @@ Flags:
   -h, --help            help for cvwonder
   -i, --input string    Input file in YAML format (required). Default is 'cv.yml' (default "cv.yml")
   -o, --output string   Output directory (optional). Default is 'generated/' (default "generated/")
-  -p, --port int        Listening port (default 3000)
   -t, --theme string    Name of the theme (optional). Default is 'default'. (default "default")
   -v, --version         version for cvwonder
 

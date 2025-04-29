@@ -1,0 +1,82 @@
+package cmdGenerate
+
+import (
+	"os"
+
+	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
+	"github.com/germainlefebvre4/cvwonder/internal/cvrender"
+	render_html "github.com/germainlefebvre4/cvwonder/internal/cvrender/html"
+	render_pdf "github.com/germainlefebvre4/cvwonder/internal/cvrender/pdf"
+	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
+	"github.com/germainlefebvre4/cvwonder/internal/model"
+	"github.com/germainlefebvre4/cvwonder/internal/themes"
+	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
+	"github.com/germainlefebvre4/cvwonder/internal/utils"
+	"github.com/germainlefebvre4/cvwonder/internal/version"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+)
+
+func GenerateCmd() *cobra.Command {
+	var cobraCmd = &cobra.Command{
+		PreRun:  utils.ToggleDebug,
+		Use:     "generate",
+		Aliases: []string{"g", "gen"},
+		Short:   "Generate the CV",
+		Long:    `Generate the CV`,
+		Run: func(cmd *cobra.Command, args []string) {
+			if utils.CliArgs.ThemeName == "" {
+				utils.CliArgs.ThemeName = "default"
+			}
+
+			// Build InputFile object
+			inputFile := model.BuildInputFile(utils.CliArgs.InputFile)
+
+			// Build OutputDirectory object
+			outputDir := model.BuildOutputDirectory(utils.CliArgs.OutputDirectory)
+
+			logrus.Info("CV Wonder")
+			logrus.Info("  Input file: ", inputFile.RelativePath)
+			logrus.Info("  Output directory: ", outputDir.RelativePath)
+			logrus.Info("  Theme: ", utils.CliArgs.ThemeName)
+			logrus.Info("  Format: ", utils.CliArgs.Format)
+			logrus.Info("")
+
+			// Check Theme exists
+			err := themes.CheckThemeExists(utils.CliArgs.ThemeName)
+			utils.CheckError(err)
+
+			// Check Theme version compatibility
+			themeConfig := theme_config.GetThemeConfigFromThemeName(utils.CliArgs.ThemeName)
+			themeConfig.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
+
+			// Parse the CV
+			parserService, err := cvparser.NewParserServices()
+			utils.CheckError(err)
+			content, err := parserService.ParseFile(inputFile.FullPath)
+			utils.CheckError(err)
+
+			// Create render services
+			serveService, err := cvserve.NewServeServices()
+			utils.CheckError(err)
+			renderHTMLService, err := render_html.NewRenderHTMLServices()
+			utils.CheckError(err)
+			renderPDFService, err := render_pdf.NewRenderPDFServices(serveService)
+			utils.CheckError(err)
+			renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService)
+			utils.CheckError(err)
+
+			// Render the CV
+			baseDirectory, err := os.Getwd()
+			utils.CheckError(err)
+			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
+			utils.CheckError(err)
+
+			logrus.Info("CV generated successfully")
+		},
+	}
+
+	cobraCmd.Flags().IntVarP(&utils.CliArgs.Port, "port", "p", 9889, "Listening port for PDF generation")
+
+	return cobraCmd
+}
