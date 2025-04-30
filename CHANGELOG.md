@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.3.1...v0.4.0) (2025-04-30)
+
+
+### Features
+
+* **themes:** Add minimumVersion attribute in theme config ([#30](https://github.com/germainlefebvre4/cvwonder/issues/30)) ([f5fbd31](https://github.com/germainlefebvre4/cvwonder/commit/f5fbd31af5d7808c5e25e6c4bf227459005946c9))
+
 ## [0.3.1](https://github.com/germainlefebvre4/cvwonder/compare/v0.3.0...v0.3.1) (2025-03-31)
 
 
