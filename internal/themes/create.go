@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
+	"github.com/germainlefebvre4/cvwonder/internal/version"
 )
 
 func (t *ThemesService) Create(themeName string) {
@@ -34,7 +35,7 @@ func createThemeConfig(themeName string, themeSlugName string) {
 		Slug:           themeSlugName,
 		Description:    "Description of the new theme.",
 		Author:         "Anonymous",
-		MinimumVersion: "0.3.1",
+		MinimumVersion: version.CVWONDER_VERSION,
 	}
 	err := createThemeConfigFile("themes/"+themeSlugName+"/theme.yaml", themeConfig)
 	if err != nil {
