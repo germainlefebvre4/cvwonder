@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
+	"github.com/germainlefebvre4/cvwonder/internal/version"
 )
 
 func (t *ThemesService) Create(themeName string) {
@@ -22,6 +23,9 @@ func (t *ThemesService) Create(themeName string) {
 		// Create theme.yaml
 		createThemeConfig(themeName, themeSlugName)
 
+		// Create theme index.html
+		createThemeIndexHTML(themeName, themeSlugName)
+
 		logrus.Info("Your theme '" + themeName + "' has been created in the directory themes/" + themeSlugName + "/.")
 	} else {
 		logrus.Error("Theme '" + themeSlugName + "' already exists.")
@@ -30,10 +34,11 @@ func (t *ThemesService) Create(themeName string) {
 
 func createThemeConfig(themeName string, themeSlugName string) {
 	themeConfig := theme_config.ThemeConfig{
-		Name:        themeName,
-		Slug:        themeSlugName,
-		Description: "Description of the new theme.",
-		Author:      "Anonymous",
+		Name:           themeName,
+		Slug:           themeSlugName,
+		Description:    "Description of the new theme.",
+		Author:         "Anonymous",
+		MinimumVersion: version.CVWONDER_VERSION,
 	}
 	err := createThemeConfigFile("themes/"+themeSlugName+"/theme.yaml", themeConfig)
 	if err != nil {
@@ -57,4 +62,29 @@ func createThemeConfigFile(filePath string, themeConfig theme_config.ThemeConfig
 	err = os.WriteFile(filePath, configYaml, 0600)
 
 	return nil
+}
+
+func createThemeIndexHTML(themeName string, themeSlugName string) {
+	// Create index.html file
+	file, err := os.Create("themes/" + themeSlugName + "/index.html")
+	if err != nil {
+		logrus.Error("Error creating index.html: ", err)
+	}
+	defer file.Close()
+
+	// Write index.html
+	indexHTML := `<html>
+  <head>
+    <title>` + themeName + `</title>
+  </head>
+  <body>
+    <h1>` + themeName + `</h1>
+    <h2>Hello {{ .Person.Name }}</h2>
+  </body>
+</html>
+`
+	err = os.WriteFile("themes/"+themeSlugName+"/index.html", []byte(indexHTML), 0600)
+	if err != nil {
+		logrus.Error("Error writing index.html: ", err)
+	}
 }

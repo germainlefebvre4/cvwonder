@@ -17,7 +17,7 @@ func (f *PlainFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 }
 
 func ToggleDebug(cmd *cobra.Command, args []string) {
-	if CliArgs.Verbose {
+	if CliArgs.Debug {
 		logrus.Debug("Debug logs enabled")
 		logrus.SetLevel(logrus.DebugLevel)
 		logrus.SetFormatter(&logrus.TextFormatter{})

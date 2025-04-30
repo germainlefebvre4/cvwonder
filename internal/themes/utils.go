@@ -24,3 +24,11 @@ func createNewThemeDir(dirName string) {
 		}
 	}
 }
+
+func CheckThemeExists(themeName string) error {
+	themePath := "themes/" + themeName
+	if _, err := os.Stat(themePath); os.IsNotExist(err) {
+		return err
+	}
+	return nil
+}

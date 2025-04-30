@@ -4,17 +4,13 @@ import (
 	"fmt"
 	"os"
 
+	cmdGenerate "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/generate"
+	cmdServe "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/serve"
 	cmdThemes "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/themes"
-	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
-	"github.com/germainlefebvre4/cvwonder/internal/cvrender"
-	render_html "github.com/germainlefebvre4/cvwonder/internal/cvrender/html"
-	render_pdf "github.com/germainlefebvre4/cvwonder/internal/cvrender/pdf"
-	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
-	"github.com/germainlefebvre4/cvwonder/internal/model"
+	cmdVersion "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/version"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
-	"github.com/germainlefebvre4/cvwonder/internal/watcher"
+	"github.com/germainlefebvre4/cvwonder/internal/version"
 
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -26,135 +22,23 @@ var (
 
 func main() {
 	var rootCmd = &cobra.Command{
-		PreRun: utils.ToggleDebug,
-		Use:    "cvwonder [COMMAND] [OPTIONS]",
-		Short:  "CV Wonder",
-		Long:   `CV Wonder - Generate your CV with Wonder!`,
-	}
-
-	var generateCmd = &cobra.Command{
 		PreRun:  utils.ToggleDebug,
-		Use:     "generate",
-		Aliases: []string{"g", "gen"},
-		Short:   "Generate the CV",
-		Long:    `Generate the CV`,
-		Run: func(cmd *cobra.Command, args []string) {
-			if utils.CliArgs.ThemeName == "" {
-				utils.CliArgs.ThemeName = "default"
-			}
-
-			// Build InputFile object
-			inputFile := model.BuildInputFile(utils.CliArgs.InputFile)
-
-			// Build OutputDirectory object
-			outputDir := model.BuildOutputDirectory(utils.CliArgs.OutputDirectory)
-
-			logrus.Info("CV Wonder")
-			logrus.Info("  Input file: ", inputFile.RelativePath)
-			logrus.Info("  Output directory: ", outputDir.RelativePath)
-			logrus.Info("  Theme: ", utils.CliArgs.ThemeName)
-			logrus.Info("  Format: ", utils.CliArgs.Format)
-			logrus.Info("")
-
-			// Parse the CV
-			parserService, err := cvparser.NewParserServices()
-			utils.CheckError(err)
-			content, err := parserService.ParseFile(inputFile.FullPath)
-			utils.CheckError(err)
-
-			// Create render services
-			serveService, err := cvserve.NewServeServices()
-			utils.CheckError(err)
-			renderHTMLService, err := render_html.NewRenderHTMLServices()
-			utils.CheckError(err)
-			renderPDFService, err := render_pdf.NewRenderPDFServices(serveService)
-			utils.CheckError(err)
-			renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService)
-			utils.CheckError(err)
-
-			// Render the CV
-			baseDirectory, err := os.Getwd()
-			utils.CheckError(err)
-			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
-			utils.CheckError(err)
-
-			logrus.Info("CV generated successfully")
-		},
-	}
-
-	var serveCmd = &cobra.Command{
-		PreRun:  utils.ToggleDebug,
-		Use:     "serve",
-		Aliases: []string{"s"},
-		Short:   "Generate and serve the CV",
-		Long:    `Generate and serve the CV`,
-		Run: func(cmd *cobra.Command, args []string) {
-			if utils.CliArgs.ThemeName == "" {
-				utils.CliArgs.ThemeName = "default"
-			}
-
-			// Build InputFile object
-			inputFile := model.BuildInputFile(utils.CliArgs.InputFile)
-
-			// Build OutputDirectory object
-			outputDir := model.BuildOutputDirectory(utils.CliArgs.OutputDirectory)
-
-			logrus.Info("CV Wonder")
-			logrus.Info("  Input file: ", inputFile.RelativePath)
-			logrus.Info("  Output directory: ", outputDir.RelativePath)
-			logrus.Info("  Theme: ", utils.CliArgs.ThemeName)
-			logrus.Info("  Format: ", utils.CliArgs.Format)
-			logrus.Info("  Watch: ", utils.CliArgs.Watch)
-			logrus.Info("  Open browser: ", utils.CliArgs.Browser)
-			logrus.Info()
-
-			// Parse the CV
-			parserService, err := cvparser.NewParserServices()
-			utils.CheckError(err)
-			content, err := parserService.ParseFile(inputFile.FullPath)
-			utils.CheckError(err)
-
-			// Create render services
-			serveService, err := cvserve.NewServeServices()
-			utils.CheckError(err)
-			renderHTMLService, err := render_html.NewRenderHTMLServices()
-			utils.CheckError(err)
-			renderPDFService, err := render_pdf.NewRenderPDFServices(serveService)
-			utils.CheckError(err)
-			renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService)
-			utils.CheckError(err)
-
-			// Render the CV
-			baseDirectory, err := os.Getwd()
-			utils.CheckError(err)
-			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
-			utils.CheckError(err)
-
-			if utils.CliArgs.Watch {
-				watcherService, err := watcher.NewWatcherServices(parserService, renderService)
-				utils.CheckError(err)
-				go watcherService.ObserveFileEvents(baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
-			}
-			// Serve the CV
-			if utils.CliArgs.Browser {
-				serveService.OpenBrowser(outputDir.FullPath, inputFile.FullPath)
-			}
-			serveService.StartLiveReloader(utils.CliArgs.Port, outputDir.FullPath, inputFile.FullPath)
-		},
+		Version: version.CVWONDER_VERSION,
+		Use:     "cvwonder [COMMAND] [OPTIONS]",
+		Short:   "CV Wonder",
+		Long:    `CV Wonder - Generate your CV with Wonder!`,
 	}
 
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.InputFile, "input", "i", "cv.yml", "Input file in YAML format (required). Default is 'cv.yml'")
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.OutputDirectory, "output", "o", "generated/", "Output directory (optional). Default is 'generated/'")
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.ThemeName, "theme", "t", "default", "Name of the theme (optional). Default is 'default'.")
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.Format, "format", "f", "html", "Format for the export (optional). Default is 'html'.")
-	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Browser, "browser", "b", false, "Format for the export (optional). Default is 'false'.")
-	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Verbose, "verbose", "v", false, "Verbose mode.")
-	rootCmd.PersistentFlags().IntVarP(&utils.CliArgs.Port, "port", "p", 3000, "Listening port")
-	rootCmd.AddCommand(generateCmd)
-	rootCmd.AddCommand(serveCmd)
-	serveCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Watch, "watch", "w", false, "Watch for file changes")
+	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Debug, "debug", "d", false, "Debug mode: more verbose.")
 
+	rootCmd.AddCommand(cmdGenerate.GenerateCmd())
+	rootCmd.AddCommand(cmdServe.ServeCmd())
 	rootCmd.AddCommand(cmdThemes.ThemesCmd())
+	rootCmd.AddCommand(cmdVersion.VersionCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "There was an error while executing your CLI '%s'", err)

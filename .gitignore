@@ -29,6 +29,7 @@ cv.html
 
 # Documentation
 .venv/
+docs/site/
 
 # Goreleaser
 dist/
