@@ -1,8 +1,11 @@
+---
+sidebar_position: 2
+---
 # PDF format
 
-!!! info "Default format is HTML"
-
-    The default format for the generated CV is [HTML](./html.md).
+:::info "Default format is HTML"
+The default format for the generated CV is [HTML](html.md).
+:::
 
 ## Getting started
 
@@ -18,5 +21,5 @@ The PDF format is generated using the `rod` Go package. The package is a high-le
 
 To generate the PDF, `cvwonder` generates the HTML file then the PDF file.
 
-* [GitHub go-rod/rod](https://github.com/go-rod/rod){:target="_blank"}
-* [Go Package](https://pkg.go.dev/github.com/go-rod/rod){:target="_blank"}
+* [GitHub go-rod/rod](https://github.com/go-rod/rod)
+* [Go Package](https://pkg.go.dev/github.com/go-rod/rod)
