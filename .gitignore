@@ -37,3 +37,22 @@ dist/
 # Env
 .env
 .cache/
+
+# Docs
+docs/github-pages/node_modules/
+docs/github-pages/build
+
+# Generated files
+docs/github-pages/.docusaurus
+docs/github-pages/.cache-loader
+
+# Misc
+docs/github-pages/.DS_Store
+docs/github-pages/.env.local
+docs/github-pages/.env.development.local
+docs/github-pages/.env.test.local
+docs/github-pages/.env.production.local
+
+docs/github-pages/npm-debug.log*
+docs/github-pages/yarn-debug.log*
+docs/github-pages/yarn-error.log*
