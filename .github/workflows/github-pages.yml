@@ -4,8 +4,8 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'docs/github-pages/**'
+    # paths:
+    #   - 'docs/github-pages/**'
 #   push:
 #     branches:
 #       - main
