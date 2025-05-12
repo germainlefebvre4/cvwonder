@@ -11,32 +11,32 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Fast & Efficient',
+    Svg: require('@site/static/img/2838939_417701-PDQC57-237.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Generate beautiful CVs in seconds without any formatting headaches.
+        Focus on your content, let CV Wonder handle the presentation.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Themeable & Customizable',
+    Svg: require('@site/static/img/4266119_2257832.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Choose from community-built themes or create your own custom designs.
+        The powerful theme system gives you complete control over the look and feel.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Mass Generation Ready',
+    Svg: require('@site/static/img/1311988_161361-OVJH8F-605.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Need to create CVs for thousands of people? CV Wonder can handle it without breaking a sweat.
+        Perfect for HR departments and recruitment agencies.
       </>
     ),
   },

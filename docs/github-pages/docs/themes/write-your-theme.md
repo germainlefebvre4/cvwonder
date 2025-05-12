@@ -3,6 +3,8 @@ sidebar_position: 3
 ---
 # Write a theme
 
+---
+
 You can write your own theme to customize the look and feel of your CV. It becomes easy to create themes, switch between them, and share with the community.
 
 The theme must be located in the `themes` directory in the current working directory. Here is an example of the directory structure:
@@ -51,7 +53,7 @@ author: Germain
 
 The templated file is located at `themes/<my-theme-name>/index.html` and stands as the entry point for the theme.
 
-:::note "Main template file"
+:::note Main template file
 The main template file must be named `index.html`.
 :::
 
@@ -78,7 +80,7 @@ Which can be used in the template like this:
 <h2>{{ .Person.Profession }}</h2>
 ```
 
-:::note "Go template variable name"
+:::note Go template variable name
 Every key in the yaml file is capitalized in the Go template.
 Even though the yaml file uses `person`, the Go template variable name is `Person`.
 :::

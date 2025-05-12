@@ -1,7 +1,12 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
+import CodeBlock from "@theme/CodeBlock";
+import CVFullExample from "!!raw-loader!@site/static/cv.yml";
+
 # Write your CV
+
+---
 
 Write your CV in YAML format following the schema designed in the json schema file.
 
@@ -25,15 +30,14 @@ The company section is used to describe the company you are working for.
 | Name | The name of the company. |
 | Logo | The logo of the company. |
 
-:::tip "Example"
-Add your company information in the company section:
-
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 company:
     name: zatsit
     logo: images/zatsit-logo.webp
 ```
-:::
+</details>
 
 ### Person
 
@@ -50,9 +54,8 @@ The person section is used to describe "you".
 | Site | Your site. |
 | Phone | Your phone number. |
 
-:::tip "Example"
-Add your person information in the person section:
-
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 person:
     name: Germain Lefebvre
@@ -64,7 +67,7 @@ person:
     site: https://germainlefebvre.fr
     phone: +33 6 12 34 56 78
 ```
-:::
+</details>
 
 ### Social Networks
 
@@ -77,9 +80,8 @@ The social networks section is used to describe your social networks.
 | Linkedin | Your Linkedin profile. |
 | Twitter | Your Twitter profile. |
 
-:::tip "Example"
-Add your social networks in the social networks section:
-
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 socialNetworks:
     github: germainlefebvre4
@@ -87,7 +89,7 @@ socialNetworks:
     linkedin: germainlefebvre4
     twitter: germainlefebvr4
 ```
-:::
+</details>
 
 ### Abstract
 
@@ -99,15 +101,14 @@ The abstract section is used to describe a short abstract about you.
 
 You can add multiple abstracts.
 
-:::tip "Example"
-Add 2 lines in the abstract section:
-
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 abstract:
     - tr: "I am a software engineer with 5 years of experience in the field."
     - tr: "I am passionate about technology and I love to learn new things."
 ```
-:::
+</details>
 
 ### Career
 
@@ -120,9 +121,8 @@ The career section is used to describe your multiple career paths and experience
 | Duration | The duration of your experience. |
 | Missions | The missions you have accomplished. |
 
-:::tip "Example"
-Add your career information in the career section:
-
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 career:
     - companyName: zatsit
@@ -142,7 +142,7 @@ career:
             - Node.js
         project: MyProject
 ```
-:::
+</details>
 
 #### Missions
 
@@ -163,9 +163,8 @@ The missions sub-section is used to describe your missions in detail.
     The `Dates` fields is a text field. You can use any format you want. The theme will not parse it.
 :::
 
-:::tip "Example"
-Add your career information in the career section:
-
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 career:
     - companyName: ...
@@ -183,7 +182,7 @@ career:
             - Node.js
         project: MyProject
 ```
-:::
+</details>
 
 ### Technical Skills
 
@@ -202,9 +201,8 @@ The domains sub-section is used to describe your domains and competencies.
 | Name | The name of the domain. |
 | Competencies | The competencies you have in this domain. |
 
-:::tip "Example"
-Add your technical skills in the technical skills section:
-
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 technicalSkills:
     domains:
@@ -219,7 +217,7 @@ technicalSkills:
         - name: Node.js
             level: 4
 ```
-:::
+</details>
 
 :::abstract "Level"
     The `Level` field is a number from 0 to 100. It represents your level of expertise in this competency.
@@ -239,9 +237,8 @@ The side projects section is used to describe the personal projects or open-sour
 | Langs | The languages used in the side project. |
 | Color | The color of the side project. |
 
-:::tip "Example"
-Add your side projects in the side projects section:
-
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 sideProjects:
     - name: MyProject
@@ -252,7 +249,7 @@ sideProjects:
     langs: React, Node.js
     color: 61dafb
 ```
-:::
+</details>
 
 The `Type` field can be used to identify the hosting platform of the side project. The theme can use this information to display the right icon.
 
@@ -269,9 +266,8 @@ The certifications section is used to describe the certifications you have.
 | Link | The link to the certification. |
 | Badge | The badge of the certification. |
 
-:::tip "Example"
-Add your certifications in the certifications section:
-
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 certifications:
     - companyName: AWS
@@ -281,7 +277,7 @@ certifications:
         link: https://www.credly.com/badges/dd09dc40-9ef8-43a4-addb-d861d4dadf26/public_url
         badge: images/aws-certified-solutions-architect-associate.png
 ```
-:::
+</details>
 
 ### Languages
 
@@ -292,9 +288,8 @@ The languages section is used to describe the languages you speak.
 | Name | The name of the language. |
 | Level | The level of the language. |
 
-:::tip "Example"
-Add your languages in the languages section:
-
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 languages:
     - name: French
@@ -302,7 +297,7 @@ languages:
     - name: English
     level: Fluent
 ```
-:::
+</details>
 
 :::abstract "Level"
 The `Level` field is a text field. It represents your level of the language in the way that you want to show.
@@ -321,9 +316,8 @@ The education section is used to describe your school and education.
 | Dates | The dates of your education. |
 | Link | The link to the school. |
 
-:::tip "Example"
-Add your education in the education section:
-
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 education:
     - schoolName: University of Lille
@@ -333,9 +327,9 @@ education:
     dates: 2015-2018
     link: https://www.univ-lille.fr/
 ```
-:::
+</details>
 
-:::note "Date format"
+:::note Date format
 The `Dates` field is a text field. You can use any format you want. The theme will not parse it.
 :::
 
@@ -343,6 +337,8 @@ The `Dates` field is a text field. You can use any format you want. The theme wi
 
 Here is a full example in a `cv.yml` file:
 
-```yaml
-{!../static/cv.yml!}
-```
+<CodeBlock
+    language="yaml"
+    description="Here is a full example of a CV in YAML format.">
+{CVFullExample}
+</CodeBlock>

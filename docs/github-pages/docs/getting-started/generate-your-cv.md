@@ -1,7 +1,9 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 ---
 # Generate your CV
+
+---
 
 To generate your CV, you need to create a YAML file with your data and use the theme to generate the CV.
 
@@ -15,7 +17,7 @@ cvwonder generate --input=cv.yml --output=generated/
 
 Your CV will be generated in the `generated/` directory.
 
-:::note "Generated HTML file name"
+:::note Generated HTML file name
 The generated HTML file name is based on the input YAML file name. For example, if your input YAML file is `germain.yml`, the generated HTML file will be `germain.html`.
 
 It allows you to generate multiple CVs from different YAML files without overwriting the generated HTML file.
@@ -47,10 +49,10 @@ You can render and serve your CV on a simple HTTP server which will automaticall
 cvwonder serve --input=cv.yml --output=generated/ --watch
 ```
 
-:::info "Serving the CV"
+:::info Serving the CV
 The `serve` command will open your default browser and display the rendered CV.
 :::
 
 :::note
-Serving your CV wil help you to see the changes in real-time.
+Serving your CV will help you to see the changes in real-time.
 :::

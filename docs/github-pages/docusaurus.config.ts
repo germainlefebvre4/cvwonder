@@ -10,9 +10,8 @@ const config: Config = {
   url: 'https://cvwonder.fr',
   baseUrl: '/',
 
-  organizationName: 'germainlefebvre4', // Usually your GitHub org/user name.
-  projectName: 'cvwonder', // Usually your repo name.
-
+  organizationName: 'germainlefebvre4',
+  projectName: 'cvwonder',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
@@ -38,6 +37,14 @@ const config: Config = {
   ],
 
   themeConfig: {
+    image: 'img/social-card.png',
+    metadata: [
+      {name: 'keywords', content: 'cv, resume, generator, yaml, themes, professional'},
+      {name: 'description', content: 'Generate beautiful, professional CVs from YAML in seconds with CV Wonder'},
+      {name: 'og:type', content: 'website'},
+      {name: 'og:title', content: 'CV Wonder | Professional CV Generator'},
+      {name: 'og:description', content: 'Generate beautiful, professional CVs from YAML in seconds with CV Wonder'},
+    ],
     navbar: {
       title: 'CV Wonder',
       logo: {
@@ -45,14 +52,34 @@ const config: Config = {
         src: 'img/logo.svg',
       },
       items: [
+        // {
+        //   type: 'docSidebar',
+        //   sidebarId: 'documentationSidebar',
+        //   position: 'left',
+        //   label: 'Documentation',
+        // },
         {
-          type: 'docSidebar',
-          sidebarId: 'documentationSidebar',
+          to: '/docs/getting-started',
+          label: 'Getting Started',
           position: 'left',
-          label: 'Documentation',
         },
         {
-          href: 'https://github.com/facebook/docusaurus',
+          to: '/docs/cli',
+          label: 'CLI',
+          position: 'left',
+        },
+        {
+          to: '/docs/themes',
+          label: 'Themes',
+          position: 'left',
+        },
+        {
+          to: '/docs/export',
+          label: 'Export',
+          position: 'left',
+        },
+        {
+          href: 'https://github.com/germainlefebvre4/cvwonder',
           label: 'GitHub',
           position: 'right',
         },
@@ -65,30 +92,30 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Go to Documentation',
-              to: '/docs',
+              label: 'Getting Started',
+              to: '/docs/getting-started',
+            },
+            {
+              label: 'CV Format',
+              to: '/docs/export',
             },
           ],
         },
-        // {
-        //   title: 'Community',
-        //   items: [
-        //     {
-        //       label: 'Stack Overflow',
-        //       href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-        //     },
-        //     {
-        //       label: 'Discord',
-        //       href: 'https://discordapp.com/invite/docusaurus',
-        //     },
-        //     {
-        //       label: 'X',
-        //       href: 'https://x.com/docusaurus',
-        //     },
-        //   ],
-        // },
         {
-          title: 'More',
+          title: 'Themes',
+          items: [
+            {
+              label: 'Theme Gallery',
+              to: '/docs/themes',
+            },
+            {
+              label: 'Creating Themes',
+              to: '/docs/themes/write-your-theme',
+            },
+          ],
+        },
+        {
+          title: 'Resources',
           items: [
             {
               label: 'GitHub',
@@ -99,7 +126,7 @@ const config: Config = {
               href: 'https://github.com/germainlefebvre4/cvwonder/releases',
             },
             {
-              label: 'Issues',
+              label: 'Report Issues',
               href: 'https://github.com/germainlefebvre4/cvwonder/issues',
             },
           ],
@@ -110,6 +137,12 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+      additionalLanguages: ['bash', 'yaml', 'go'],
+    },
+    colorMode: {
+      defaultMode: 'light',
+      disableSwitch: false,
+      respectPrefersColorScheme: true,
     },
   } satisfies Preset.ThemeConfig,
   markdown: {

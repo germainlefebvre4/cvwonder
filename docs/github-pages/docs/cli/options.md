@@ -4,6 +4,8 @@ hide_table_of_contents: false
 ---
 # Options
 
+---
+
 CV Wonder CLI provides a set of options that can be used to customize the behavior of the command.
 
 These options can be used with most of subcommands and are available in the CLI help output.

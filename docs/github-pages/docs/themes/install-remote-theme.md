@@ -3,6 +3,8 @@ sidebar_position: 2
 ---
 # Install a remote theme
 
+---
+
 Download and install a theme from Github to customize the look and feel of your CV.
 
 ## Find your theme
@@ -16,7 +18,7 @@ To make it easy to find, the CV Wonder Themes repositories should contain at lea
 
 ### Search on Github
 
-Look for CVWonder themes on Github based on the Search and Topics.
+Look for CV Wonder themes on Github based on the Search and Topics.
 
 * [Keyword](https://github.com/search?q=cvwonder-theme-&type=repositories): `cvwonder-theme-`
 * [Topic](https://github.com/topics/cvwonder-theme): `cvwonder-theme`
@@ -33,7 +35,7 @@ cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
 # cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
 ```
 
-:::info "Theme version"
+:::info Theme version
 The downloaded theme is the latest version from the `main` branch.
 :::
 

@@ -1,7 +1,12 @@
 ---
 sidebar_position: 1
 ---
+import CodeBlock from "@theme/CodeBlock";
+import CVFullExample from "!!raw-loader!@site/static/cv.yml";
+
 # Use a theme
+
+---
 
 Use the flag `--theme=<theme-ame>` to specify the theme you want to use.
 
@@ -40,6 +45,8 @@ The default theme renders the CV with a simple and clean design.
 
 Here is the content of the `cv.yml` file for the rendered CV.
 
-```yaml
-{!../static/cv.yml!}
-```
+<CodeBlock
+  language="yaml"
+  description="CV input">
+{CVFullExample}
+</CodeBlock>

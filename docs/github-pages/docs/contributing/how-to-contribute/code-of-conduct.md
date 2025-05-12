@@ -3,6 +3,8 @@ sidebar_position: 3
 ---
 # Contributor Covenant Code of Conduct
 
+---
+
 !!! note
     This Code of Conduct is following the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/).
 

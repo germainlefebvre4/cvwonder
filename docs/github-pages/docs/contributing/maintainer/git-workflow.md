@@ -3,6 +3,8 @@ sidebar_position: 1
 ---
 # Git workflow
 
+---
+
 ## Overview
 
 ```mermaid

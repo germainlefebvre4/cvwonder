@@ -3,6 +3,8 @@ sidebar_position: 5
 ---
 # Theme functions
 
+---
+
 The theme functions are a way to customize the look and add some logic to your CV Theme. You can use them in your theme template to help you display the content of your CV.
 
 ## Functions
@@ -27,7 +29,7 @@ The `dec` function is used to decrement a number. It can also be used to get the
 | `{{ dec 0 }}` | -1 |
 | `{{ dec $length }}` | `$length - 1` |
 
-:::tip "Last item of a list"
+:::tip Last item of a list
 ```html
 {{ $list := (list "a" "b" "c") }}
 {{ index $list (dec (len $list)) }}

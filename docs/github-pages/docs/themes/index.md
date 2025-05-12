@@ -1,7 +1,9 @@
 ---
 sidebar_position: 3
 ---
-# Theme system
+# Theme
+
+---
 
 Theme system is a way to customize the look and feel of your CV.
 

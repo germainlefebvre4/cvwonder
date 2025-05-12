@@ -3,6 +3,8 @@ sidebar_position: 1
 ---
 # Commands
 
+---
+
 CV Wonder CLI provides a set of commands that can be used to perform various tasks related to generating and managing CVs.
 
 ## Main command

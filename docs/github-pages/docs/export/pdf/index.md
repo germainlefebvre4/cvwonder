@@ -1,10 +1,12 @@
 ---
 sidebar_position: 2
 ---
-# PDF format
+# PDF
 
-:::info "Default format is HTML"
-The default format for the generated CV is [HTML](html.md).
+---
+
+:::info Default format
+The default format for the generated CV is [HTML](../html).
 :::
 
 ## Getting started

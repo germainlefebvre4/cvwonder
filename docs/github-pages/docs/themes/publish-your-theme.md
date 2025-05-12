@@ -3,6 +3,8 @@ sidebar_position: 4
 ---
 # Publish a theme
 
+---
+
 [Write your theme](write-your-theme.md) and publish it on GitHub to share your wonderful theme with the community.
 
 :::info
