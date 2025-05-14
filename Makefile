@@ -18,13 +18,16 @@ test:
 	go test ./...
 
 doc-install:
-	poetry --directory docs/ lock && poetry --directory docs/ install
+	cd docs/github-pages/; \
+	pnpm install;
 
 doc-build:
-	poetry --directory docs/ run mkdocs build --config-file mkdocs.yml
+	cd docs/github-pages/; \
+	pnpm build;
 
 doc-serve:
-	poetry --directory docs/ run mkdocs serve --config-file mkdocs.yml
+	cd docs/github-pages/; \
+	pnpm start;
 
 goreleser-check:
 	goreleaser check

@@ -1,0 +1,149 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+ :root {
+  --ifm-color-primary: #3178c6;
+  --ifm-color-primary-dark: #2c6cb2;
+  --ifm-color-primary-darker: #2964a8;
+  --ifm-color-primary-darkest: #22528a;
+  --ifm-color-primary-light: #4285d9;
+  --ifm-color-primary-lighter: #4e8ddc;
+  --ifm-color-primary-lightest: #d6e8ff;
+ }
+ 
+ [data-theme='dark'] {
+  --ifm-color-primary: #ffff;
+  --ifm-color-primary-dark: #ffff;
+  --ifm-color-primary-darker: #ffff;
+  --ifm-color-primary-darkest: #ffff;
+  --ifm-color-primary-light: #ffff;
+  --ifm-color-primary-lighter: #ffff;
+  --ifm-color-primary-lightest: #ffff;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-background-color: #ffff;
+  --ifm-background-surface-color: #ffff;
+}
+
+.logoBanner {
+  --ifm-color-primary: #ffffff;
+  --ifm-color-primary-dark: #ffffff;
+  padding: 6rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--ifm-color-primary-dark) 0%, var(--ifm-color-primary) 100%);
+}
+
+.heroBanner {
+  padding: 6rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--ifm-color-primary-dark) 0%, var(--ifm-color-primary) 100%);
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 2rem;
+  }
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Demo Section */
+.demoSection {
+  padding: 5rem 0;
+}
+
+.demoRow {
+  align-items: center;
+}
+
+.demoTextCol {
+  padding: 2rem;
+}
+
+.demoImageCol {
+  display: flex;
+  justify-content: center;
+}
+
+.demoImage {
+  max-width: 90%;
+  height: auto;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+}
+
+.demoButtons {
+  margin-top: 2rem;
+}
+
+/* Themes Section */
+.themesSection {
+  padding: 5rem 0;
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+.sectionSubtitle {
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.themeCard {
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  border-radius: 8px;
+  background: var(--ifm-background-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.themeCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.themeImage {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+/* CTA Section */
+.ctaSection {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, var(--ifm-color-primary-lightest) 0%, var(--ifm-color-primary-light) 100%);
+  color: white;
+}
+
+.ctaText {
+  font-size: 1.2rem;
+  margin: 2rem auto;
+  max-width: 700px;
+}
+
+.ctaButtons {
+  margin-top: 2rem;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .demoRow {
+    flex-direction: column-reverse;
+  }
+  
+  .demoTextCol, .demoImageCol {
+    width: 100%;
+    padding: 1rem;
+  }
+}
