@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.3.1...v0.4.0) (2025-06-18)
+
+
+### Features
+
+* change model on abstract attribute ([#36](https://github.com/germainlefebvre4/cvwonder/issues/36)) ([47eeb88](https://github.com/germainlefebvre4/cvwonder/commit/47eeb88f791ce7e8bb6ba36769fc1b4fde1ab57d))
+* **themes:** Add minimumVersion attribute in theme config ([#30](https://github.com/germainlefebvre4/cvwonder/issues/30)) ([f5fbd31](https://github.com/germainlefebvre4/cvwonder/commit/f5fbd31af5d7808c5e25e6c4bf227459005946c9))
+
 ## [0.3.1](https://github.com/germainlefebvre4/cvwonder/compare/v0.3.0...v0.3.1) (2025-03-31)
 
 
