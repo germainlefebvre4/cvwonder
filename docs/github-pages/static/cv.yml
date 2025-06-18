@@ -20,10 +20,10 @@ socialNetworks:
   twitter: germainlefebvr4
 
 abstract:
-  - tr: "J'ai grandi dans l'univers des systèmes Linux. Ma volonté de progression m'a rapidement amené vers des outils automatisation, d'Infra-as-Code, ainsi que les plateformes de CI/CD."
-  - tr: "La découverte de l'univers des conteneurs est digne de 'Rencontre avec le 3ème type'. C'est devenu un écosystème que j'aime tester, utiliser et transmettre."
-  - tr: "Mon amour pour le logiciel libre m'a amené à contribuer pour des librairies, sqlfluff, libtado, crossplane-assistant ou encore cvwonder."
-  - tr: "J'aime passer du temps sur des 'side projects' qui peuvent aider, servir et simplifier le quotidien des Techs. Ce que nous enseigne la sphère de l'open source est vertueux : l'entraide et le partage."
+  - "J'ai grandi dans l'univers des systèmes Linux. Ma volonté de progression m'a rapidement amené vers des outils automatisation, d'Infra-as-Code, ainsi que les plateformes de CI/CD."
+  - "La découverte de l'univers des conteneurs est digne de 'Rencontre avec le 3ème type'. C'est devenu un écosystème que j'aime tester, utiliser et transmettre."
+  - "Mon amour pour le logiciel libre m'a amené à contribuer pour des librairies, sqlfluff, libtado, crossplane-assistant ou encore cvwonder."
+  - "J'aime passer du temps sur des 'side projects' qui peuvent aider, servir et simplifier le quotidien des Techs. Ce que nous enseigne la sphère de l'open source est vertueux : l'entraide et le partage."
 
 career:
   - companyName: Zatsit
