@@ -47,7 +47,22 @@ jobs:
         with:
           path: docs/github-pages/build/
 
-  deploy:
+  deploy-staging:
+    name: Deploy to GitHub Pages
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: docs-staging
+      url: "https://staging.cvwonder.fr"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  deploy-production:
     name: Deploy to GitHub Pages
     needs: build
     permissions:
@@ -55,7 +70,7 @@ jobs:
       id-token: write
     environment:
       name: docs-production
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: "https://cvwonder.fr"
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
