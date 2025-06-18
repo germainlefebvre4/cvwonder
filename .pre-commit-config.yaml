@@ -17,6 +17,6 @@ repos:
         verbose: true
       - id: cvwonder-documentation
         name: cvwonder-documentation
-        entry: bash -c 'poetry --directory docs/ run mkdocs build --config-file mkdocs.yml'
+        entry: bash -c 'cd docs/github-pages && pnpm build'
         language: system
         verbose: false
