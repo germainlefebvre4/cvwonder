@@ -11,10 +11,10 @@
             "args": [
                 "generate",
                 // "serve",
-                // "--input=cv.yml",
-                // "--output=generated/",
+                "--input=cv.yml",
+                "--output=generated/",
                 "--theme=basic",
-                "--format=pdf",
+                // "--format=pdf",
                 // "--watch",
                 // "--verbose",
                 // "--browser",
@@ -48,6 +48,9 @@
             "mode": "debug",
             "cwd": "${workspaceFolder}",
             "program": "./cmd/cvwonder",
+            "args": [
+                "generate",
+            ]
             "env": {
             }
         }
