@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - docs/v2-docusaurus
 
 jobs:
   build:
