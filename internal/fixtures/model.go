@@ -137,16 +137,10 @@ var CvModelGood02 = model.CV{
 		Linkedin:      "germainlefebvre4",
 		Twitter:       "germainlefebvr4",
 	},
-	Abstract: []model.Abstract{
-		{
-			"I am a Platform Engineer looking for people to share knowledge to each other.",
-		},
-		{
-			"This section can be a multiples lines of text.",
-		},
-		{
-			"This section can be a multiples lines of text again.",
-		},
+	Abstract: []string{
+		"I am a Platform Engineer looking for people to share knowledge to each other.",
+		"This section can be a multiples lines of text.",
+		"This section can be a multiples lines of text again.",
 	},
 	Career: []model.Career{
 		{
