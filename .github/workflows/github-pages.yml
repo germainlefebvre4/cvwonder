@@ -1,15 +1,10 @@
 ---
 name: GitHub Pages
 on:
-  pull_request:
+  push:
     branches:
       - main
-    # paths:
-    #   - 'docs/github-pages/**'
-#   push:
-#     branches:
-#       - main
-#       - docs/v2-docusaurus
+      - docs/v2-docusaurus
 
 jobs:
   build:
@@ -47,22 +42,7 @@ jobs:
         with:
           path: docs/github-pages/build/
 
-  deploy-staging:
-    name: Deploy to GitHub Pages
-    needs: build
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: docs-staging
-      url: "https://staging.cvwonder.fr"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-  deploy-production:
+  deploy:
     name: Deploy to GitHub Pages
     needs: build
     permissions:
