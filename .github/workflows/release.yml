@@ -36,6 +36,8 @@ jobs:
         shell: bash
         run: |
           sed -i 's/\(var CVWONDER_VERSION =\).*/\1 "${{ github.ref_name }}"/' internal/version/version.go
+          git add internal/version/version.go
+          git commit -m "chore: update version to ${{ github.ref_name }}" || echo "No changes to commit"
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
@@ -57,3 +59,4 @@ jobs:
     with:
       version: ${{ github.ref_name }}
     secrets: inherit
+
