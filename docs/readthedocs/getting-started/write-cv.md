@@ -102,8 +102,8 @@ You can add multiple abstracts.
 
     ```yaml
     abstract:
-      - tr: "I am a software engineer with 5 years of experience in the field."
-      - tr: "I am passionate about technology and I love to learn new things."
+      - "I am a software engineer with 5 years of experience in the field."
+      - "I am passionate about technology and I love to learn new things."
     ```
 
 ### Career
