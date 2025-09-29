@@ -1,8 +1,8 @@
 ---
-name: Bug report
+name: ":bug: Bug report"
 about: Create a report to help us improve
-title: ':bug: Bug Report'
-labels: 'bug'
+title: '[Bug] '
+labels: '["bug"]'
 assignees: ''
 body:
   - type: markdown

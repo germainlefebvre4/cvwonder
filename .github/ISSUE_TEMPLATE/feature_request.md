@@ -1,8 +1,8 @@
 ---
-name: ":rocket: Feature request"
+name: ":rocket: Idea / Feature request"
 about: Suggest an idea for this project
-title: 'Idea / Feature request'
-labels: 'enhancement'
+title: '[Feature] '
+labels: '["enhancement"]'
 assignees: ''
 body:
   - type: markdown
