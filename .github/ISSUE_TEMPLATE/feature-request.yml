@@ -53,4 +53,3 @@ body:
           value: agree_contributing_guidelines
     validations:
       required: true
----
