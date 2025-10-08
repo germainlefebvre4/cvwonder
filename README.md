@@ -5,7 +5,7 @@ CV Wonder is a tool that allows you to create a CV in a few minutes. It allows y
 Don't waste any more time formatting your CV, let CV Wonder do it for you and just focus on the content.
 
 <p align="center">
-    <img src="./docs/readthedocs/logo.svg" alt="cvwonder" width="400px" style="display: block; margin: 0 auto;" />
+    <img src="./docs/github-pages/static/img/logo.svg" alt="cvwonder" width="400px" style="display: block; margin: 0 auto;" />
 </p>
 
 ## Getting started
