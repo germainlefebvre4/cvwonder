@@ -1,11 +1,8 @@
 ---
 all: true
 dir: '{{.InterfaceDir}}'
-structname: '{{.InterfaceName}}Mock'
-pkgname: '{{.SrcPackageName}}'
+mockname: '{{.InterfaceName}}Mock'
 filename: "mocks/mock_{{.InterfaceName}}.go"
-template: testify
-# inpackage: True
 packages:
   github.com/germainlefebvre4/cvwonder/internal/cvparser:
     interfaces:
