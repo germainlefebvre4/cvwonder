@@ -298,7 +298,7 @@ The languages section is used to describe the languages you speak.
       - name: English
         level: Fluent
     ```
-  
+
 !!! abstract "Level"
     The `Level` field is a text field. It represents your level of the language in the way that you want to show.
 

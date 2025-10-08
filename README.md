@@ -111,7 +111,7 @@ docker run -v $(pwd):/cv germainlefebvre4/cvwonder:latest generate --input=cv.ym
 ### Run
 
 ```bash
-go run ./cmd/cvwonder/main.go --input=cv.yml --output=generated/ --theme=default 
+go run ./cmd/cvwonder/main.go --input=cv.yml --output=generated/ --theme=default
 # make run
 ```
 

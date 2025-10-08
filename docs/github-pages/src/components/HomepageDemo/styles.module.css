@@ -53,7 +53,7 @@
   .demoRow {
     flex-direction: column-reverse;
   }
-  
+
   .demoTextCol, .demoImageCol {
     width: 100%;
     padding: 1rem;

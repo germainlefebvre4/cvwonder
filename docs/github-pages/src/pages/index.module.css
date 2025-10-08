@@ -12,7 +12,7 @@
   --ifm-color-primary-lighter: #4e8ddc;
   --ifm-color-primary-lightest: #d6e8ff;
  }
- 
+
  [data-theme='dark'] {
   --ifm-color-primary: #ffff;
   --ifm-color-primary-dark: #ffff;
@@ -141,7 +141,7 @@
   .demoRow {
     flex-direction: column-reverse;
   }
-  
+
   .demoTextCol, .demoImageCol {
     width: 100%;
     padding: 1rem;

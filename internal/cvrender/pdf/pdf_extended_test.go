@@ -147,7 +147,7 @@ func TestRunWebServer_New(t *testing.T) {
 
 		// Wait for goroutines to execute
 		time.Sleep(30 * time.Millisecond)
-		
+
 		serveMock.AssertExpectations(t)
 	})
 }
