@@ -15,7 +15,7 @@ func TestReadDirectory(t *testing.T) {
 		tempDir := t.TempDir()
 		file1 := filepath.Join(tempDir, "file1.txt")
 		file2 := filepath.Join(tempDir, "file2.txt")
-		
+
 		err := os.WriteFile(file1, []byte("content1"), 0644)
 		require.NoError(t, err)
 		err = os.WriteFile(file2, []byte("content2"), 0644)
@@ -23,7 +23,7 @@ func TestReadDirectory(t *testing.T) {
 
 		// Test
 		files, err := ReadDirectory(tempDir)
-		
+
 		// Assert
 		assert.NoError(t, err)
 		assert.Len(t, files, 2)
@@ -33,9 +33,9 @@ func TestReadDirectory(t *testing.T) {
 
 	t.Run("Should return empty list for empty directory", func(t *testing.T) {
 		tempDir := t.TempDir()
-		
+
 		files, err := ReadDirectory(tempDir)
-		
+
 		assert.NoError(t, err)
 		assert.Len(t, files, 0)
 	})
@@ -57,7 +57,7 @@ func TestCopy(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		
+
 		// Verify destination file exists and has same content
 		dstContent, err := os.ReadFile(dstFile)
 		assert.NoError(t, err)
@@ -84,7 +84,7 @@ func TestCopyDirectory(t *testing.T) {
 		// Create source directory structure
 		err := os.MkdirAll(filepath.Join(srcDir, "subdir"), 0750)
 		require.NoError(t, err)
-		
+
 		file1 := filepath.Join(srcDir, "file1.txt")
 		file2 := filepath.Join(srcDir, "subdir", "file2.txt")
 		err = os.WriteFile(file1, []byte("content1"), 0644)
@@ -101,7 +101,7 @@ func TestCopyDirectory(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		
+
 		// Verify files were copied
 		_, err = os.Stat(filepath.Join(dstDir, "file1.txt"))
 		assert.NoError(t, err)
@@ -118,7 +118,7 @@ func TestCopyDirectory(t *testing.T) {
 		gitDir := filepath.Join(srcDir, ".git")
 		err := os.MkdirAll(gitDir, 0750)
 		require.NoError(t, err)
-		
+
 		gitFile := filepath.Join(gitDir, "config")
 		err = os.WriteFile(gitFile, []byte("git config"), 0644)
 		require.NoError(t, err)
@@ -132,7 +132,7 @@ func TestCopyDirectory(t *testing.T) {
 
 		// Assert - should succeed but skip .git
 		assert.NoError(t, err)
-		
+
 		// Verify .git was not copied
 		_, err = os.Stat(filepath.Join(dstDir, ".git"))
 		assert.True(t, os.IsNotExist(err))
@@ -197,30 +197,30 @@ func TestExists(t *testing.T) {
 func TestGenerateRandomString(t *testing.T) {
 	t.Run("Should generate random string of correct length", func(t *testing.T) {
 		length := 10
-		
+
 		result := GenerateRandomString(length)
-		
+
 		assert.Len(t, result, length)
 	})
 
 	t.Run("Should generate different strings on consecutive calls", func(t *testing.T) {
 		length := 10
-		
+
 		result1 := GenerateRandomString(length)
 		result2 := GenerateRandomString(length)
-		
+
 		// Very unlikely to be the same
 		assert.NotEqual(t, result1, result2)
 	})
 
 	t.Run("Should only contain alphanumeric characters", func(t *testing.T) {
 		length := 20
-		
+
 		result := GenerateRandomString(length)
-		
+
 		for _, char := range result {
-			isAlphanumeric := (char >= 'a' && char <= 'z') || 
-							  (char >= 'A' && char <= 'Z') || 
+			isAlphanumeric := (char >= 'a' && char <= 'z') ||
+							  (char >= 'A' && char <= 'Z') ||
 							  (char >= '0' && char <= '9')
 			assert.True(t, isAlphanumeric, "Character %c is not alphanumeric", char)
 		}

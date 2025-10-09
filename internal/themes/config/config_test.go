@@ -54,8 +54,8 @@ minimumVersion: 1.0.0
 				content: `
 name: Simple Theme
 slug: simple-theme
-description: 
-author: 
+description:
+author:
 minimumVersion: 1.0.0
 `,
 			},

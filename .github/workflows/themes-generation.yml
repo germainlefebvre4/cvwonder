@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        theme: 
+        theme:
           - default
           - basic
           - horizon-timeline

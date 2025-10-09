@@ -50,12 +50,12 @@ func TestStartServer(t *testing.T) {
 		if err == nil {
 			defer resp.Body.Close()
 			assert.Equal(t, http.StatusOK, resp.StatusCode)
-			
+
 			// Verify content
 			body, err := io.ReadAll(resp.Body)
 			assert.NoError(t, err)
 			assert.Contains(t, string(body), "Test Content")
-			
+
 			// Also test 404
 			resp2, err := http.Get("http://localhost:19991/nonexistent.html")
 			if err == nil {

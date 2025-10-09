@@ -124,7 +124,7 @@ func TestBuildOutputDirectory(t *testing.T) {
 	t.Run("Should build OutputDirectory with relative path", func(t *testing.T) {
 		// Setup
 		tempDir := t.TempDir()
-		
+
 		// Change to temp directory
 		originalDir, err := os.Getwd()
 		require.NoError(t, err)

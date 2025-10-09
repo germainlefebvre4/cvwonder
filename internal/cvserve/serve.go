@@ -69,11 +69,11 @@ func (s *ServeServices) StartServer(port int, outputDirectory string) {
 
 	logrus.Info(fmt.Sprintf("Listening on: http://localhost:%d", port))
 	logrus.Info("")
-	
+
 	// Create a new ServeMux to avoid conflicts with global DefaultServeMux
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(http.Dir(outputDirectory)))
-	
+
 	listeningPort := fmt.Sprintf(":%d", port)
 	http.ListenAndServe(listeningPort, mux)
 }
