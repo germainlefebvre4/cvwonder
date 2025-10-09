@@ -6,7 +6,11 @@ on:
     branches:
       - main
     paths:
-      - '!docs/**'
+      - 'internal/**'
+      - 'cmd/**'
+      - '.github/**'
+      - 'go.mod'
+      - 'go.sum'
 
 jobs:
   build:
