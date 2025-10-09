@@ -10,15 +10,9 @@
 - `/cmd`: Contains the main application entry point.
 - `/docs`: Contains documentation for the project, including API specifications and user guides.
 
-## Configuration
-
-Create a configuration file `config.yml` in the root directory of the project.
-This file should contain all configurable parameters for the application, including database connection settings, API keys, and any other environment-specific variables.
-
 ## Unit Tests
 
 Write unit tests for all functions and methods. Ensure that the tests cover edge cases and error handling.
-Query the database to verify that the expected data is being stored and retrieved correctly.
 Store the tests in the package directory where the functions are defined. Do not create a separate `tests` directory and do not store tests in the root directory.
 
 ## Ignore Files and Directories

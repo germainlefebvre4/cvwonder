@@ -56,3 +56,8 @@ docs/github-pages/.env.production.local
 docs/github-pages/npm-debug.log*
 docs/github-pages/yarn-debug.log*
 docs/github-pages/yarn-error.log*
+
+# nektos/act
+/event.json
+/events.json
+/act.log

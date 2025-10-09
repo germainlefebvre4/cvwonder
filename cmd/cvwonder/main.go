@@ -7,6 +7,7 @@ import (
 	cmdGenerate "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/generate"
 	cmdServe "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/serve"
 	cmdThemes "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/themes"
+	cmdValidate "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/validate"
 	cmdVersion "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/version"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
 	"github.com/germainlefebvre4/cvwonder/internal/version"
@@ -38,6 +39,7 @@ func main() {
 	rootCmd.AddCommand(cmdGenerate.GenerateCmd())
 	rootCmd.AddCommand(cmdServe.ServeCmd())
 	rootCmd.AddCommand(cmdThemes.ThemesCmd())
+	rootCmd.AddCommand(cmdValidate.ValidateCmd())
 	rootCmd.AddCommand(cmdVersion.VersionCmd())
 
 	if err := rootCmd.Execute(); err != nil {

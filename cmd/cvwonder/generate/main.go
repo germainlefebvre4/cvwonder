@@ -12,6 +12,7 @@ import (
 	"github.com/germainlefebvre4/cvwonder/internal/themes"
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
+	"github.com/germainlefebvre4/cvwonder/internal/validator"
 	"github.com/germainlefebvre4/cvwonder/internal/version"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -41,6 +42,30 @@ func GenerateCmd() *cobra.Command {
 			logrus.Info("  Theme: ", utils.CliArgs.ThemeName)
 			logrus.Info("  Format: ", utils.CliArgs.Format)
 			logrus.Info("")
+
+			// Validate if flag is set
+			if utils.CliArgs.Validate {
+				logrus.Info("Validating YAML file...")
+				validatorService, err := validator.NewValidatorServices()
+				utils.CheckError(err)
+
+				result, err := validatorService.ValidateFile(inputFile.FullPath)
+				utils.CheckError(err)
+
+				if !result.Valid {
+					output := validator.FormatValidationResult(result)
+					logrus.Error(output)
+					logrus.Fatal("Validation failed. Please fix the errors above.")
+				}
+
+				if len(result.Warnings) > 0 {
+					output := validator.FormatValidationResult(result)
+					logrus.Warn(output)
+				} else {
+					logrus.Info("✓ Validation passed!")
+				}
+				logrus.Info("")
+			}
 
 			// Check Theme exists
 			err := themes.CheckThemeExists(utils.CliArgs.ThemeName)
@@ -77,6 +102,7 @@ func GenerateCmd() *cobra.Command {
 	}
 
 	cobraCmd.Flags().IntVarP(&utils.CliArgs.Port, "port", "p", 9889, "Listening port for PDF generation")
+	cobraCmd.Flags().BoolVar(&utils.CliArgs.Validate, "validate", false, "Validate the YAML file before generating the CV")
 
 	return cobraCmd
 }

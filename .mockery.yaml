@@ -28,3 +28,6 @@ packages:
   github.com/germainlefebvre4/cvwonder/internal/watcher:
     interfaces:
       WatcherInterface: {}
+  github.com/germainlefebvre4/cvwonder/internal/validator:
+    interfaces:
+      ValidatorInterface: {}

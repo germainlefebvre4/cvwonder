@@ -1,0 +1,344 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cvwonder.io/schema/v1/cv.json",
+  "title": "CV Wonder Schema",
+  "description": "Schema for CV Wonder YAML files",
+  "type": "object",
+  "required": ["person"],
+  "properties": {
+    "company": {
+      "type": "object",
+      "description": "Company information",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Company name"
+        },
+        "logo": {
+          "type": "string",
+          "description": "Path to company logo"
+        }
+      }
+    },
+    "person": {
+      "type": "object",
+      "description": "Personal information (required)",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Full name (required)"
+        },
+        "depiction": {
+          "type": "string",
+          "description": "Path to profile picture"
+        },
+        "profession": {
+          "type": "string",
+          "description": "Professional title"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location/City"
+        },
+        "citizenship": {
+          "type": "string",
+          "description": "Citizenship/Nationality"
+        },
+        "email": {
+          "anyOf": [
+            {"type": "string", "maxLength": 0},
+            {"type": "string", "format": "email"}
+          ],
+          "description": "Email address"
+        },
+        "site": {
+          "anyOf": [
+            {"type": "string", "maxLength": 0},
+            {"type": "string", "format": "uri"}
+          ],
+          "description": "Personal website URL"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number"
+        }
+      }
+    },
+    "socialNetworks": {
+      "type": "object",
+      "description": "Social network profiles",
+      "properties": {
+        "github": {
+          "type": "string",
+          "description": "GitHub username"
+        },
+        "stackoverflow": {
+          "type": "string",
+          "description": "Stack Overflow username"
+        },
+        "linkedin": {
+          "type": "string",
+          "description": "LinkedIn username"
+        },
+        "twitter": {
+          "type": "string",
+          "description": "Twitter username"
+        }
+      }
+    },
+    "abstract": {
+      "type": "array",
+      "description": "Professional summary paragraphs",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "career": {
+      "type": "array",
+      "description": "Career history",
+      "items": {
+        "type": "object",
+        "required": ["companyName", "missions"],
+        "properties": {
+          "companyName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Company name (required)"
+          },
+          "companyLogo": {
+            "type": "string",
+            "description": "Path to company logo"
+          },
+          "duration": {
+            "type": "string",
+            "description": "Total duration at company"
+          },
+          "missions": {
+            "type": "array",
+            "description": "List of missions/positions at company (required)",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["position", "company"],
+              "properties": {
+                "position": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Job title/position (required)"
+                },
+                "company": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Company name (required)"
+                },
+                "location": {
+                  "type": "string",
+                  "description": "Work location"
+                },
+                "dates": {
+                  "type": "string",
+                  "description": "Employment dates"
+                },
+                "summary": {
+                  "type": "string",
+                  "description": "Brief summary of the role"
+                },
+                "technologies": {
+                  "type": "array",
+                  "description": "Technologies used",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "description": {
+                  "type": "array",
+                  "description": "Detailed description points",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "project": {
+                  "type": "string",
+                  "description": "Project name"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "technicalSkills": {
+      "type": "object",
+      "description": "Technical skills organized by domains",
+      "properties": {
+        "domains": {
+          "type": "array",
+          "description": "Skill domains",
+          "items": {
+            "type": "object",
+            "required": ["name", "competencies"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Domain name (required)"
+              },
+              "competencies": {
+                "type": "array",
+                "description": "Competencies in this domain (required)",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["name", "level"],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Skill name (required)"
+                    },
+                    "level": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100,
+                      "description": "Skill level 0-100 (required)"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sideProjects": {
+      "type": "array",
+      "description": "Side projects and contributions",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project name (required)"
+          },
+          "position": {
+            "type": "string",
+            "description": "Your role (e.g., maintainer, contributor)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Project description"
+          },
+          "link": {
+            "type": "string",
+            "description": "Project link or repository"
+          },
+          "type": {
+            "type": "string",
+            "description": "Project type (e.g., github)"
+          },
+          "langs": {
+            "type": "string",
+            "description": "Programming languages used"
+          },
+          "color": {
+            "type": "string",
+            "description": "Color code for display"
+          }
+        }
+      }
+    },
+    "certifications": {
+      "type": "array",
+      "description": "Professional certifications",
+      "items": {
+        "type": "object",
+        "properties": {
+          "companyName": {
+            "type": "string",
+            "description": "Issuing company/organization"
+          },
+          "certificationName": {
+            "type": "string",
+            "description": "Certification name"
+          },
+          "issuer": {
+            "type": "string",
+            "description": "Issuer name"
+          },
+          "date": {
+            "type": "string",
+            "description": "Date obtained"
+          },
+          "link": {
+            "type": "string",
+            "format": "uri",
+            "description": "Link to certification"
+          },
+          "badge": {
+            "type": "string",
+            "description": "Path to certification badge image"
+          }
+        }
+      }
+    },
+    "languages": {
+      "type": "array",
+      "description": "Language proficiencies",
+      "items": {
+        "type": "object",
+        "required": ["name", "level"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Language name (required)"
+          },
+          "level": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Proficiency level (required)"
+          }
+        }
+      }
+    },
+    "education": {
+      "type": "array",
+      "description": "Educational background",
+      "items": {
+        "type": "object",
+        "properties": {
+          "schoolName": {
+            "type": "string",
+            "description": "School/University name"
+          },
+          "schoolLogo": {
+            "type": "string",
+            "description": "Path to school logo"
+          },
+          "degree": {
+            "type": "string",
+            "description": "Degree obtained"
+          },
+          "location": {
+            "type": "string",
+            "description": "School location"
+          },
+          "dates": {
+            "type": "string",
+            "description": "Study period"
+          },
+          "link": {
+            "type": "string",
+            "format": "uri",
+            "description": "Link to school website"
+          }
+        }
+      }
+    }
+  }
+}
