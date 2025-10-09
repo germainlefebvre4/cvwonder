@@ -102,6 +102,7 @@ func GenerateCmd() *cobra.Command {
 	}
 
 	cobraCmd.Flags().IntVarP(&utils.CliArgs.Port, "port", "p", 9889, "Listening port for PDF generation")
+	cobraCmd.Flags().BoolVar(&utils.CliArgs.Validate, "validate", false, "Validate the YAML file before generating the CV")
 
 	return cobraCmd
 }

@@ -33,14 +33,6 @@ This will:
 3. Exit if validation fails
 4. Generate the CV if validation passes
 
-### Validate in Watch Mode
-
-Combine validation with watch mode for live feedback:
-
-```bash
-cvwonder serve -i cv.yml --validate --watch
-```
-
 ### CI/CD Integration
 
 Use validation in your CI/CD pipeline. Run basically the same command in your pipeline while the return code will indicate success or failure:
