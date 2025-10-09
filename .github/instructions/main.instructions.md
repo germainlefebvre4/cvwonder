@@ -18,6 +18,8 @@
 
 - The application is a CV generator that converts Markdown files to styled HTML CVs.
 - It should be able to serve the generated CVs via a local web server.
+- It should support PDF generation from the HTML CVs.
+- It should allow users to choose from different themes for styling the CVs.
 
 ### Specifications
 
@@ -25,6 +27,15 @@
 - Convert the Markdown files to HTML using a predefined template.
 - Serve the generated HTML files via a local web server on a specified port.
 - Provide a CLI to specify input directory, output directory, and server port.
+- Provide an option to generate a PDF version of the CV using a headless browser.
+- Allow users to select different themes for the CV via CLI options.
+- Provide a HTTP endpoint to generate the CV on-the-fly from a given Markdown file.
+
+### Quality
+
+- Ensure the application is robust and handles errors gracefully (e.g., file not found, invalid Markdown syntax).
+- Implement logging for key actions and errors.
+- Ensure the application is well-documented, including a README with usage instructions.
 
 ## Coding Standards
 
