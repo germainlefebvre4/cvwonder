@@ -1,6 +1,7 @@
 package cmdValidate
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/germainlefebvre4/cvwonder/internal/model"
@@ -53,6 +54,58 @@ func ValidateCmd() *cobra.Command {
 
 	// Add command to show json schema
 	cobraCmd.AddCommand(ValidateShowSchemaCmd())
+
+	return cobraCmd
+}
+
+func ValidateShowSchemaCmd() *cobra.Command {
+	var showPretty bool
+	var showInfo bool
+
+	var cobraCmd = &cobra.Command{
+		PreRun:  utils.ToggleDebug,
+		Use:     "show-schema",
+		Aliases: []string{"schema", "show"},
+		Short:   "Display the JSON schema used for validation",
+		Long:    `Display the JSON schema used for CV YAML validation. Can show raw JSON, pretty-printed JSON, or schema information.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			// Create validator service
+			validatorService, err := validator.NewValidatorServices()
+			if err != nil {
+				logrus.Fatal("Error creating validator service: ", err)
+			}
+
+			if showInfo {
+				// Show schema information
+				info, err := validatorService.GetSchemaInfo()
+				if err != nil {
+					logrus.Fatal("Error getting schema info: ", err)
+				}
+
+				output := validator.FormatSchemaInfo(info)
+				fmt.Println(output)
+			} else if showPretty {
+				// Show pretty-printed schema
+				schema, err := validatorService.GetSchemaPretty()
+				if err != nil {
+					logrus.Fatal("Error getting schema: ", err)
+				}
+
+				fmt.Println(schema)
+			} else {
+				// Show raw schema
+				schema, err := validatorService.GetSchema()
+				if err != nil {
+					logrus.Fatal("Error getting schema: ", err)
+				}
+
+				fmt.Println(schema)
+			}
+		},
+	}
+
+	cobraCmd.Flags().BoolVarP(&showPretty, "pretty", "p", false, "Pretty-print the JSON schema")
+	cobraCmd.Flags().BoolVarP(&showInfo, "info", "", false, "Show schema information summary")
 
 	return cobraCmd
 }

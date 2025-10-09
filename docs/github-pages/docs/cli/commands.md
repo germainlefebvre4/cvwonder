@@ -44,7 +44,7 @@ The command can be run as follows:
 cvwonder validate [OPTIONS]
 ```
 
-**Aliases**: `v`, `val`
+**Aliases**: `val`, `valid`
 
 This command validates your CV file and provides detailed feedback including:
 - Line numbers for errors
@@ -67,6 +67,43 @@ Error 1:
   Field: person.email
   Issue: Does not match format 'email'
   Suggestion: Email should be in format: user@example.com
+```
+
+#### Validate Show Schema
+
+The `validate show-schema` subcommand displays the JSON schema used for validation.
+
+```bash
+cvwonder validate show-schema [OPTIONS]
+```
+
+**Aliases**: `schema`, `show`
+
+**Options:**
+- `--info`: Show schema information summary
+- `--pretty` or `-p`: Pretty-print the JSON schema
+
+**Examples:**
+
+Show schema information:
+```bash
+cvwonder validate show-schema --info
+```
+
+Show pretty-printed JSON schema:
+```bash
+cvwonder validate show-schema --pretty
+```
+
+Show raw JSON schema:
+```bash
+cvwonder validate show-schema
+```
+
+Using aliases:
+```bash
+cvwonder validate schema --info
+cvwonder validate show --pretty
 ```
 
 ### Themes
