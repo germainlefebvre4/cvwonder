@@ -10,6 +10,7 @@ type Configuration struct {
 	Browser         bool   `mapstructure:"BROWSER"`
 	Debug           bool   `mapstructure:"VERBOSE"`
 	Port            int    `mapstructure:"PORT"`
+	Validate        bool   `mapstructure:"VALIDATE"`
 }
 
 var CliArgs Configuration

@@ -7,6 +7,28 @@ sidebar_position: 3
 
 To generate your CV, you need to create a YAML file with your data and use the theme to generate the CV.
 
+## Validate your CV
+
+Before generating your CV, you can validate your YAML file to catch errors early:
+
+```bash
+cvwonder validate --input=cv.yml
+```
+
+This will check for:
+- YAML syntax errors
+- Missing required fields
+- Invalid data formats (email, URLs, etc.)
+- Out-of-range values
+
+You can also validate automatically during generation:
+
+```bash
+cvwonder generate --input=cv.yml --output=generated/ --validate
+```
+
+Learn more about validation in the [Validation guide](../validation/index.md).
+
 ## Generate your data with the theme
 
 When your YAML CV file is ready, you can generate your CV using the following command:

@@ -34,6 +34,41 @@ The command can be run as follows:
 cvwonder serve [OPTIONS]
 ```
 
+### Validate
+
+The `validate` subcommand is used to validate a CV YAML file against the schema.
+It checks for syntax errors, missing required fields, and provides helpful suggestions.
+The command can be run as follows:
+
+```bash
+cvwonder validate [OPTIONS]
+```
+
+**Aliases**: `v`, `val`
+
+This command validates your CV file and provides detailed feedback including:
+- Line numbers for errors
+- Contextual suggestions
+- Warnings for optional but recommended fields
+
+**Example output:**
+
+```
+✓ Validation passed! Your CV YAML file is valid.
+```
+
+Or with errors:
+
+```
+✗ Validation failed! Please fix the following errors:
+
+Error 1:
+  Line: 15
+  Field: person.email
+  Issue: Does not match format 'email'
+  Suggestion: Email should be in format: user@example.com
+```
+
 ### Themes
 
 The `theme` subcommand is used to manage themes for the CV.

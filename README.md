@@ -38,6 +38,20 @@ cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-defau
 cvwonder generate --input=cv.yml --output=generated/ --theme=default
 ```
 
+## Validate your CV
+
+CV Wonder includes comprehensive YAML schema validation to catch errors early:
+
+```bash
+# Validate your CV file
+cvwonder validate --input=cv.yml
+
+# Validate during generation
+cvwonder generate --validate --input=cv.yml
+```
+
+See the [Validation Documentation](https://cvwonder.fr/docs/validation/) for more details.
+
 ## Generate your CV
 
 Generate your CV in HTML format:
@@ -97,6 +111,8 @@ To allow basic string manipulation, here are the functions available in the temp
 | `dec` | Decrement a number | `{{ dec 2 }}` | `1` |
 | `replace` | Replace a substring by another | `{{ replace "Hello World" "World" "Universe" }}` | `Hello Universe` |
 | `join` | Join a list of strings with a separator | `{{ join ["one", "two", "three"] ", " }}` | `one, two, three` |
+
+See the [Theme Functions Documentation](https://cvwonder.fr/docs/themes/theme-functions) for more details.
 
 ## Docker
 

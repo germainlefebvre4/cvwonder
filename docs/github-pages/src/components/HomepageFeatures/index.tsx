@@ -31,8 +31,18 @@ const FeatureList: FeatureItem[] = [
     ),
   },
   {
+    title: 'Built-in Validation',
+    Svg: require('@site/static/img/1984723_0138733.svg').default,
+    description: (
+      <>
+        Catch errors early with comprehensive YAML schema validation.
+        Get helpful feedback with line numbers and actionable suggestions.
+      </>
+    ),
+  },
+  {
     title: 'Mass Generation Ready',
-    Svg: require('@site/static/img/1311988_161361-OVJH8F-605.svg').default,
+    Svg: require('@site/static/img/9342397_1093748.svg').default,
     description: (
       <>
         Need to create CVs for thousands of people? CV Wonder can handle it without breaking a sweat.
@@ -44,7 +54,7 @@ const FeatureList: FeatureItem[] = [
 
 function Feature({title, Svg, description}: FeatureItem) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx('col col--3')}>
       <div className="text--center">
         <Svg className={styles.featureSvg} role="img" />
       </div>
