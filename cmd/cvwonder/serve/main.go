@@ -87,7 +87,7 @@ func ServeCmd() *cobra.Command {
 			serveService.StartLiveReloader(utils.CliArgs.Port, outputDir.FullPath, inputFile.FullPath)
 		},
 	}
-	cobraCmd.Flags().BoolVarP(&utils.CliArgs.Browser, "browser", "b", false, "Open the browser (optional). Default is 'false'.")
+	cobraCmd.Flags().BoolVarP(&utils.CliArgs.Browser, "browser", "b", false, "Open the browser.")
 	cobraCmd.Flags().BoolVarP(&utils.CliArgs.Watch, "watch", "w", false, "Watch for file changes")
 	cobraCmd.Flags().IntVarP(&utils.CliArgs.Port, "port", "p", 3000, "Listening port for local server")
 
