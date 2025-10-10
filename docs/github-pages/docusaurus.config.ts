@@ -2,6 +2,8 @@ import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
+const version = process.env.CVWONDER_VERSION || 'dev';
+
 const config: Config = {
   title: 'CV Wonder',
   tagline: 'Generate your CV with Wonder!',
@@ -77,6 +79,16 @@ const config: Config = {
           to: '/docs/export',
           label: 'Export',
           position: 'left',
+        },
+        {
+          to: '/docs/validation',
+          label: 'Validation',
+          position: 'left',
+        },
+        {
+          href: `https://github.com/germainlefebvre4/cvwonder/releases/tag/${version}`,
+          label: version,
+          position: 'right',
         },
         {
           href: 'https://github.com/germainlefebvre4/cvwonder',
