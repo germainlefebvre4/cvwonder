@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.4.0...v0.5.0) (2025-10-10)
+
+
+### Features
+
+* Implement YAML schema validation with detailed error messages ([#79](https://github.com/germainlefebvre4/cvwonder/issues/79)) ([5f83c26](https://github.com/germainlefebvre4/cvwonder/commit/5f83c264d87e7b1a3bc62345c333495aad8db871))
+
 ## [0.4.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.3.1...v0.4.0) (2025-06-18)
 
 
