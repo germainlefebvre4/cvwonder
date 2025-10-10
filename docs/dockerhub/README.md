@@ -51,14 +51,17 @@ Available Commands:
   help        Help about any command
   serve       Generate and serve the CV
   themes      Manage themes
+  validate    Validate the CV YAML file
+  version     Show version
 
 Flags:
-  -f, --format string   Format for the export (optional). Default is 'html'. (default "html")
+  -d, --debug           Debug mode: more verbose.
+  -f, --format string   Format for the export. (default "html")
   -h, --help            help for cvwonder
-  -i, --input string    Input file in YAML format (required). Default is 'cv.yml' (default "cv.yml")
-  -o, --output string   Output directory (optional). Default is 'generated/' (default "generated/")
-  -t, --theme string    Name of the theme (optional). Default is 'default'. (default "default")
-  -v, --verbose         Debug mode.
+  -i, --input string    Input file in YAML format. (default "cv.yml")
+  -o, --output string   Output directory. (default "generated/")
+  -t, --theme string    Name of the theme. (default "default")
+  -v, --version         version for cvwonder
 
 Use "cvwonder [command] --help" for more information about a command.
 ```

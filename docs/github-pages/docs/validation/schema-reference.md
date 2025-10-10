@@ -5,6 +5,10 @@ sidebar_position: 3
 
 ---
 
+:::info
+Available since `v0.5.0`
+:::
+
 The validator uses a JSON Schema to define the CV structure. Key validation rules:
 
 ### Required Fields

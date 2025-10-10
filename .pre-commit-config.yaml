@@ -20,6 +20,11 @@ repos:
         entry: bash -c 'mockery'
         language: system
         verbose: false
+      - id: cli-helper
+        name: cli-helper
+        entry: bash -c 'go run ./cmd/cvwonder > docs/github-pages/static/helper.out'
+        language: system
+        verbose: true
       # - id: cvwonder-documentation
       #   name: cvwonder-documentation
       #   entry: bash -c 'cd docs/github-pages && pnpm build'

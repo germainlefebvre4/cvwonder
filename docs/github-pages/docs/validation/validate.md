@@ -6,8 +6,10 @@ sidebar_position: 1
 ---
 
 :::info
-Consider validating your CV file before generating to ensure quality and correctness.
+Available since `v0.5.0`
 :::
+
+Validation is a crucial step in ensuring the integrity and correctness of your CV data. CVWonder provides built-in validation features to help you catch errors and inconsistencies before generating your CV.
 
 ## Getting Started
 

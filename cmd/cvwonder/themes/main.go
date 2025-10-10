@@ -76,7 +76,7 @@ func CmdCreate() *cobra.Command {
 		},
 	}
 
-	cobraCmd.Flags().StringVarP(&utils.CliArgs.CreateThemeName, "name", "n", "New Theme", "Name of the new theme (required). Default is 'New Theme'")
+	cobraCmd.Flags().StringVarP(&utils.CliArgs.CreateThemeName, "name", "n", "New Theme", "Name of the new theme.")
 
 	return cobraCmd
 }
