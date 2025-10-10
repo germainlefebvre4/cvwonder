@@ -3,6 +3,9 @@ sidebar_position: 2
 ---
 # Schema
 
+:::info
+Available since `v0.5.0`
+:::
 
 ## View Schema
 
