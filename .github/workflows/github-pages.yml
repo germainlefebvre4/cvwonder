@@ -2,8 +2,8 @@
 name: GitHub Pages
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -34,6 +34,8 @@ jobs:
           cd docs/github-pages/
           pnpm install
           pnpm build
+        env:
+          CVWONDER_VERSION: ${{ github.ref_name }}
 
       - name: Upload static files as artifact
         id: deployment
