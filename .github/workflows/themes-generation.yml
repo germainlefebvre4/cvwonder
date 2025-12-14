@@ -46,3 +46,4 @@ jobs:
           ./cvwonder theme list
           THEME_NAME=$(./cvwonder theme list | tail -n +2 | head -1 | awk '{print $1}')
           ./cvwonder generate --theme=${THEME_NAME} --format=html
+
