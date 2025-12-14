@@ -160,6 +160,9 @@ references:
     company: Tech Innovations
     date: Janvier 2024
     linkedin: janesmith
+    socialNetworks:
+      - linkedin: janesmith
+        github: janesmith
     text: "Une collaboration exceptionnelle. Germain a su transformer notre infrastructure."
 `)
 
@@ -326,7 +329,13 @@ var CvModelGood02 = model.CV{
 			Company:  "Tech Innovations",
 			Date:     "Janvier 2024",
 			Linkedin: "janesmith",
-			Text:     "Une collaboration exceptionnelle. Germain a su transformer notre infrastructure.",
+			SocialNetworks: []model.SocialNetworks{
+				{
+					Linkedin: "janesmith",
+					Github:   "janesmith",
+				},
+			},
+			Text: "Une collaboration exceptionnelle. Germain a su transformer notre infrastructure.",
 		},
 	},
 }
