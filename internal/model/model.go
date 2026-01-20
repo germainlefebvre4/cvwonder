@@ -21,7 +21,7 @@ type Reference struct {
 	Date           string           `yaml:"date"`
 	Linkedin       string           `yaml:"linkedin"`
 	SocialNetworks []SocialNetworks `yaml:"socialNetworks"`
-	Text           string           `yaml:"text"`
+	Description    string           `yaml:"description"`
 }
 
 type Company struct {
