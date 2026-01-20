@@ -17,7 +17,7 @@ test.pdf
 /generated-test-*/
 
 # Themes
-/themes/
+/themes/*
 
 # Generated directory
 /generated/
