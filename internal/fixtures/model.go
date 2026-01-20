@@ -107,7 +107,7 @@ references:
     socialNetworks:
       - linkedin: janesmith
         github: janesmith
-    text: "Une collaboration exceptionnelle. Germain a su transformer notre infrastructure."
+    description: "Une collaboration exceptionnelle. Germain a su transformer notre infrastructure."
 `)
 
 var CvYamlGood03 = []byte(`
@@ -251,7 +251,7 @@ var CvModelGood02 = model.CV{
 					Github:   "janesmith",
 				},
 			},
-			Text: "Une collaboration exceptionnelle. Germain a su transformer notre infrastructure.",
+			Description: "Une collaboration exceptionnelle. Germain a su transformer notre infrastructure.",
 		},
 	},
 }
