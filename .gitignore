@@ -61,3 +61,9 @@ docs/github-pages/yarn-error.log*
 /event.json
 /events.json
 /act.log
+
+#Intellij
+.idea
+
+#Code Assist
+.claude
