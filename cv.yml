@@ -495,10 +495,10 @@ references:
     company: TechCorp
     date: Jan 2024
     linkedin: https://linkedin.com/in/janedoe
-    text: "Germain est un excellent ingénieur, très compétent sur les sujets DevOps et Kubernetes. Je recommande vivement !"
+    description: "Germain est un excellent ingénieur, très compétent sur les sujets DevOps et Kubernetes. Je recommande vivement !"
   - name: John Smith
     position: Lead Developer
     company: WebSolutions
     date: Dec 2023
     linkedin: https://linkedin.com/in/johnsmith
-    text: "Un plaisir de travailler avec Germain. Pédagogue et technique."
+    description: "Un plaisir de travailler avec Germain. Pédagogue et technique."
