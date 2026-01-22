@@ -103,7 +103,7 @@ references:
     position: CTO
     company: Tech Innovations
     date: Janvier 2024
-    linkedin: janesmith
+    url: https://linkedin.com/in/janesmith
     socialNetworks:
       - linkedin: janesmith
         github: janesmith
@@ -244,7 +244,7 @@ var CvModelGood02 = model.CV{
 			Position: "CTO",
 			Company:  "Tech Innovations",
 			Date:     "Janvier 2024",
-			Linkedin: "janesmith",
+			Url:      "https://linkedin.com/in/janesmith",
 			SocialNetworks: []model.SocialNetworks{
 				{
 					Linkedin: "janesmith",
