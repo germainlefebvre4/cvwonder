@@ -50,13 +50,25 @@ jobs:
           if [ -z "$docker_tag" ]; then
             docker_tag="${{ inputs.version }}"
           fi
-          # if format is vX.Y.Z, remove the 'v' prefix
+
+          # Normalize docker_tag
+          # Remove 'v' prefix if present
           if [[ $docker_tag == v* ]]; then
             docker_tag="${docker_tag:1}"
           fi
-          echo "docker_tag=$docker_tag" >> $GITHUB_OUTPUT
+          
+          # Normalize cvwonder_version
+          ## Remove 'v' prefix if present
+          cvwonder_version="${{ inputs.version }}"
+          if [[ $cvwonder_version == v* ]]; then
+            cvwonder_version="${cvwonder_version:1}"
+          fi
+
+          # Output results
+          echo "DOCKER_TAG=$docker_tag" >> $GITHUB_OUTPUT
           echo "VERSION_ONE_DIGIT=$(echo $docker_tag | cut -d '.' -f1)" >> $GITHUB_OUTPUT
           echo "VERSION_TWO_DIGIT=$(echo $docker_tag | cut -d '.' -f1-2)" >> $GITHUB_OUTPUT
+          echo "CVWONDER_VERSION=$cvwonder_version" >> $GITHUB_OUTPUT
 
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
@@ -106,13 +118,13 @@ jobs:
           push: true
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            CVWONDER_VERSION=${{ inputs.version }}
+            CVWONDER_VERSION=${{ steps.versions.outputs.CVWONDER_VERSION }}
           tags: |
-            ${{ env.DOCKERHUB_REPO }}:v${{ steps.versions.outputs.docker_tag }}
+            ${{ env.DOCKERHUB_REPO }}:v${{ steps.versions.outputs.DOCKER_TAG }}
             ${{ env.DOCKERHUB_REPO }}:v${{ steps.versions.outputs.VERSION_TWO_DIGIT }}
             ${{ env.DOCKERHUB_REPO }}:v${{ steps.versions.outputs.VERSION_ONE_DIGIT }}
             ${{ env.DOCKERHUB_REPO }}:latest
-            ${{ env.GHCR_REPO }}:v${{ steps.versions.outputs.docker_tag }}
+            ${{ env.GHCR_REPO }}:v${{ steps.versions.outputs.DOCKER_TAG }}
             ${{ env.GHCR_REPO }}:v${{ steps.versions.outputs.VERSION_TWO_DIGIT }}
             ${{ env.GHCR_REPO }}:v${{ steps.versions.outputs.VERSION_ONE_DIGIT }}
             ${{ env.GHCR_REPO }}:latest
@@ -125,7 +137,7 @@ jobs:
       
       - name: Validate image integrity
         run: |
-          docker run --rm ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.docker_tag }} cvwonder version
+          docker run --rm ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }} cvwonder version
 
       - name: Upload digest
         uses: actions/upload-artifact@v4

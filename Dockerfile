@@ -20,7 +20,7 @@ RUN apk add jq && \
 RUN OS=$(echo $TARGETPLATFORM | cut -d'/' -f1) && \
     ARCH=$(echo $TARGETPLATFORM | cut -d'/' -f2) && \
     ARM_VERSION=$(echo $TARGETPLATFORM | cut -d'/' -f3) && \
-    curl -L --output /app/cvwonder "https://github.com/germainlefebvre4/cvwonder/releases/download/v${CVWONDER_VERSION}/cvwonder_${OS}_${ARCH}" && \
+    curl -L --output /app/cvwonder "https://github.com/germainlefebvre4/cvwonder/releases/download/v${CVWONDER_VERSION}/cvwonder_${OS}_${ARCH}${ARM_VERSION}" && \
     chmod +x /app/cvwonder && \
     /app/cvwonder version
 
