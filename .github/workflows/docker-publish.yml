@@ -52,22 +52,23 @@ jobs:
           fi
 
           # Normalize docker_tag
-          # Remove 'v' prefix if present
-          if [[ $docker_tag == v* ]]; then
-            docker_tag="${docker_tag:1}"
+          # Add 'v' prefix if in format X.Y.Z
+          if [[ $docker_tag =~ ^[0-9]+(\.[0-9]+){2}$ ]]; then
+            docker_tag="v$docker_tag"
           fi
           
           # Normalize cvwonder_version
-          ## Remove 'v' prefix if present
+          ## Remove 'v' prefix if in format vX.Y.Z
           cvwonder_version="${{ inputs.version }}"
-          if [[ $cvwonder_version == v* ]]; then
+          if [[ $cvwonder_version =~ ^v[0-9]+(\.[0-9]+){2}$ ]]; then
             cvwonder_version="${cvwonder_version:1}"
           fi
 
           # Output results
           echo "DOCKER_TAG=$docker_tag" >> $GITHUB_OUTPUT
-          echo "VERSION_ONE_DIGIT=$(echo $docker_tag | cut -d '.' -f1)" >> $GITHUB_OUTPUT
-          echo "VERSION_TWO_DIGIT=$(echo $docker_tag | cut -d '.' -f1-2)" >> $GITHUB_OUTPUT
+          echo "DOCKER_TAG_THREE_DIGIT=$(echo $docker_tag | cut -d '.' -f1-3)" >> $GITHUB_OUTPUT
+          echo "DOCKER_TAG_TWO_DIGIT=$(echo $docker_tag | cut -d '.' -f1-2)" >> $GITHUB_OUTPUT
+          echo "DOCKER_TAG_ONE_DIGIT=$(echo $docker_tag | cut -d '.' -f1)" >> $GITHUB_OUTPUT
           echo "CVWONDER_VERSION=$cvwonder_version" >> $GITHUB_OUTPUT
 
       - name: Set up Docker
@@ -120,13 +121,15 @@ jobs:
           build-args: |
             CVWONDER_VERSION=${{ steps.versions.outputs.CVWONDER_VERSION }}
           tags: |
-            ${{ env.DOCKERHUB_REPO }}:v${{ steps.versions.outputs.DOCKER_TAG }}
-            ${{ env.DOCKERHUB_REPO }}:v${{ steps.versions.outputs.VERSION_TWO_DIGIT }}
-            ${{ env.DOCKERHUB_REPO }}:v${{ steps.versions.outputs.VERSION_ONE_DIGIT }}
+            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }}
+            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_THREE_DIGIT }}
+            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_TWO_DIGIT }}
+            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_ONE_DIGIT }}
             ${{ env.DOCKERHUB_REPO }}:latest
-            ${{ env.GHCR_REPO }}:v${{ steps.versions.outputs.DOCKER_TAG }}
-            ${{ env.GHCR_REPO }}:v${{ steps.versions.outputs.VERSION_TWO_DIGIT }}
-            ${{ env.GHCR_REPO }}:v${{ steps.versions.outputs.VERSION_ONE_DIGIT }}
+            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }}
+            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_THREE_DIGIT }}
+            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_TWO_DIGIT }}
+            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_ONE_DIGIT }}
             ${{ env.GHCR_REPO }}:latest
 
       - name: Export digest
