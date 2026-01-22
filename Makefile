@@ -43,7 +43,7 @@ mockery:
 DOCKER_REPO ?= germainlefebvre4/cvwonder
 DOCKER_TAG ?= latest
 CVWONDER_VERSION ?= 0.5.0
-PLATFORMS ?= linux/amd64#,linux/arm64
+PLATFORMS ?= linux/amd64,linux/arm/v7,linux/arm64/v8
 
 docker-build: ## Build multi-arch Docker image locally (no push)
 	docker buildx build \
