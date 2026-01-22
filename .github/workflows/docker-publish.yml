@@ -30,7 +30,7 @@ on:
 env:
   DOCKERHUB_REPO: germainlefebvre4/cvwonder
   GHCR_REPO: ghcr.io/germainlefebvre4/cvwonder
-  PLATFORMS: linux/amd64,linux/arm64
+  PLATFORMS: linux/amd64,linux/arm64,darwin
 
 jobs:
   build:

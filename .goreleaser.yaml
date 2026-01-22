@@ -14,13 +14,30 @@ builds:
   - main: ./cmd/{{ .ProjectName }}/main.go
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X 'cmd.cvwonder.main.Version={{.Version}}' -X 'cmd.cvwonder.main.Commit={{.Commit}}' -X 'cmd.cvwonder.main.Date={{.CommitDate}}'
     goos:
       - linux
       - windows
       - darwin
+    goarch:
+      - amd64
+      - arm
+      - arm64
+    goarm:
+      - 6
+      - 7
+    ignore:
+      - goos: darwin
+        goarch: 386
+      - goarm: mips64
+      - gomips: hardfloat
+      - goamd64: v4
+      - goos: windows
+        goarch: arm
 
 archives:
-  - format: binary
+  - formats: "binary"
     name_template: >-
       {{- .ProjectName }}_
       {{- .Os }}_
@@ -28,6 +45,9 @@ archives:
         i386
       {{- else -}}
         {{ .Arch }}
+      {{- end -}}
+      {{- if .Arm -}}
+        v{{ .Arm }}
       {{- end -}}
 
 changelog:
