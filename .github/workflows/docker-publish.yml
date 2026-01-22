@@ -99,20 +99,24 @@ jobs:
           mkdir -p ${{ runner.temp }}/digests
           digest="${{ steps.build.outputs.digest }}"
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
+      
+      - name: Validate image integrity
+        run: |
+          docker run -ti --rm ${{ env.DOCKERHUB_REPO }}:${{ inputs.version }} cvwonder --version
 
-      - name: Upload digest
-        uses: actions/upload-artifact@v4
-        with:
-          name: digests-${{ env.PLATFORM_PAIR }}
-          path: ${{ runner.temp }}/digests/*
-          if-no-files-found: error
-          retention-days: 1
+      # - name: Upload digest
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: digests-${{ env.PLATFORM_PAIR }}
+      #     path: ${{ runner.temp }}/digests/*
+      #     if-no-files-found: error
+      #     retention-days: 1
 
-      - name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@v4
-        with:
-          repository: ${{ env.DOCKERHUB_REPO }}
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          short-description: ${{ github.event.repository.description }}
-          readme-filepath: ./docs/dockerhub/README.md
+      # - name: Docker Hub Description
+      #   uses: peter-evans/dockerhub-description@v4
+      #   with:
+      #     repository: ${{ env.DOCKERHUB_REPO }}
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      #     short-description: ${{ github.event.repository.description }}
+      #     readme-filepath: ./docs/dockerhub/README.md
