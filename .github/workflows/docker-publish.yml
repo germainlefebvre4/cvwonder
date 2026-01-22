@@ -140,7 +140,7 @@ jobs:
       
       - name: Validate image integrity
         run: |
-          docker run --rm ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }} cvwonder version
+          docker run --rm ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }} version
 
       - name: Upload digest
         uses: actions/upload-artifact@v4
