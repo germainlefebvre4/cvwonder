@@ -35,6 +35,36 @@ cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
 # cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
 ```
 
+:::info Private Repositories
+To install themes from private GitHub repositories, you have two authentication options:
+
+**Option 1: Use GitHub CLI (Recommended)**
+
+If you have the GitHub CLI installed and authenticated, CVWonder will automatically use your `gh` credentials:
+
+```bash
+gh auth login
+cvwonder theme install https://github.com/your-org/your-private-theme
+```
+
+**Option 2: Use Environment Variables**
+
+Set the `GITHUB_TOKEN` or `GH_TOKEN` environment variable with a GitHub personal access token:
+
+```bash
+export GITHUB_TOKEN="your_github_token_here"
+cvwonder theme install https://github.com/your-org/your-private-theme
+```
+
+You can create a personal access token at https://github.com/settings/tokens
+
+CVWonder will check for authentication in this order:
+1. GitHub CLI (`gh`) credentials
+2. `GITHUB_TOKEN` environment variable
+3. `GH_TOKEN` environment variable
+4. Unauthenticated access (public repositories only)
+:::
+
 :::info Theme version
 The downloaded theme is the latest version from the `main` branch.
 :::

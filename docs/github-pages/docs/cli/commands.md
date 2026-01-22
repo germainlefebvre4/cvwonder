@@ -113,8 +113,53 @@ It can be used to list available themes, install new themes, and remove existing
 The command can be run as follows:
 
 ```bash
-cvwonder theme [OPTIONS]
+cvwonder theme [SUBCOMMAND] [OPTIONS]
 ```
+
+**Subcommands:**
+
+- `list`: List all installed themes
+- `install <url>`: Install a theme from a GitHub repository
+- `create`: Create a new theme (interactive)
+
+**Examples:**
+
+List installed themes:
+```bash
+cvwonder theme list
+```
+
+Install a public theme:
+```bash
+cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
+```
+
+Install a private theme (requires authentication):
+```bash
+# Option 1: Using GitHub CLI (automatic if authenticated)
+gh auth login
+cvwonder theme install https://github.com/your-org/your-private-theme
+
+# Option 2: Using environment variable
+export GITHUB_TOKEN="your_github_token"
+cvwonder theme install https://github.com/your-org/your-private-theme
+```
+
+Create a new theme:
+```bash
+cvwonder theme create
+```
+
+**Authentication:**
+
+CVWonder supports multiple authentication methods for accessing private GitHub repositories:
+
+1. **GitHub CLI** (recommended): Automatically uses your `gh` credentials if logged in
+2. **GITHUB_TOKEN**: Environment variable with a GitHub personal access token
+3. **GH_TOKEN**: Alternative environment variable for GitHub token
+4. **No authentication**: For public repositories only
+
+See the [Theme Installation](../themes/install-remote-theme.md) documentation for more details.
 
 ### Version
 

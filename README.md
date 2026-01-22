@@ -38,6 +38,22 @@ cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-defau
 cvwonder generate --input=cv.yml --output=generated/ --theme=default
 ```
 
+### Installing Private Themes
+
+CVWonder supports installing themes from private GitHub repositories using authentication:
+
+```bash
+# Option 1: Use GitHub CLI (automatically uses your gh credentials)
+gh auth login
+cvwonder themes install https://github.com/your-org/your-private-theme
+
+# Option 2: Use environment variable
+export GITHUB_TOKEN="your_github_token"
+cvwonder themes install https://github.com/your-org/your-private-theme
+```
+
+See the [Theme Installation Documentation](https://cvwonder.fr/docs/themes/install-remote-theme) for more details.
+
 ## Validate your CV
 
 CV Wonder includes comprehensive YAML schema validation to catch errors early:
