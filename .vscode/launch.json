@@ -9,11 +9,11 @@
             "cwd": "${workspaceFolder}",
             "program": "./cmd/cvwonder",
             "args": [
-                "generate",
+                // "generate",
                 // "serve",
-                "--input=cv.yml",
-                "--output=generated/",
-                "--theme=basic",
+                // "--input=cv.yml",
+                // "--output=generated/",
+                // "--theme=basic",
                 // "--format=pdf",
                 // "--watch",
                 // "--verbose",
@@ -23,9 +23,10 @@
                 // "themes",
                 // "list",
 
-                // "themes",
-                // "install",
+                "themes",
+                "install",
                 // "github.com/germainlefebvre4/cvwonder-theme-default",
+                "https://github.com/zatsit-oss/cvwonder-theme-zatsit",
 
                 // "themes",
                 // "create",

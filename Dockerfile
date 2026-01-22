@@ -24,6 +24,7 @@ RUN case "${TARGETPLATFORM}" in \
 
 # Determine architecture for cvwonder binary
 RUN case "${TARGETPLATFORM}" in \
+        "darwin") ARCH="darwin" ;; \
         "linux/amd64") ARCH="amd64" ;; \
         "linux/arm64") ARCH="arm64" ;; \
         "linux/arm/v7") ARCH="armv7" ;; \

@@ -5,17 +5,27 @@ on:
   workflow_call:
     inputs:
       version:
-        description: 'Version to publish (release tag)'
+        description: 'Binary version (release tag)'
         required: true
         type: string
         default: 'latest'
+      docker_tag:
+        description: 'Docker image version (tag)'
+        required: false
+        type: string
+        default: ''
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to publish (release tag)'
+        description: 'Binary version (release tag)'
         required: true
         type: string
         default: 'latest'
+      docker_tag:
+        description: 'Docker image version (tag)'
+        required: false
+        type: string
+        default: ''
 
 env:
   DOCKERHUB_REPO: germainlefebvre4/cvwonder
@@ -32,8 +42,14 @@ jobs:
         id: versions
         shell: bash
         run: |
-          echo "VERSION_ONE_DIGIT=$(echo ${{ inputs.version }} | cut -d '.' -f1)" >> $GITHUB_OUTPUT
-          echo "VERSION_TWO_DIGIT=$(echo ${{ inputs.version }} | cut -d '.' -f1-2)" >> $GITHUB_OUTPUT
+          # Use docker_tag if provided, otherwise fall back to version
+          docker_tag="${{ inputs.docker_tag }}"
+          if [ -z "$docker_tag" ]; then
+            docker_tag="${{ inputs.version }}"
+          fi
+          echo "docker_tag=$docker_tag" >> $GITHUB_OUTPUT
+          echo "VERSION_ONE_DIGIT=$(echo $docker_tag | cut -d '.' -f1)" >> $GITHUB_OUTPUT
+          echo "VERSION_TWO_DIGIT=$(echo $docker_tag | cut -d '.' -f1-2)" >> $GITHUB_OUTPUT
 
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
@@ -85,11 +101,11 @@ jobs:
           build-args: |
             CVWONDER_VERSION=${{ inputs.version }}
           tags: |
-            ${{ env.DOCKERHUB_REPO }}:${{ inputs.version }}
+            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.docker_tag }}
             ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.VERSION_TWO_DIGIT }}
             ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.VERSION_ONE_DIGIT }}
             ${{ env.DOCKERHUB_REPO }}:latest
-            ${{ env.GHCR_REPO }}:${{ inputs.version }}
+            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.docker_tag }}
             ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.VERSION_TWO_DIGIT }}
             ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.VERSION_ONE_DIGIT }}
             ${{ env.GHCR_REPO }}:latest
@@ -102,21 +118,21 @@ jobs:
       
       - name: Validate image integrity
         run: |
-          docker run -ti --rm ${{ env.DOCKERHUB_REPO }}:${{ inputs.version }} cvwonder --version
+          docker run --rm ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.docker_tag }} cvwonder version
 
-      # - name: Upload digest
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: digests-${{ env.PLATFORM_PAIR }}
-      #     path: ${{ runner.temp }}/digests/*
-      #     if-no-files-found: error
-      #     retention-days: 1
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
 
-      # - name: Docker Hub Description
-      #   uses: peter-evans/dockerhub-description@v4
-      #   with:
-      #     repository: ${{ env.DOCKERHUB_REPO }}
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
-      #     short-description: ${{ github.event.repository.description }}
-      #     readme-filepath: ./docs/dockerhub/README.md
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          repository: ${{ env.DOCKERHUB_REPO }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          short-description: ${{ github.event.repository.description }}
+          readme-filepath: ./docs/dockerhub/README.md
