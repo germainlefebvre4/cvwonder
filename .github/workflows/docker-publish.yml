@@ -4,36 +4,85 @@ name: Push to DockerHub & GHCR
 on:
   workflow_call:
     inputs:
+      ref:
+        description: 'Git ref to build from'
+        required: false
+        type: string
       version:
-        description: 'Version to publish (release tag)'
+        description: 'Binary version (release tag)'
         required: true
         type: string
         default: 'latest'
+      docker_tag:
+        description: 'Docker image version (tag)'
+        required: false
+        type: string
+        default: ''
+      publish:
+        description: 'Publish the Docker image'
+        required: false
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to publish (release tag)'
+        description: 'Binary version (release tag)'
         required: true
         type: string
         default: 'latest'
+      docker_tag:
+        description: 'Docker image version (tag)'
+        required: false
+        type: string
+        default: ''
+      publish:
+        description: 'Publish the Docker image'
+        required: false
+        type: boolean
+        default: true
 
 env:
   DOCKERHUB_REPO: germainlefebvre4/cvwonder
   GHCR_REPO: ghcr.io/germainlefebvre4/cvwonder
-  PLATFORMS: linux/amd64,linux/arm64
+  PLATFORMS: linux/amd64,linux/arm64/v8
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Set versions
         id: versions
         shell: bash
         run: |
-          echo "VERSION_ONE_DIGIT=$(echo ${{ inputs.version }} | cut -d '.' -f1)" >> $GITHUB_OUTPUT
-          echo "VERSION_TWO_DIGIT=$(echo ${{ inputs.version }} | cut -d '.' -f1-2)" >> $GITHUB_OUTPUT
+          # Use docker_tag if provided, otherwise fall back to version
+          docker_tag="${{ inputs.docker_tag }}"
+          if [ -z "$docker_tag" ]; then
+            docker_tag="${{ inputs.version }}"
+          fi
+
+          # Normalize docker_tag
+          # Add 'v' prefix if in format X.Y.Z
+          if [[ $docker_tag =~ ^[0-9]+(\.[0-9]+){2}$ ]]; then
+            docker_tag="v$docker_tag"
+          fi
+          
+          # Normalize cvwonder_version
+          ## Remove 'v' prefix if in format vX.Y.Z
+          cvwonder_version="${{ inputs.version }}"
+          if [[ $cvwonder_version =~ ^v[0-9]+(\.[0-9]+){2}$ ]]; then
+            cvwonder_version="${cvwonder_version:1}"
+          fi
+
+          # Output results
+          echo "DOCKER_TAG=$docker_tag" >> $GITHUB_OUTPUT
+          echo "DOCKER_TAG_THREE_DIGIT=$(echo $docker_tag | cut -d '.' -f1-3)" >> $GITHUB_OUTPUT
+          echo "DOCKER_TAG_TWO_DIGIT=$(echo $docker_tag | cut -d '.' -f1-2)" >> $GITHUB_OUTPUT
+          echo "DOCKER_TAG_ONE_DIGIT=$(echo $docker_tag | cut -d '.' -f1)" >> $GITHUB_OUTPUT
+          echo "CVWONDER_VERSION=$cvwonder_version" >> $GITHUB_OUTPUT
 
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
@@ -80,35 +129,45 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           platforms: ${{ env.PLATFORMS }}
-          push: true
+          load: true
+          push: ${{ inputs.publish }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            CVWONDER_VERSION=${{ inputs.version }}
+            CVWONDER_VERSION=${{ steps.versions.outputs.CVWONDER_VERSION }}
           tags: |
-            ${{ env.DOCKERHUB_REPO }}:${{ inputs.version }}
-            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.VERSION_TWO_DIGIT }}
-            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.VERSION_ONE_DIGIT }}
+            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }}
+            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_THREE_DIGIT }}
+            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_TWO_DIGIT }}
+            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_ONE_DIGIT }}
             ${{ env.DOCKERHUB_REPO }}:latest
-            ${{ env.GHCR_REPO }}:${{ inputs.version }}
-            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.VERSION_TWO_DIGIT }}
-            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.VERSION_ONE_DIGIT }}
+            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }}
+            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_THREE_DIGIT }}
+            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_TWO_DIGIT }}
+            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_ONE_DIGIT }}
             ${{ env.GHCR_REPO }}:latest
 
       - name: Export digest
+        if: ${{ inputs.publish }}
         run: |
           mkdir -p ${{ runner.temp }}/digests
           digest="${{ steps.build.outputs.digest }}"
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
+      
+      - name: Validate image integrity
+        run: |
+          docker run --rm ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }} version
 
       - name: Upload digest
+        if: ${{ inputs.publish }}
         uses: actions/upload-artifact@v4
         with:
-          name: digests-${{ env.PLATFORM_PAIR }}
+          name: digests
           path: ${{ runner.temp }}/digests/*
           if-no-files-found: error
           retention-days: 1
 
       - name: Docker Hub Description
+        if: ${{ inputs.publish }}
         uses: peter-evans/dockerhub-description@v4
         with:
           repository: ${{ env.DOCKERHUB_REPO }}
