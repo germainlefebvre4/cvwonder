@@ -144,8 +144,22 @@ See the [Theme Functions Documentation](https://cvwonder.fr/docs/themes/theme-fu
 
 CV Wonder is also available as a Docker image on [Docker Hub](https://hub.docker.com/r/germainlefebvre4/cvwonder).
 
+To generate the CV.
+
 ```bash
 docker run -v $(pwd):/cv germainlefebvre4/cvwonder:latest generate --input=cv.yml --output=generated/ --theme=default
+```
+
+To serve the CV and watch for changes.
+
+```bash
+docker run -v $(pwd):/cv germainlefebvre4/cvwonder:latest serve --input=cv.yml --output=generated/ --theme=default --watch
+```
+
+To validate the CV.
+
+```bash
+docker run -v $(pwd):/cv germainlefebvre4/cvwonder:latest validate
 ```
 
 ## Development
