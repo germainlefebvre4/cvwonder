@@ -17,7 +17,7 @@ test.pdf
 /generated-test-*/
 
 # Themes
-/themes/
+/themes/*
 
 # Generated directory
 /generated/
@@ -61,3 +61,9 @@ docs/github-pages/yarn-error.log*
 /event.json
 /events.json
 /act.log
+
+#Intellij
+.idea
+
+#Code Assist
+.claude
