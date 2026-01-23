@@ -38,6 +38,32 @@ cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-defau
 cvwonder generate --input=cv.yml --output=generated/ --theme=default
 ```
 
+### Installing Private Themes
+
+CVWonder supports installing themes from private GitHub repositories with automatic authentication detection:
+
+```bash
+# Option 1: GitHub CLI (recommended - automatic credential detection)
+gh auth login
+cvwonder themes install https://github.com/your-org/your-private-theme
+
+# Option 2: Environment variable
+export GITHUB_TOKEN="ghp_your_personal_access_token"
+cvwonder themes install https://github.com/your-org/your-private-theme
+
+# Option 3: Alternative environment variable
+export GH_TOKEN="ghp_your_personal_access_token"
+cvwonder themes install https://github.com/your-org/your-private-theme
+```
+
+**Authentication Priority:**
+1. GitHub CLI (`gh`) credentials
+2. `GITHUB_TOKEN` environment variable
+3. `GH_TOKEN` environment variable
+4. Unauthenticated (public repositories only)
+
+See the [Theme Installation Documentation](https://cvwonder.fr/docs/themes/install-remote-theme) for more details.
+
 ## Validate your CV
 
 CV Wonder includes comprehensive YAML schema validation to catch errors early:
@@ -118,8 +144,22 @@ See the [Theme Functions Documentation](https://cvwonder.fr/docs/themes/theme-fu
 
 CV Wonder is also available as a Docker image on [Docker Hub](https://hub.docker.com/r/germainlefebvre4/cvwonder).
 
+To generate the CV.
+
 ```bash
 docker run -v $(pwd):/cv germainlefebvre4/cvwonder:latest generate --input=cv.yml --output=generated/ --theme=default
+```
+
+To serve the CV and watch for changes.
+
+```bash
+docker run -v $(pwd):/cv germainlefebvre4/cvwonder:latest serve --input=cv.yml --output=generated/ --theme=default --watch
+```
+
+To validate the CV.
+
+```bash
+docker run -v $(pwd):/cv germainlefebvre4/cvwonder:latest validate
 ```
 
 ## Development

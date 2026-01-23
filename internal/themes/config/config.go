@@ -2,11 +2,10 @@ package theme_config
 
 import (
 	"context"
-	"io"
 	"os"
 
+	"github.com/germainlefebvre4/cvwonder/internal/utils"
 	"github.com/goccy/go-yaml"
-	"github.com/google/go-github/github"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,21 +19,21 @@ type ThemeConfig struct {
 
 func GetThemeConfigFromURL(githubRepo GithubRepo) ThemeConfig {
 	// Download theme.yaml
-	client := github.NewClient(nil)
-	file, err := client.Repositories.DownloadContents(context.TODO(), githubRepo.Owner, githubRepo.Name, "theme.yaml", nil)
+	client := utils.GetGitHubClient()
+	fileContent, _, _, err := client.Repositories.GetContents(context.TODO(), githubRepo.Owner, githubRepo.Name, "theme.yaml", nil)
 	if err != nil {
 		logrus.Fatal("Error downloading theme.yaml: ", err)
 	}
 
 	// Read theme.yaml
-	config, err := io.ReadAll(file)
+	config, err := fileContent.GetContent()
 	if err != nil {
 		logrus.Fatal("Error reading theme.yaml: ", err)
 	}
 
 	// Parse theme.yaml
 	themeConfig := ThemeConfig{}
-	err = yaml.Unmarshal(config, &themeConfig)
+	err = yaml.Unmarshal([]byte(config), &themeConfig)
 	if err != nil {
 		logrus.Fatal("Error parsing theme.yaml: ", err)
 	}

@@ -35,6 +35,89 @@ cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
 # cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
 ```
 
+:::info Private Repositories
+CVWonder supports installing themes from private GitHub repositories with automatic authentication detection.
+
+### Authentication Methods
+
+CVWonder checks for authentication in the following priority order:
+
+1. **GitHub CLI (`gh`)** - Recommended
+2. **`GITHUB_TOKEN` environment variable**
+3. **`GH_TOKEN` environment variable**
+4. **Unauthenticated** (public repositories only)
+
+### Option 1: GitHub CLI (Recommended)
+
+The GitHub CLI provides the most seamless authentication experience. CVWonder automatically uses your existing `gh` credentials:
+
+```bash
+# First, authenticate with GitHub CLI
+gh auth login
+
+# Then install your private theme
+cvwonder theme install https://github.com/your-org/your-private-theme
+```
+
+**Benefits:**
+- Automatic credential management
+- Secure token storage
+- Works with both HTTPS and SSH
+- No manual token creation needed
+
+### Option 2: Environment Variables
+
+For CI/CD environments or when GitHub CLI is not available, use environment variables:
+
+```bash
+# Using GITHUB_TOKEN
+export GITHUB_TOKEN="ghp_your_personal_access_token"
+cvwonder theme install https://github.com/your-org/your-private-theme
+
+# Or using GH_TOKEN
+export GH_TOKEN="ghp_your_personal_access_token"
+cvwonder theme install https://github.com/your-org/your-private-theme
+```
+
+**Creating a Personal Access Token:**
+1. Visit [GitHub Settings > Personal Access Tokens](https://github.com/settings/tokens)
+2. Click "Generate new token (classic)"
+3. Select the `repo` scope for private repository access
+4. Copy the generated token and use it in your environment
+
+**For CI/CD pipelines:**
+```bash
+# GitHub Actions example
+- name: Install private theme
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: cvwonder theme install https://github.com/your-org/your-private-theme
+```
+
+### Troubleshooting
+
+If you encounter authentication issues:
+
+1. **Verify authentication is detected:**
+   ```bash
+   cvwonder theme install https://github.com/your-org/your-private-theme --debug
+   ```
+   Look for messages indicating which authentication method is being used.
+
+2. **Check GitHub CLI authentication:**
+   ```bash
+   gh auth status
+   ```
+
+3. **Verify token permissions:**
+   Ensure your token has the `repo` scope for private repository access.
+
+4. **Test with a public repository first:**
+   ```bash
+   cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
+   ```
+:::
+
 :::info Theme version
 The downloaded theme is the latest version from the `main` branch.
 :::

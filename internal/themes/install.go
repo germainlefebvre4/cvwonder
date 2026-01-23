@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
+	"github.com/germainlefebvre4/cvwonder/internal/utils"
 	"github.com/germainlefebvre4/cvwonder/internal/version"
 
 	"github.com/go-git/go-git/v5"
@@ -73,13 +74,21 @@ func downloadTheme(githubRepo theme_config.GithubRepo) {
 		logrus.Error("Theme '" + themeConfig.Name + "' already exists in " + themeDirectory + "/")
 		return
 	}
-	_, err := git.PlainClone(themeDirectory, false, &git.CloneOptions{
-		URL: githubRepo.URL.String(),
-		// Progress: os.Stdout,
+
+	cloneOptions := &git.CloneOptions{
+		URL:   githubRepo.URL.String(),
 		Depth: 1,
-	})
+	}
+
+	// Add authentication if available
+	if auth := utils.GetGitAuth(); auth != nil {
+		cloneOptions.Auth = auth
+	}
+
+	_, err := git.PlainClone(themeDirectory, false, cloneOptions)
 	if err != nil {
-		logrus.Error("Error cloning theme")
+		logrus.Errorf("Error cloning theme: %v", err)
+		return
 	}
 
 	logrus.Info("Theme '" + themeConfig.Name + "' successfully installed in " + themeDirectory + "/")

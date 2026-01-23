@@ -113,8 +113,81 @@ It can be used to list available themes, install new themes, and remove existing
 The command can be run as follows:
 
 ```bash
-cvwonder theme [OPTIONS]
+cvwonder theme [SUBCOMMAND] [OPTIONS]
 ```
+
+**Subcommands:**
+
+- `list`: List all installed themes
+- `install <url>`: Install a theme from a GitHub repository
+- `create`: Create a new theme (interactive)
+
+**Examples:**
+
+List installed themes:
+```bash
+cvwonder theme list
+```
+
+Install a public theme:
+```bash
+cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
+```
+
+Install a private theme:
+```bash
+# Option 1: Using GitHub CLI (recommended - automatic if authenticated)
+gh auth login
+cvwonder theme install https://github.com/your-org/your-private-theme
+
+# Option 2: Using GITHUB_TOKEN environment variable
+export GITHUB_TOKEN="ghp_your_personal_access_token"
+cvwonder theme install https://github.com/your-org/your-private-theme
+
+# Option 3: Using GH_TOKEN environment variable
+export GH_TOKEN="ghp_your_personal_access_token"
+cvwonder theme install https://github.com/your-org/your-private-theme
+```
+
+Verify authentication in debug mode:
+```bash
+cvwonder theme install https://github.com/your-org/your-private-theme --debug
+```
+
+Create a new theme:
+```bash
+cvwonder theme create
+```
+
+**Authentication:**
+
+When installing themes from private GitHub repositories, CVWonder supports multiple authentication methods with automatic detection:
+
+**Priority Order:**
+1. **GitHub CLI (`gh`)** - Automatically uses your authenticated session
+2. **`GITHUB_TOKEN`** - Environment variable with personal access token
+3. **`GH_TOKEN`** - Alternative environment variable for GitHub token
+4. **Unauthenticated** - For public repositories only
+
+**Quick Setup:**
+
+```bash
+# GitHub CLI (recommended)
+gh auth login
+
+# Or use environment variable
+export GITHUB_TOKEN="ghp_your_personal_access_token"
+```
+
+**Debugging Authentication:**
+
+Enable debug mode to see which authentication method is being used:
+
+```bash
+cvwonder theme install <url> --debug
+```
+
+See the [Theme Installation](../themes/install-remote-theme.md) documentation for detailed authentication setup and troubleshooting.
 
 ### Version
 
