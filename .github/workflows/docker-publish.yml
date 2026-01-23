@@ -129,6 +129,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           platforms: ${{ env.PLATFORMS }}
+          load: true
           push: ${{ inputs.publish }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
