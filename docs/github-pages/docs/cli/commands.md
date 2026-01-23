@@ -134,15 +134,24 @@ Install a public theme:
 cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
 ```
 
-Install a private theme (requires authentication):
+Install a private theme:
 ```bash
-# Option 1: Using GitHub CLI (automatic if authenticated)
+# Option 1: Using GitHub CLI (recommended - automatic if authenticated)
 gh auth login
 cvwonder theme install https://github.com/your-org/your-private-theme
 
-# Option 2: Using environment variable
-export GITHUB_TOKEN="your_github_token"
+# Option 2: Using GITHUB_TOKEN environment variable
+export GITHUB_TOKEN="ghp_your_personal_access_token"
 cvwonder theme install https://github.com/your-org/your-private-theme
+
+# Option 3: Using GH_TOKEN environment variable
+export GH_TOKEN="ghp_your_personal_access_token"
+cvwonder theme install https://github.com/your-org/your-private-theme
+```
+
+Verify authentication in debug mode:
+```bash
+cvwonder theme install https://github.com/your-org/your-private-theme --debug
 ```
 
 Create a new theme:
@@ -152,14 +161,33 @@ cvwonder theme create
 
 **Authentication:**
 
-CVWonder supports multiple authentication methods for accessing private GitHub repositories:
+When installing themes from private GitHub repositories, CVWonder supports multiple authentication methods with automatic detection:
 
-1. **GitHub CLI** (recommended): Automatically uses your `gh` credentials if logged in
-2. **GITHUB_TOKEN**: Environment variable with a GitHub personal access token
-3. **GH_TOKEN**: Alternative environment variable for GitHub token
-4. **No authentication**: For public repositories only
+**Priority Order:**
+1. **GitHub CLI (`gh`)** - Automatically uses your authenticated session
+2. **`GITHUB_TOKEN`** - Environment variable with personal access token
+3. **`GH_TOKEN`** - Alternative environment variable for GitHub token
+4. **Unauthenticated** - For public repositories only
 
-See the [Theme Installation](../themes/install-remote-theme.md) documentation for more details.
+**Quick Setup:**
+
+```bash
+# GitHub CLI (recommended)
+gh auth login
+
+# Or use environment variable
+export GITHUB_TOKEN="ghp_your_personal_access_token"
+```
+
+**Debugging Authentication:**
+
+Enable debug mode to see which authentication method is being used:
+
+```bash
+cvwonder theme install <url> --debug
+```
+
+See the [Theme Installation](../themes/install-remote-theme.md) documentation for detailed authentication setup and troubleshooting.
 
 ### Version
 

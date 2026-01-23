@@ -40,17 +40,27 @@ cvwonder generate --input=cv.yml --output=generated/ --theme=default
 
 ### Installing Private Themes
 
-CVWonder supports installing themes from private GitHub repositories using authentication:
+CVWonder supports installing themes from private GitHub repositories with automatic authentication detection:
 
 ```bash
-# Option 1: Use GitHub CLI (automatically uses your gh credentials)
+# Option 1: GitHub CLI (recommended - automatic credential detection)
 gh auth login
 cvwonder themes install https://github.com/your-org/your-private-theme
 
-# Option 2: Use environment variable
-export GITHUB_TOKEN="your_github_token"
+# Option 2: Environment variable
+export GITHUB_TOKEN="ghp_your_personal_access_token"
+cvwonder themes install https://github.com/your-org/your-private-theme
+
+# Option 3: Alternative environment variable
+export GH_TOKEN="ghp_your_personal_access_token"
 cvwonder themes install https://github.com/your-org/your-private-theme
 ```
+
+**Authentication Priority:**
+1. GitHub CLI (`gh`) credentials
+2. `GITHUB_TOKEN` environment variable
+3. `GH_TOKEN` environment variable
+4. Unauthenticated (public repositories only)
 
 See the [Theme Installation Documentation](https://cvwonder.fr/docs/themes/install-remote-theme) for more details.
 

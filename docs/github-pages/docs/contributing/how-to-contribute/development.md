@@ -34,17 +34,66 @@ This creates the `cvwonder` executable in the project root.
 
 ### Working with Private Theme Repositories
 
-If you're developing themes in private repositories, authenticate with GitHub:
+If you're developing or testing themes in private repositories, CVWonder supports multiple authentication methods:
+
+**Option 1: GitHub CLI (Recommended)**
 
 ```bash
-# Option 1: Use GitHub CLI (recommended)
+# Authenticate once
 gh auth login
 
-# Option 2: Use environment variable
-export GITHUB_TOKEN="your_personal_access_token"
+# CVWonder automatically detects and uses your gh credentials
+./cvwonder theme install https://github.com/your-org/your-private-theme
 ```
 
-CVWonder will automatically use these credentials when installing themes from private repositories.
+**Option 2: Environment Variables**
+
+```bash
+# Set the token in your environment
+export GITHUB_TOKEN="ghp_your_personal_access_token"
+
+# Or use GH_TOKEN
+export GH_TOKEN="ghp_your_personal_access_token"
+
+# Install themes
+./cvwonder theme install https://github.com/your-org/your-private-theme
+```
+
+**Authentication Priority:**
+
+CVWonder checks for credentials in this order:
+1. GitHub CLI (`gh`) - automatic if logged in
+2. `GITHUB_TOKEN` environment variable
+3. `GH_TOKEN` environment variable
+4. Unauthenticated (public repositories only)
+
+**Debugging Authentication:**
+
+Use debug mode to verify which authentication method is being used:
+
+```bash
+./cvwonder theme install <url> --debug
+```
+
+**Testing Authentication Flow:**
+
+When developing authentication features, test all methods:
+
+```bash
+# Test GitHub CLI
+gh auth login
+./cvwonder theme install <private-repo> --debug
+
+# Test environment variable
+gh auth logout
+export GITHUB_TOKEN="token_here"
+./cvwonder theme install <private-repo> --debug
+
+# Test unauthenticated (should fail for private repos)
+unset GITHUB_TOKEN
+unset GH_TOKEN
+./cvwonder theme install <private-repo> --debug
+```
 
 ### Live Development
 
