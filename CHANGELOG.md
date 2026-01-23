@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/germainlefebvre4/cvwonder/compare/v0.5.0...v0.5.1) (2026-01-23)
+
+
+### Bug Fixes
+
+* **auth:** Configure git authentication for private repositories ([#95](https://github.com/germainlefebvre4/cvwonder/issues/95)) ([02900d1](https://github.com/germainlefebvre4/cvwonder/commit/02900d19a03b0f80d20e4bebb87166adf0ac2dc4))
+
 ## [0.5.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.4.0...v0.5.0) (2025-10-10)
 
 
