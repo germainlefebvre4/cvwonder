@@ -12,7 +12,7 @@ RUN apk update && \
         curl
 
 # Install dependencies: >=jq-1.8.1
-RUN apk add jq && \
+RUN apk add --no-cache jq && \
     echo "jq version: " && \
     jq --version
 

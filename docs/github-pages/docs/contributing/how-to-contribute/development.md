@@ -117,4 +117,3 @@ pnpm build
 ## Architecture
 
 For information about the codebase structure and architecture, see the [Architecture](../architecture.md) documentation.
-
