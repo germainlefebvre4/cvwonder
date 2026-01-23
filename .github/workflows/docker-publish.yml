@@ -4,6 +4,10 @@ name: Push to DockerHub & GHCR
 on:
   workflow_call:
     inputs:
+      ref:
+        description: 'Git ref to build from'
+        required: false
+        type: string
       version:
         description: 'Binary version (release tag)'
         required: true
@@ -48,7 +52,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Set versions
         id: versions

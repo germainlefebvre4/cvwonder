@@ -60,6 +60,8 @@ jobs:
   docker-publish:
     uses: ./.github/workflows/docker-publish.yml
     with:
+      ref: ${{ github.ref_name }}
       version: ${{ github.ref_name }}
       docker_tag: ${{ github.ref_name }}
+      publish: true
     secrets: inherit
