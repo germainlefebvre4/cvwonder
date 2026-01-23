@@ -14,6 +14,11 @@ on:
         required: false
         type: string
         default: ''
+      publish:
+        description: 'Publish the Docker image'
+        required: false
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       version:
@@ -26,11 +31,15 @@ on:
         required: false
         type: string
         default: ''
+      publish:
+        description: 'Publish the Docker image'
+        required: false
+        type: boolean
+        default: true
 
 env:
   DOCKERHUB_REPO: germainlefebvre4/cvwonder
   GHCR_REPO: ghcr.io/germainlefebvre4/cvwonder
-  # PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64/v8
   PLATFORMS: linux/amd64,linux/arm64/v8
 
 jobs:
@@ -116,7 +125,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           platforms: ${{ env.PLATFORMS }}
-          push: true
+          push: ${{ inputs.publish }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             CVWONDER_VERSION=${{ steps.versions.outputs.CVWONDER_VERSION }}
@@ -133,6 +142,7 @@ jobs:
             ${{ env.GHCR_REPO }}:latest
 
       - name: Export digest
+        if: ${{ inputs.publish }}
         run: |
           mkdir -p ${{ runner.temp }}/digests
           digest="${{ steps.build.outputs.digest }}"
@@ -143,6 +153,7 @@ jobs:
           docker run --rm ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }} version
 
       - name: Upload digest
+        if: ${{ inputs.publish }}
         uses: actions/upload-artifact@v4
         with:
           name: digests
@@ -151,6 +162,7 @@ jobs:
           retention-days: 1
 
       - name: Docker Hub Description
+        if: ${{ inputs.publish }}
         uses: peter-evans/dockerhub-description@v4
         with:
           repository: ${{ env.DOCKERHUB_REPO }}
