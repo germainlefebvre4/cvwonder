@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	cmdConvert "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/convert"
 	cmdGenerate "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/generate"
 	cmdServe "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/serve"
 	cmdThemes "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/themes"
@@ -36,6 +37,7 @@ func main() {
 	rootCmd.PersistentFlags().StringVarP(&utils.CliArgs.Format, "format", "f", "html", "Format for the export.")
 	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Debug, "debug", "d", false, "Debug mode: more verbose.")
 
+	rootCmd.AddCommand(cmdConvert.ConvertCmd())
 	rootCmd.AddCommand(cmdGenerate.GenerateCmd())
 	rootCmd.AddCommand(cmdServe.ServeCmd())
 	rootCmd.AddCommand(cmdThemes.ThemesCmd())
