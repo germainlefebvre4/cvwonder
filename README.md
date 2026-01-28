@@ -10,6 +10,30 @@ Don't waste any more time formatting your CV, let CV Wonder do it for you and ju
     <img src="./docs/github-pages/static/img/logo.svg" alt="cvwonder" width="400px" style="display: block; margin: 0 auto;" />
 </p>
 
+## Table of Contents
+
+- [CV Wonder](#cv-wonder)
+  - [Table of Contents](#table-of-contents)
+  - [Getting started](#getting-started)
+    - [Installing Private Themes](#installing-private-themes)
+  - [Validate your CV](#validate-your-cv)
+  - [Generate your CV](#generate-your-cv)
+  - [Serve your CV](#serve-your-cv)
+    - [Watch for changes](#watch-for-changes)
+  - [Themes](#themes)
+    - [Default](#default)
+  - [Theme Functions](#theme-functions)
+  - [Docker](#docker)
+  - [Development](#development)
+    - [Run](#run)
+    - [Build](#build)
+    - [Test](#test)
+    - [VSCode](#vscode)
+  - [Contributing](#contributing)
+  - [Contributors](#contributors)
+  - [Sponsors](#sponsors)
+  - [They use CV Wonder!](#they-use-cv-wonder)
+
 ## Getting started
 
 1) Download the latest release from the [releases page](https://github.com/germainlefebvre4/cvwonder/releases) OR in your terminal.
@@ -190,3 +214,35 @@ go test -v ./...
 ### VSCode
 
 A `.vscode/launch.json` file is provided to help you debug the application.
+
+## Contributing
+
+Contributions are welcome! Please read the [contributing guidelines](https://cvwonder.fr/docs/contributing/) before submitting a pull request.
+
+## Contributors
+
+<a href="https://github.com/germainlefebvre4/cvwonder/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=germainlefebvre4/cvwonder" />
+</a>
+
+## Sponsors
+
+They help CV Wonder to grow.
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center; margin: 20px 0;">
+  <a href="https://www.zatsit.fr" target="_blank" rel="noopener" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+    <img src="https://zatsit-oss.github.io/signatures/logos/blue/zatsit-blue.png" alt="zatsit" width="100px" />
+  </a>
+</div>
+
+## They use CV Wonder!
+
+Companies and organizations that use CV Wonder.
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center; margin: 20px 0;">
+  <a href="https://www.zatsit.fr" target="_blank" rel="noopener" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+    <img src="https://zatsit-oss.github.io/signatures/logos/blue/zatsit-blue.png" alt="zatsit" width="100px" />
+  </a>
+</div>
+
+What about you? Contact me to add your company here!
