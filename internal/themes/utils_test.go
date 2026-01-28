@@ -58,6 +58,7 @@ func TestParseGitHubURL(t *testing.T) {
 
 		assert.Equal(t, "germainlefebvre4", result.Owner)
 		assert.Equal(t, "cvwonder-theme-default", result.Name)
+		assert.Equal(t, "", result.Ref) // empty means use default branch
 		assert.Equal(t, "https://github.com/germainlefebvre4/cvwonder-theme-default", result.URL.String())
 	})
 
@@ -68,6 +69,51 @@ func TestParseGitHubURL(t *testing.T) {
 
 		assert.Equal(t, "user", result.Owner)
 		assert.Equal(t, "repository", result.Name)
+		assert.Equal(t, "", result.Ref) // empty means use default branch
+		assert.Contains(t, result.URL.String(), "github.com")
+	})
+
+	t.Run("Should parse GitHub URL with ref", func(t *testing.T) {
+		input := "github.com/germainlefebvre4/cvwonder-theme-default@develop"
+
+		result := parseGitHubURL(input)
+
+		assert.Equal(t, "germainlefebvre4", result.Owner)
+		assert.Equal(t, "cvwonder-theme-default", result.Name)
+		assert.Equal(t, "develop", result.Ref)
+		assert.Contains(t, result.URL.String(), "github.com")
+	})
+
+	t.Run("Should parse GitHub URL with https and ref", func(t *testing.T) {
+		input := "https://github.com/germainlefebvre4/cvwonder-theme-default@feature/test"
+
+		result := parseGitHubURL(input)
+
+		assert.Equal(t, "germainlefebvre4", result.Owner)
+		assert.Equal(t, "cvwonder-theme-default", result.Name)
+		assert.Equal(t, "feature/test", result.Ref)
+		assert.Equal(t, "https://github.com/germainlefebvre4/cvwonder-theme-default", result.URL.String())
+	})
+
+	t.Run("Should parse GitHub URL with tag ref", func(t *testing.T) {
+		input := "github.com/germainlefebvre4/cvwonder-theme-default@v1.0.0"
+
+		result := parseGitHubURL(input)
+
+		assert.Equal(t, "germainlefebvre4", result.Owner)
+		assert.Equal(t, "cvwonder-theme-default", result.Name)
+		assert.Equal(t, "v1.0.0", result.Ref)
+		assert.Contains(t, result.URL.String(), "github.com")
+	})
+
+	t.Run("Should parse GitHub URL with semantic version tag", func(t *testing.T) {
+		input := "https://github.com/user/repo@1.2.3"
+
+		result := parseGitHubURL(input)
+
+		assert.Equal(t, "user", result.Owner)
+		assert.Equal(t, "repo", result.Name)
+		assert.Equal(t, "1.2.3", result.Ref)
 		assert.Contains(t, result.URL.String(), "github.com")
 	})
 }
@@ -219,5 +265,359 @@ func TestCheckThemeExists(t *testing.T) {
 		// Assert
 		assert.Error(t, err)
 		assert.True(t, os.IsNotExist(err))
+	})
+
+	t.Run("Should return nil if theme exists with @ref format", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create theme directory with @ref suffix
+		themeDir := filepath.Join(tempDir, "themes", "test-theme@develop")
+		err = os.MkdirAll(themeDir, 0750)
+		require.NoError(t, err)
+
+		// Test
+		err = CheckThemeExists("test-theme@develop")
+
+		// Assert
+		assert.NoError(t, err)
+	})
+
+	t.Run("Should return error if theme with specific ref does not exist", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create theme directory with main ref
+		themeDir := filepath.Join(tempDir, "themes", "test-theme@main")
+		err = os.MkdirAll(themeDir, 0750)
+		require.NoError(t, err)
+
+		// Test - try to find theme with different ref
+		err = CheckThemeExists("test-theme@develop")
+
+		// Assert
+		assert.Error(t, err)
+		assert.True(t, os.IsNotExist(err))
+	})
+
+	t.Run("Should find theme with @ref fallback when theme without ref does not exist", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create theme directory with @main ref only
+		themeDir := filepath.Join(tempDir, "themes", "test-theme@main")
+		err = os.MkdirAll(themeDir, 0750)
+		require.NoError(t, err)
+
+		// Test - look for theme without ref
+		err = CheckThemeExists("test-theme")
+
+		// Assert - should find test-theme@main as fallback
+		assert.NoError(t, err)
+	})
+}
+
+func TestFindThemeWithRef(t *testing.T) {
+	t.Run("Should return empty string when no theme variants exist", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create themes directory but no themes
+		err = os.MkdirAll(filepath.Join(tempDir, "themes"), 0750)
+		require.NoError(t, err)
+
+		// Test
+		result := FindThemeWithRef("nonexistent")
+
+		// Assert
+		assert.Equal(t, "", result)
+	})
+
+	t.Run("Should prioritize 'main' branch", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create multiple theme variants
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@v1.0.0"), 0750)
+		require.NoError(t, err)
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@main"), 0750)
+		require.NoError(t, err)
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@develop"), 0750)
+		require.NoError(t, err)
+
+		// Test
+		result := FindThemeWithRef("mytheme")
+
+		// Assert - should prefer 'main' over others
+		assert.Equal(t, "mytheme@main", result)
+	})
+
+	t.Run("Should prioritize 'master' when 'main' doesn't exist", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create theme variants without 'main'
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@v1.0.0"), 0750)
+		require.NoError(t, err)
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@master"), 0750)
+		require.NoError(t, err)
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@develop"), 0750)
+		require.NoError(t, err)
+
+		// Test
+		result := FindThemeWithRef("mytheme")
+
+		// Assert - should prefer 'master'
+		assert.Equal(t, "mytheme@master", result)
+	})
+
+	t.Run("Should prioritize 'develop' when 'main' and 'master' don't exist", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create theme variants without 'main' or 'master'
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@v1.0.0"), 0750)
+		require.NoError(t, err)
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@develop"), 0750)
+		require.NoError(t, err)
+
+		// Test
+		result := FindThemeWithRef("mytheme")
+
+		// Assert - should prefer 'develop'
+		assert.Equal(t, "mytheme@develop", result)
+	})
+
+	t.Run("Should return first match when no priority branch exists", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create theme variant with custom ref only
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@custom"), 0750)
+		require.NoError(t, err)
+
+		// Test
+		result := FindThemeWithRef("mytheme")
+
+		// Assert - should return the only available variant
+		assert.Equal(t, "mytheme@custom", result)
+	})
+}
+
+func TestResolveThemePath(t *testing.T) {
+	t.Run("Should return path as-is when theme exists", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create theme directory
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme"), 0750)
+		require.NoError(t, err)
+
+		// Test
+		result := ResolveThemePath("mytheme")
+
+		// Assert
+		assert.Equal(t, "themes/mytheme", result)
+	})
+
+	t.Run("Should return path with @ref when theme without ref does not exist", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create theme with @main only
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@main"), 0750)
+		require.NoError(t, err)
+
+		// Test
+		result := ResolveThemePath("mytheme")
+
+		// Assert
+		assert.Equal(t, filepath.Join("themes", "mytheme@main"), result)
+	})
+
+	t.Run("Should return path as-is for theme with explicit ref", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create theme directory with ref
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@develop"), 0750)
+		require.NoError(t, err)
+
+		// Test
+		result := ResolveThemePath("mytheme@develop")
+
+		// Assert
+		assert.Equal(t, "themes/mytheme@develop", result)
+	})
+}
+
+func TestResolveThemeNameForDisplay(t *testing.T) {
+	t.Run("Should return name as-is for theme with explicit ref", func(t *testing.T) {
+		// Test
+		result := ResolveThemeNameForDisplay("mytheme@develop")
+
+		// Assert
+		assert.Equal(t, "mytheme@develop", result)
+	})
+
+	t.Run("Should return name with resolved ref when symlink exists", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create theme directory with ref
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@main"), 0750)
+		require.NoError(t, err)
+
+		// Create symlink
+		err = os.Symlink("mytheme@main", filepath.Join(tempDir, "themes", "mytheme"))
+		require.NoError(t, err)
+
+		// Test
+		result := ResolveThemeNameForDisplay("mytheme")
+
+		// Assert
+		assert.Equal(t, "mytheme (mytheme@main)", result)
+	})
+
+	t.Run("Should return name with resolved ref when fallback is used", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create theme with @main only (no symlink)
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme@main"), 0750)
+		require.NoError(t, err)
+
+		// Test
+		result := ResolveThemeNameForDisplay("mytheme")
+
+		// Assert
+		assert.Equal(t, "mytheme (mytheme@main)", result)
+	})
+
+	t.Run("Should return name as-is when theme exists as directory", func(t *testing.T) {
+		// Setup
+		tempDir := t.TempDir()
+		originalDir, err := os.Getwd()
+		require.NoError(t, err)
+		defer func() {
+			err := os.Chdir(originalDir)
+			require.NoError(t, err)
+		}()
+		err = os.Chdir(tempDir)
+		require.NoError(t, err)
+
+		// Create theme directory without ref
+		err = os.MkdirAll(filepath.Join(tempDir, "themes", "mytheme"), 0750)
+		require.NoError(t, err)
+
+		// Test
+		result := ResolveThemeNameForDisplay("mytheme")
+
+		// Assert
+		assert.Equal(t, "mytheme", result)
 	})
 }

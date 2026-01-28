@@ -6,4 +6,5 @@ type GithubRepo struct {
 	URL   *url.URL
 	Owner string
 	Name  string
+	Ref   string
 }
