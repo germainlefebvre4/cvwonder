@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.2](https://github.com/germainlefebvre4/cvwonder/compare/v0.5.1...v0.5.2) (2026-01-28)
+
+
+### Bug Fixes
+
+* **model:** Add CompanyLogo attribute in Career Missions ([#104](https://github.com/germainlefebvre4/cvwonder/issues/104)) ([a6cd7ba](https://github.com/germainlefebvre4/cvwonder/commit/a6cd7baa77375ae8930fcc472aece48f94663919))
+* **model:** Add Person Experience attributes ([#101](https://github.com/germainlefebvre4/cvwonder/issues/101)) ([9faac4d](https://github.com/germainlefebvre4/cvwonder/commit/9faac4d3375858070c247c93a406fb48a40acf54))
+
 ## [0.5.1](https://github.com/germainlefebvre4/cvwonder/compare/v0.5.0...v0.5.1) (2026-01-23)
 
 
