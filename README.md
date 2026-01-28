@@ -1,5 +1,7 @@
 # CV Wonder
 
+**[📚 Documentation](https://cvwonder.fr)** | **[🐳 Docker Hub](https://hub.docker.com/r/germainlefebvre4/cvwonder)**
+
 CV Wonder is a tool that allows you to create a CV in a few minutes. It allows you to massively generate CVs, base on a theme, for thousands of people in a few seconds without friction. The Theme system allows you to use community themes and create your own for your purposes.
 
 Don't waste any more time formatting your CV, let CV Wonder do it for you and just focus on the content.
