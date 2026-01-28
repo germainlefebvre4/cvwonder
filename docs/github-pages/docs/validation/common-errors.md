@@ -44,8 +44,8 @@ technicalSkills:
 
 ### Invalid Experience Year
 
-**Error**: `person.experience.since must be greater than or equal to 1900`  
-**Error**: `person.experience.since must be less than or equal to 2100`  
+**Error**: `person.experience.since must be greater than or equal to 1900`
+**Error**: `person.experience.since must be less than or equal to 2100`
 **Error**: `person.experience.years must be greater than or equal to 0`
 
 **Solution**: Use valid values for experience fields:
