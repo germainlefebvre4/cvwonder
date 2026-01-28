@@ -8,7 +8,7 @@ import CVFullExample from "!!raw-loader!@site/static/cv.yml";
 
 ---
 
-Use the flag `--theme=<theme-ame>` to specify the theme you want to use.
+Use the flag `--theme=<theme-name>` to specify the theme you want to use.
 
 To use the theme named `my-theme`:
 
@@ -17,6 +17,38 @@ cvwonder generate [...] --theme=my-theme
 ```
 
 The theme must be located in the `themes` directory in the current working directory.
+
+## Using themes with specific branches or tags
+
+You can specify a theme variant by using the `@ref` syntax:
+
+```bash
+# Use a specific branch variant
+cvwonder generate --theme=default@develop
+
+# Use a specific tag variant
+cvwonder generate --theme=default@v1.2.0
+
+# Use the default variant (searches for installed variants)
+cvwonder generate --theme=default
+```
+
+**Automatic fallback:**
+
+When you specify a theme without a ref (e.g., `--theme=default`), CVWonder automatically searches for installed variants in this priority order:
+
+1. `themes/default/` (exact match or symlink)
+2. `themes/default@main/`
+3. `themes/default@master/`
+4. `themes/default@develop/`
+5. `themes/default@trunk/`
+6. Any other `themes/default@*/` variant
+
+The generation logs will show which variant is being used:
+
+```
+Theme: default (default@main)
+```
 
 ## Default theme
 

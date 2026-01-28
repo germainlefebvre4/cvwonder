@@ -35,6 +35,45 @@ cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
 # cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
 ```
 
+### Install a specific branch or tag
+
+You can specify a Git branch or tag using the `@ref` syntax:
+
+```bash
+# Install from a specific branch
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@develop
+
+# Install from a specific tag
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@v1.2.0
+
+# Install from default branch (when no ref is specified)
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
+```
+
+**How it works:**
+
+- **Without `@ref`**: Installs from the repository's default branch (e.g., `main`, `master`)
+- **With `@ref`**: Installs from the specified branch or tag
+- Themes are stored in `themes/name@ref/` directories
+- A symlink `themes/name/` points to the default branch for backward compatibility
+
+**Examples:**
+
+```bash
+# These create:
+# - themes/default@main/ (actual theme files)
+# - themes/default/ -> themes/default@main/ (symlink)
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
+
+# This creates:
+# - themes/default@develop/ (actual theme files)
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@develop
+
+# This creates:
+# - themes/default@v1.0.0/ (actual theme files)
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@v1.0.0
+```
+
 :::info Private Repositories
 CVWonder supports installing themes from private GitHub repositories with automatic authentication detection.
 
@@ -117,14 +156,6 @@ If you encounter authentication issues:
    cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
    ```
 :::
-
-:::info Theme version
-The downloaded theme is the latest version from the `main` branch.
-:::
-
-## Download a specific version
-
-*Theme versioning is supported yet.*
 
 ## Hosting
 

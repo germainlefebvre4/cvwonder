@@ -134,6 +134,18 @@ Install a public theme:
 cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
 ```
 
+Install a theme from a specific branch or tag:
+```bash
+# Install from a specific branch
+cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default@develop
+
+# Install from a specific tag
+cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default@v1.2.0
+
+# Install from the repository's default branch (no ref specified)
+cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
+```
+
 Install a private theme:
 ```bash
 # Option 1: Using GitHub CLI (recommended - automatic if authenticated)
