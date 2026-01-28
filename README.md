@@ -231,7 +231,7 @@ They helps CVWonder to grow
 
 <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; align-items: center; text-align: center; margin: 20px 0;">
   <a href="https://www.zatsit.fr" target="_blank" rel="noopener" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
-    <img src="https://www.zatsit.fr/wp-content/uploads/2024/02/SIGLE-ZATSIT-BLEU-1.svg" alt="zatsit" width="100px" />
+    <img src="https://zatsit-oss.github.io/signatures/logos/blue/zatsit-blue.png" alt="zatsit" width="100px" />
   </a>
 </div>
 
