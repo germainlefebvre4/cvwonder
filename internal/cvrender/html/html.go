@@ -9,6 +9,7 @@ import (
 	"text/template"
 
 	"github.com/germainlefebvre4/cvwonder/internal/model"
+	"github.com/germainlefebvre4/cvwonder/internal/themes"
 	utils "github.com/germainlefebvre4/cvwonder/internal/utils"
 
 	"github.com/sirupsen/logrus"
@@ -17,8 +18,9 @@ import (
 func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string, outputDirectory string, inputFilename string, themeName string) error {
 	logrus.Debug("Generating HTML")
 
-	// Theme directory
-	themeDirectory := filepath.Join(baseDirectory, "themes", themeName)
+	// Theme directory - resolve with fallback to @main/@master if needed
+	resolvedThemePath := themes.ResolveThemePath(themeName)
+	themeDirectory := filepath.Join(baseDirectory, resolvedThemePath)
 
 	// Output file
 	outputDirectory, err := filepath.Abs(outputDirectory)

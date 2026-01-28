@@ -36,10 +36,13 @@ func GenerateCmd() *cobra.Command {
 			// Build OutputDirectory object
 			outputDir := model.BuildOutputDirectory(utils.CliArgs.OutputDirectory)
 
+			// Resolve theme with ref for display
+			resolvedTheme := themes.ResolveThemeNameForDisplay(utils.CliArgs.ThemeName)
+
 			logrus.Info("CV Wonder")
 			logrus.Info("  Input file: ", inputFile.RelativePath)
 			logrus.Info("  Output directory: ", outputDir.RelativePath)
-			logrus.Info("  Theme: ", utils.CliArgs.ThemeName)
+			logrus.Info("  Theme: ", resolvedTheme)
 			logrus.Info("  Format: ", utils.CliArgs.Format)
 			logrus.Info("")
 

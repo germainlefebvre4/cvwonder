@@ -3,9 +3,12 @@ package theme_config
 import (
 	"context"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
 	"github.com/goccy/go-yaml"
+	"github.com/google/go-github/github"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,7 +23,13 @@ type ThemeConfig struct {
 func GetThemeConfigFromURL(githubRepo GithubRepo) ThemeConfig {
 	// Download theme.yaml
 	client := utils.GetGitHubClient()
-	fileContent, _, _, err := client.Repositories.GetContents(context.TODO(), githubRepo.Owner, githubRepo.Name, "theme.yaml", nil)
+	var opts *github.RepositoryContentGetOptions
+	if githubRepo.Ref != "" {
+		opts = &github.RepositoryContentGetOptions{
+			Ref: githubRepo.Ref,
+		}
+	}
+	fileContent, _, _, err := client.Repositories.GetContents(context.TODO(), githubRepo.Owner, githubRepo.Name, "theme.yaml", opts)
 	if err != nil {
 		logrus.Fatal("Error downloading theme.yaml: ", err)
 	}
@@ -60,7 +69,56 @@ func GetThemeConfigFromDir(dir string) ThemeConfig {
 }
 
 func GetThemeConfigFromThemeName(themeName string) ThemeConfig {
-	return GetThemeConfigFromDir("themes/" + themeName)
+	// Support both "themename" and "themename@ref" formats
+	themePath := "themes/" + themeName
+
+	// Check if path exists
+	if _, err := os.Stat(themePath); os.IsNotExist(err) {
+		// If theme without @ref doesn't exist, try to find any variant with @ref
+		if !strings.Contains(themeName, "@") {
+			if resolved := findThemeWithRefInConfig(themeName); resolved != "" {
+				logrus.Debugf("Theme '%s' not found, using '%s'", themeName, resolved)
+				themePath = filepath.Join("themes", resolved)
+			}
+		}
+	}
+
+	return GetThemeConfigFromDir(themePath)
+}
+
+// findThemeWithRefInConfig searches for a theme directory with any @ref suffix
+// Duplicated here to avoid circular import with themes package
+func findThemeWithRefInConfig(themeName string) string {
+	entries, err := os.ReadDir("themes")
+	if err != nil {
+		return ""
+	}
+
+	var matches []string
+	prefix := themeName + "@"
+
+	for _, entry := range entries {
+		if entry.IsDir() && strings.HasPrefix(entry.Name(), prefix) {
+			matches = append(matches, entry.Name())
+		}
+	}
+
+	if len(matches) == 0 {
+		return ""
+	}
+
+	// Prioritize common default branches
+	for _, defaultBranch := range []string{"main", "master", "develop", "trunk"} {
+		preferred := themeName + "@" + defaultBranch
+		for _, match := range matches {
+			if match == preferred {
+				return match
+			}
+		}
+	}
+
+	// Return the first match if no preferred default branch found
+	return matches[0]
 }
 
 func (tc *ThemeConfig) VerifyThemeMinimumVersion(cvwonderVersion string) bool {
