@@ -63,6 +63,23 @@
         "phone": {
           "type": "string",
           "description": "Phone number"
+        },
+        "experience": {
+          "type": "object",
+          "description": "Professional experience information",
+          "properties": {
+            "years": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total years of professional experience"
+            },
+            "since": {
+              "type": "integer",
+              "minimum": 1900,
+              "maximum": 2100,
+              "description": "Year when professional experience started"
+            }
+          }
         }
       }
     },

@@ -9,6 +9,28 @@ person:
   name: John Doe
 `)
 
+var CvYamlWithExperienceYears = []byte(`
+person:
+  name: John Doe
+  experience:
+    years: 10
+`)
+
+var CvYamlWithExperienceSince = []byte(`
+person:
+  name: Jane Smith
+  experience:
+    since: 2014
+`)
+
+var CvYamlWithExperienceFull = []byte(`
+person:
+  name: Bob Johnson
+  experience:
+    years: 10
+    since: 2014
+`)
+
 var CvYamlGood02 = []byte(`
 ---
 company:
@@ -114,6 +136,34 @@ person:
 var CvModelGood01 = model.CV{
 	Person: model.Person{
 		Name: "John Doe",
+	},
+}
+
+var CvModelWithExperienceYears = model.CV{
+	Person: model.Person{
+		Name: "John Doe",
+		Experience: model.Experience{
+			Years: 10,
+		},
+	},
+}
+
+var CvModelWithExperienceSince = model.CV{
+	Person: model.Person{
+		Name: "Jane Smith",
+		Experience: model.Experience{
+			Since: 2014,
+		},
+	},
+}
+
+var CvModelWithExperienceFull = model.CV{
+	Person: model.Person{
+		Name: "Bob Johnson",
+		Experience: model.Experience{
+			Years: 10,
+			Since: 2014,
+		},
 	},
 }
 

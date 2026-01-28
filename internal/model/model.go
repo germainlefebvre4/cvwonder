@@ -19,14 +19,20 @@ type Company struct {
 }
 
 type Person struct {
-	Name        string `yaml:"name"`
-	Depiction   string `yaml:"depiction"`
-	Profession  string `yaml:"profession"`
-	Location    string `yaml:"location"`
-	Citizenship string `yaml:"citizenship"`
-	Email       string `yaml:"email"`
-	Site        string `yaml:"site"`
-	Phone       string `yaml:"phone"`
+	Name        string     `yaml:"name"`
+	Depiction   string     `yaml:"depiction"`
+	Profession  string     `yaml:"profession"`
+	Location    string     `yaml:"location"`
+	Citizenship string     `yaml:"citizenship"`
+	Email       string     `yaml:"email"`
+	Site        string     `yaml:"site"`
+	Phone       string     `yaml:"phone"`
+	Experience  Experience `yaml:"experience,omitempty"`
+}
+
+type Experience struct {
+	Years int `yaml:"years,omitempty"`
+	Since int `yaml:"since,omitempty"`
 }
 
 type SocialNetworks struct {

@@ -50,6 +50,33 @@ func TestConvertFileContentToStruct(t *testing.T) {
 			want:    fixtures.CvModelGood03,
 			wantErr: false,
 		},
+		{
+			name: "Should return a model.CV with experience years",
+			p:    &ParserServices{},
+			args: args{
+				content: fixtures.CvYamlWithExperienceYears,
+			},
+			want:    fixtures.CvModelWithExperienceYears,
+			wantErr: false,
+		},
+		{
+			name: "Should return a model.CV with experience since",
+			p:    &ParserServices{},
+			args: args{
+				content: fixtures.CvYamlWithExperienceSince,
+			},
+			want:    fixtures.CvModelWithExperienceSince,
+			wantErr: false,
+		},
+		{
+			name: "Should return a model.CV with full experience",
+			p:    &ParserServices{},
+			args: args{
+				content: fixtures.CvYamlWithExperienceFull,
+			},
+			want:    fixtures.CvModelWithExperienceFull,
+			wantErr: false,
+		},
 		// {
 		// 	name: "Should return an error",
 		// 	p:    &ParserServices{},
