@@ -7,35 +7,40 @@
 - Use Go modules for dependency management.
 - Structure the project with clear separation of concerns (e.g., handlers, services, models).
 - Write unit tests for all functions and methods.
-- Use Mockery to generate mocks for interfaces in tests.
-- Use Testify for assertions in tests.
-- Use Logrus for logging with appropriate log levels (Info, Warn, Error).
+- Use Mockery v2.53.5+ to generate mocks for interfaces in tests.
+- Use Testify for assertions and mocking in tests.
+- Use Logrus for logging with appropriate log levels (Info, Debug, Warn, Error).
 - Use Cobra for building CLI applications.
+- Use go-rod for PDF generation with headless browser.
+- Use goccy/go-yaml for YAML parsing.
+- Use xeipuuv/gojsonschema for JSON schema validation.
 
 ## Application
 
 ### Purpose
 
-- The application is a CV generator that converts Markdown files to styled HTML CVs.
-- It should be able to serve the generated CVs via a local web server.
-- It should support PDF generation from the HTML CVs.
-- It should allow users to choose from different themes for styling the CVs.
+- CVWonder is a CV generator that converts YAML files to styled HTML and PDF CVs.
+- It supports theme management (install, create, list, verify).
+- It validates CV YAML files against JSON schema.
+- It serves generated CVs via a local web server with live reload.
+- It allows users to choose from community or custom themes.
 
 ### Specifications
 
-- The application should read Markdown files from a specified directory.
-- Convert the Markdown files to HTML using a predefined template.
-- Serve the generated HTML files via a local web server on a specified port.
-- Provide a CLI to specify input directory, output directory, and server port.
-- Provide an option to generate a PDF version of the CV using a headless browser.
-- Allow users to select different themes for the CV via CLI options.
-- Provide a HTTP endpoint to generate the CV on-the-fly from a given Markdown file.
+- The application reads CV data from YAML files (default: `cv.yml`).
+- Converts YAML to HTML using theme templates.
+- Generates PDF from HTML using headless browser (go-rod).
+- Serves generated files via local web server with file watching.
+- Provides CLI commands: generate, serve, validate, themes, version.
+- Supports theme installation from GitHub repositories (public and private).
+- Validates YAML structure against JSON schema before generation.
+- Supports authentication via GitHub CLI, GITHUB_TOKEN, or GH_TOKEN.
 
 ### Quality
 
-- Ensure the application is robust and handles errors gracefully (e.g., file not found, invalid Markdown syntax).
-- Implement logging for key actions and errors.
-- Ensure the application is well-documented, including a README with usage instructions.
+- Ensure the application is robust and handles errors gracefully.
+- Implement logging for key actions and errors using Logrus.
+- Ensure the application is well-documented with README and Docusaurus docs.
 
 ## Coding Standards
 
