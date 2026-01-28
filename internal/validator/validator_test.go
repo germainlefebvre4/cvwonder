@@ -473,3 +473,64 @@ func TestValidateStruct_ExperienceFull(t *testing.T) {
 	assert.NotNil(t, result)
 	assert.True(t, result.Valid)
 }
+
+func TestValidateFile_MissionCompanyLogo(t *testing.T) {
+	// Create YAML with mission company logo field
+	validYAML := `---
+person:
+  name: John Doe
+
+career:
+  - companyName: Tech Corp
+    missions:
+      - position: Senior Engineer
+        company: Tech Corp
+        companyLogo: images/techcorp-logo.webp
+        location: Paris, France
+        dates: 2020-2024
+`
+
+	tmpDir := t.TempDir()
+	tmpFile := filepath.Join(tmpDir, "mission_logo.yml")
+	err := os.WriteFile(tmpFile, []byte(validYAML), 0644)
+	assert.NoError(t, err)
+
+	validator, err := NewValidatorServices()
+	assert.NoError(t, err)
+
+	result, err := validator.ValidateFile(tmpFile)
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.True(t, result.Valid)
+	assert.Empty(t, result.Errors)
+}
+
+func TestValidateStruct_MissionCompanyLogo(t *testing.T) {
+	cv := model.CV{
+		Person: model.Person{
+			Name: "John Doe",
+		},
+		Career: []model.Career{
+			{
+				CompanyName: "Tech Corp",
+				Missions: []model.Mission{
+					{
+						Position:    "Senior Engineer",
+						Company:     "Tech Corp",
+						CompanyLogo: "images/techcorp-logo.webp",
+						Location:    "Paris, France",
+						Dates:       "2020-2024",
+					},
+				},
+			},
+		},
+	}
+
+	validator, err := NewValidatorServices()
+	assert.NoError(t, err)
+
+	result, err := validator.ValidateStruct(cv)
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.True(t, result.Valid)
+}

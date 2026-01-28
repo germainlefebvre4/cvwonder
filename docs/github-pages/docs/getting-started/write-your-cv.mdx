@@ -29,17 +29,17 @@ Here is the list of sections.
 
 The company section is used to describe the company you are working for.
 
-| Field | Description |
-| --- | --- |
-| Name | The name of the company. |
-| Logo | The logo of the company. |
+| Field | Type | Description |
+| --- | --- | --- |
+| Name | string | The name of the company. |
+| Logo | string | The logo of the company. |
 
 <details className="details-example">
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 company:
-    name: zatsit
-    logo: images/zatsit-logo.webp
+  name: zatsit
+  logo: images/zatsit-logo.webp
 ```
 </details>
 
@@ -47,33 +47,33 @@ company:
 
 The person section is used to describe "you".
 
-| Field | Description |
-| --- | --- |
-| Name | Your name. |
-| Depiction | A short description of you. |
-| Profession | Your profession. |
-| Location | Your location. |
-| Citizenship | Your citizenship. |
-| Email | Your email. |
-| Site | Your site. |
-| Phone | Your phone number. |
-| Experience | Your professional experience (optional). |
+| Field | Type | Description |
+| --- | --- | --- |
+| Name | string | Your name. |
+| Depiction | string | A short description of you. |
+| Profession | string | Your profession. |
+| Location | string | Your location. |
+| Citizenship | string | Your citizenship. |
+| Email | string | Your email. |
+| Site | string | Your site. |
+| Phone | string | Your phone number. |
+| Experience | object | Your professional experience (optional). |
 
 <details className="details-example">
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 person:
-    name: Germain Lefebvre
-    depiction: Software Engineer
-    profession: Software Engineer
-    location: Lille, France
-    citizenship: French
-    email: germain@lefebvre.fr
-    site: https://germainlefebvre.fr
-    phone: +33 6 12 34 56 78
-    experience:
-        years: 10
-        since: 2014
+  name: Germain Lefebvre
+  depiction: Software Engineer
+  profession: Software Engineer
+  location: Lille, France
+  citizenship: French
+  email: germain@lefebvre.fr
+  site: https://germainlefebvre.fr
+  phone: +33 6 12 34 56 78
+  experience:
+    years: 10
+    since: 2014
 ```
 </details>
 
@@ -81,10 +81,10 @@ person:
 
 The experience sub-section is optional and allows you to specify your total years of professional experience.
 
-| Field | Description |
-| --- | --- |
-| Years | Total years of professional experience (optional). |
-| Since | Year when your professional experience started (optional, must be between 1900 and 2100). |
+| Field | Type | Description |
+| --- | --- | --- |
+| Years | integer | Total years of professional experience (optional). |
+| Since | integer | Year when your professional experience started (optional, must be between 1900 and 2100). |
 
 :::info
 You can provide either `years`, `since`, or both fields. All fields are optional and can be used by themes to display experience information on your CV.
@@ -94,10 +94,10 @@ You can provide either `years`, `since`, or both fields. All fields are optional
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 person:
-    name: John Doe
-    experience:
-        years: 10
-        since: 2014
+  name: John Doe
+  experience:
+    years: 10
+    since: 2014
 ```
 </details>
 
@@ -105,21 +105,21 @@ person:
 
 The social networks section is used to describe your social networks.
 
-| Field | Description |
-| --- | --- |
-| Github | Your Github profile. |
-| Stackoverflow | Your Stackoverflow profile. |
-| Linkedin | Your Linkedin profile. |
-| Twitter | Your Twitter profile. |
+| Field | Type | Description |
+| --- | --- | --- |
+| Github | string | Your Github profile. |
+| Stackoverflow | string | Your Stackoverflow profile. |
+| Linkedin | string | Your Linkedin profile. |
+| Twitter | string | Your Twitter profile. |
 
 <details className="details-example">
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 socialNetworks:
-    github: germainlefebvre4
-    stackoverflow: germainlefebvre4
-    linkedin: germainlefebvre4
-    twitter: germainlefebvr4
+  github: germainlefebvre4
+  stackoverflow: germainlefebvre4
+  linkedin: germainlefebvre4
+  twitter: germainlefebvr4
 ```
 </details>
 
@@ -127,9 +127,9 @@ socialNetworks:
 
 The abstract section is used to describe a short abstract about you.
 
-| Field | Description |
-| --- | --- |
-| []string | The abstract text. |
+| Field | Type | Description |
+| --- | --- | --- |
+| - | array of strings | The abstract text. |
 
 You can add multiple abstracts.
 
@@ -137,8 +137,8 @@ You can add multiple abstracts.
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 abstract:
-    - "I am a software engineer with 5 years of experience in the field."
-    - "I am passionate about technology and I love to learn new things."
+  - "I am a software engineer with 5 years of experience in the field."
+  - "I am passionate about technology and I love to learn new things."
 ```
 </details>
 
@@ -146,32 +146,32 @@ abstract:
 
 The career section is used to describe your multiple career paths and experiences.
 
-| Field | Description |
-| --- | --- |
-| CompanyName | The name of the company. |
-| CompanyLogo | The logo of the company. |
-| Duration | The duration of your experience. |
-| Missions | The missions you have accomplished. |
+| Field | Type | Description |
+| --- | --- | --- |
+| CompanyName | string | The name of the company. |
+| CompanyLogo | string | The logo of the company. |
+| Duration | string | The duration of your experience. |
+| Missions | array of objects | The missions you have accomplished. |
 
 <details className="details-example">
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 career:
-    - companyName: zatsit
+  - companyName: zatsit
     companyLogo: images/zatsit-logo.webp
     duration: 2 years
     missions:
-        - position: Software Engineer
+      - position: Software Engineer
         company: zatsit
         location: Lille, France
         dates: 2020-2022
         summary: Developed a web application using React and Node.js.
         description:
-            - Developed the front-end using React.
-            - Developed the back-end using Node.js.
+          - Developed the front-end using React.
+          - Developed the back-end using Node.js.
         technologies:
-            - React
-            - Node.js
+          - React
+          - Node.js
         project: MyProject
 ```
 </details>
@@ -180,18 +180,19 @@ career:
 
 The missions sub-section is used to describe your missions in detail.
 
-| Field | Description |
-| --- | --- |
-| Position | Your position/title in this mission. |
-| Company | The company you worked for. |
-| Location | The location of the mission/company. |
-| Dates | The dates of your experience. |
-| Summary | A summary, as short description, of your experience. |
-| Description | A full description of your experience. |
-| Technologies | The technologies you used in this mission. |
-| Project | The name of the project you worked on. |
+| Field | Type | Description |
+| --- | --- | --- |
+| Position | string | Your position/title in this mission. |
+| Company | string | The company you worked for. |
+| CompanyLogo | string | The logo of the company (optional). |
+| Location | string | The location of the mission/company. |
+| Dates | string | The dates of your experience. |
+| Summary | string | A summary, as short description, of your experience. |
+| Description | array of strings | A full description of your experience. |
+| Technologies | array of strings | The technologies you used in this mission. |
+| Project | string | The name of the project you worked on. |
 
-:::abstract "Date format"
+:::note "Date format"
     The `Dates` fields is a text field. You can use any format you want. The theme will not parse it.
 :::
 
@@ -199,19 +200,20 @@ The missions sub-section is used to describe your missions in detail.
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 career:
-    - companyName: ...
+  - companyName: ...
     missions:
-        - position: Software Engineer
+      - position: Software Engineer
         company: zatsit
+        companyLogo: images/zatsit-logo.webp
         location: Lille, France
         dates: 2020-2022
         summary: Developed a web application using React and Node.js.
         description:
-            - Developed the front-end using React.
-            - Developed the back-end using Node.js.
+          - Developed the front-end using React.
+          - Developed the back-end using Node.js.
         technologies:
-            - React
-            - Node.js
+          - React
+          - Node.js
         project: MyProject
 ```
 </details>
@@ -220,38 +222,38 @@ career:
 
 The technical skills section is used to describe your technical skills.
 
-| Field | Description |
-| --- | --- |
-| Domains | The domains you are skilled in. |
+| Field | Type | Description |
+| --- | --- | --- |
+| Domains | array of objects | The domains you are skilled in. |
 
 #### Domains
 
 The domains sub-section is used to describe your domains and competencies.
 
-| Field | Description |
-| --- | --- |
-| Name | The name of the domain. |
-| Competencies | The competencies you have in this domain. |
+| Field | Type | Description |
+| --- | --- | --- |
+| Name | string | The name of the domain. |
+| Competencies | array of objects | The competencies you have in this domain. |
 
 <details className="details-example">
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 technicalSkills:
-    domains:
+  domains:
     - name: Front-end
-        competencies:
+      competencies:
         - name: React
-            level: 5
+          level: 5
         - name: Angular
-            level: 3
+          level: 3
     - name: Back-end
-        competencies:
+      competencies:
         - name: Node.js
-            level: 4
+          level: 4
 ```
 </details>
 
-:::abstract "Level"
+:::note "Level"
     The `Level` field is a number from 0 to 100. It represents your level of expertise in this competency.
 :::
 
@@ -259,21 +261,21 @@ technicalSkills:
 
 The side projects section is used to describe the personal projects or open-source projects you have worked on.
 
-| Field | Description |
-| --- | --- |
-| Name | The name of the side project. |
-| Position | Your position/title in this side project. |
-| Description | A short description of the side project. |
-| Link | The link to the side project. |
-| Type | The type of the side project. |
-| Langs | The languages used in the side project. |
-| Color | The color of the side project. |
+| Field | Type | Description |
+| --- | --- | --- |
+| Name | string | The name of the side project. |
+| Position | string | Your position/title in this side project. |
+| Description | string | A short description of the side project. |
+| Link | string | The link to the side project. |
+| Type | string | The type of the side project. |
+| Langs | string | The languages used in the side project. |
+| Color | string | The color of the side project. |
 
 <details className="details-example">
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 sideProjects:
-    - name: MyProject
+  - name: MyProject
     position: Software Engineer
     description: A web application using React and Node.js.
     link: https://germainlefebvre.fr/myproject
@@ -289,25 +291,25 @@ The `Type` field can be used to identify the hosting platform of the side projec
 
 The certifications section is used to describe the certifications you have.
 
-| Field | Description |
-| --- | --- |
-| CompanyName | The name of the company that issued the certification. |
-| CertificationName | The name of the certification. |
-| Issuer | The issuer of the certification. |
-| Date | The date of the certification. |
-| Link | The link to the certification. |
-| Badge | The badge of the certification. |
+| Field | Type | Description |
+| --- | --- | --- |
+| CompanyName | string | The name of the company that issued the certification. |
+| CertificationName | string | The name of the certification. |
+| Issuer | string | The issuer of the certification. |
+| Date | string | The date of the certification. |
+| Link | string | The link to the certification. |
+| Badge | string | The badge of the certification. |
 
 <details className="details-example">
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 certifications:
-    - companyName: AWS
-        certificationName: Solutions Architect Associate
-        issuer: Coursera
-        date: Mars 2018
-        link: https://www.credly.com/badges/dd09dc40-9ef8-43a4-addb-d861d4dadf26/public_url
-        badge: images/aws-certified-solutions-architect-associate.png
+  - companyName: AWS
+    certificationName: Solutions Architect Associate
+    issuer: Coursera
+    date: Mars 2018
+    link: https://www.credly.com/badges/dd09dc40-9ef8-43a4-addb-d861d4dadf26/public_url
+    badge: images/aws-certified-solutions-architect-associate.png
 ```
 </details>
 
@@ -315,23 +317,23 @@ certifications:
 
 The languages section is used to describe the languages you speak.
 
-| Field | Description |
-| --- | --- |
-| Name | The name of the language. |
-| Level | The level of the language. |
+| Field | Type | Description |
+| --- | --- | --- |
+| Name | string | The name of the language. |
+| Level | string | The level of the language. |
 
 <details className="details-example">
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 languages:
-    - name: French
+  - name: French
     level: Native
-    - name: English
+  - name: English
     level: Fluent
 ```
 </details>
 
-:::abstract "Level"
+:::note "Level"
 The `Level` field is a text field. It represents your level of the language in the way that you want to show.
 :::
 
@@ -339,20 +341,20 @@ The `Level` field is a text field. It represents your level of the language in t
 
 The education section is used to describe your school and education.
 
-| Field | Description |
-| --- | --- |
-| SchoolName | The name of the school. |
-| SchoolLogo | The logo of the school. |
-| Degree | The degree you obtained. |
-| Location | The location of the school. |
-| Dates | The dates of your education. |
-| Link | The link to the school. |
+| Field | Type | Description |
+| --- | --- | --- |
+| SchoolName | string | The name of the school. |
+| SchoolLogo | string | The logo of the school. |
+| Degree | string | The degree you obtained. |
+| Location | string | The location of the school. |
+| Dates | string | The dates of your education. |
+| Link | string | The link to the school. |
 
 <details className="details-example">
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
 ```yaml
 education:
-    - schoolName: University of Lille
+  - schoolName: University of Lille
     schoolLogo: images/university-of-lille-logo.webp
     degree: Master's degree in Computer Science
     location: Lille, France
