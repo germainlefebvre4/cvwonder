@@ -52,6 +52,7 @@ type Career struct {
 type Mission struct {
 	Position     string   `yaml:"position"`
 	Company      string   `yaml:"company"`
+	CompanyLogo  string   `yaml:"companyLogo,omitempty"`
 	Location     string   `yaml:"location"`
 	Dates        string   `yaml:"dates"`
 	Summary      string   `yaml:"summary"`

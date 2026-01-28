@@ -87,6 +87,16 @@ Which can be used in the template like this:
 {{ if .Person.Experience.Since }}
   <p>Since {{ .Person.Experience.Since }}</p>
 {{ end }}
+
+{{ range .Career }}
+  {{ range .Missions }}
+    <h3>{{ .Position }} at {{ .Company }}</h3>
+    {{ if .CompanyLogo }}
+      <img src="{{ .CompanyLogo }}" alt="{{ .Company }} logo" />
+    {{ end }}
+    <p>{{ .Location }} | {{ .Dates }}</p>
+  {{ end }}
+{{ end }}
 ```
 
 :::note Go template variable name

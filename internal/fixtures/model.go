@@ -31,6 +31,40 @@ person:
     since: 2014
 `)
 
+var CvYamlWithMissionCompanyLogo = []byte(`
+person:
+  name: John Doe
+
+career:
+  - companyName: Tech Corp
+    missions:
+      - position: Senior Engineer
+        company: Tech Corp
+        companyLogo: images/techcorp-logo.webp
+        location: Paris, France
+        dates: 2020-2024
+`)
+
+var CvModelWithMissionCompanyLogo = model.CV{
+	Person: model.Person{
+		Name: "John Doe",
+	},
+	Career: []model.Career{
+		{
+			CompanyName: "Tech Corp",
+			Missions: []model.Mission{
+				{
+					Position:    "Senior Engineer",
+					Company:     "Tech Corp",
+					CompanyLogo: "images/techcorp-logo.webp",
+					Location:    "Paris, France",
+					Dates:       "2020-2024",
+				},
+			},
+		},
+	},
+}
+
 var CvYamlGood02 = []byte(`
 ---
 company:

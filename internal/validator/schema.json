@@ -151,6 +151,10 @@
                   "minLength": 1,
                   "description": "Company name (required)"
                 },
+                "companyLogo": {
+                  "type": "string",
+                  "description": "Path to company logo"
+                },
                 "location": {
                   "type": "string",
                   "description": "Work location"
