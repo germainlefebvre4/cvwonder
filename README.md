@@ -202,14 +202,18 @@ Contributions are welcome! Please read the [contributing guidelines](https://cvw
 ## They use CV Wonder!
 
 <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; align-items: center; text-align: center; margin: 20px 0;">
-  <a href="https://www.zatsit.fr" target="_blank" rel="noopener" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
-    <img src="https://www.zatsit.fr/wp-content/uploads/2024/02/SIGLE-ZATSIT-BLEU-1.svg" alt="zatsit" width="100px" />
-    <span style="font-size: 18px;">zatsit</span>
-  </a>
-  <a href="https://www.zatsit.fr" target="_blank" rel="noopener" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
-    <img src="https://www.zatsit.fr/wp-content/uploads/2024/02/SIGLE-ZATSIT-BLEU-1.svg" alt="zatsit" width="100px" />
-    <span style="font-size: 18px;">zatsit</span>
-  </a>
+  <div style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+    <a href="https://www.zatsit.fr" target="_blank" rel="noopener" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+        <img src="https://www.zatsit.fr/wp-content/uploads/2024/02/SIGLE-ZATSIT-BLEU-1.svg" alt="zatsit" width="100px" />
+        <span style="font-size: 18px;">zatsit</span>
+    </a>
+  </div>
+  <div style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+    <a href="https://www.zatsit.fr" target="_blank" rel="noopener" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+        <img src="https://www.zatsit.fr/wp-content/uploads/2024/02/SIGLE-ZATSIT-BLEU-1.svg" alt="zatsit" width="100px" />
+        <span style="font-size: 18px;">zatsit</span>
+    </a>
+  </div>
 </div>
 
 What about you? Contact me to add your company here!
