@@ -188,3 +188,26 @@ go test -v ./...
 ### VSCode
 
 A `.vscode/launch.json` file is provided to help you debug the application.
+
+## Contributing
+
+Contributions are welcome! Please read the [contributing guidelines](https://cvwonder.fr/docs/contributing/) before submitting a pull request.
+
+## Contributors
+
+<a href="https://github.com/germainlefebvre4/cvwonder/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=germainlefebvre4/cvwonder" />
+</a>
+
+## They use CV Wonder!
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; align-items: center; text-align: center; font-size: 24px; margin: 0px 0px 20px 0px;">
+  <a href="https://www.mycompany.fr" target="_blank" rel="noopener">
+    <div>
+        <img src="https://www.zatsit.fr/wp-content/uploads/2024/02/SIGLE-ZATSIT-BLEU-1.svg" alt="zatsit" width="100px" style="display: block; margin: 0 auto;" />
+        zatsit
+    </div>
+  </a>
+</div>
+
+What about you? Contact me to add your company here!
