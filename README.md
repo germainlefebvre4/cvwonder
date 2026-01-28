@@ -10,7 +10,6 @@ Don't waste any more time formatting your CV, let CV Wonder do it for you and ju
 
 ## Table of Contents
 
-[CV Wonder](#cv-wonder)
 - [CV Wonder](#cv-wonder)
   - [Table of Contents](#table-of-contents)
   - [Getting started](#getting-started)
