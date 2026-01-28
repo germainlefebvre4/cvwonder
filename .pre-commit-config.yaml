@@ -25,6 +25,12 @@ repos:
         entry: bash -c 'go run ./cmd/cvwonder > docs/github-pages/static/helper.out'
         language: system
         verbose: true
+      - id: update-dockerhub-readme
+        name: update-dockerhub-readme
+        entry: bash -c 'scripts/update-dockerhub-readme.sh'
+        language: system
+        files: ^(CHANGELOG\.md|docs/dockerhub/README\.md)$
+        verbose: true
       # - id: cvwonder-documentation
       #   name: cvwonder-documentation
       #   entry: bash -c 'cd docs/github-pages && pnpm build'
