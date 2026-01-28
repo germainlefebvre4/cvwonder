@@ -22,7 +22,7 @@ PATCH=$(echo "$LATEST_VERSION" | cut -d. -f3)
 
 # Create tags like: latest, v0, v0.2, v0.2.1
 TAGS="\`latest\`, \`v${MAJOR}\`, \`v${MAJOR}.${MINOR}\`, \`v${MAJOR}.${MINOR}.${PATCH}\`"
-TAG_LINE="* [$TAGS](https://github.com/germainlefebvre4/kuve/blob/v${LATEST_VERSION}/Dockerfile)"
+TAG_LINE="* [$TAGS](https://github.com/germainlefebvre4/cvwonder/blob/v${LATEST_VERSION}/Dockerfile)"
 
 # Update the DockerHub README
 # Replace the line that starts with "* [\`latest\`," with the new tag line
