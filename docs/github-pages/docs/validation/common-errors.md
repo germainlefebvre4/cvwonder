@@ -42,6 +42,22 @@ technicalSkills:
           level: 85  # Must be 0-100
 ```
 
+### Invalid Experience Year
+
+**Error**: `person.experience.since must be greater than or equal to 1900`  
+**Error**: `person.experience.since must be less than or equal to 2100`  
+**Error**: `person.experience.years must be greater than or equal to 0`
+
+**Solution**: Use valid values for experience fields:
+
+```yaml
+person:
+  name: Your Name
+  experience:
+    years: 10      # Must be non-negative
+    since: 2014    # Must be between 1900 and 2100
+```
+
 ### Invalid YAML Syntax
 
 **Error**: `Invalid YAML syntax`

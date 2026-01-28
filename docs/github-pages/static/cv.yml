@@ -12,6 +12,8 @@ person:
   email: germain.lefebvre@mycompany.fr
   site: http://germainlefebvre.fr
   phone: +33 6 00 00 00 00
+  experience:
+    since: 2014
 
 socialNetworks:
   github: germainlefebvre4
