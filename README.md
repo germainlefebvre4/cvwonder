@@ -8,6 +8,29 @@ Don't waste any more time formatting your CV, let CV Wonder do it for you and ju
     <img src="./docs/github-pages/static/img/logo.svg" alt="cvwonder" width="400px" style="display: block; margin: 0 auto;" />
 </p>
 
+## Table of Contents
+
+- [CV Wonder](#cv-wonder)
+  - [Table of Contents](#table-of-contents)
+  - [Getting started](#getting-started)
+    - [Installing Private Themes](#installing-private-themes)
+  - [Validate your CV](#validate-your-cv)
+  - [Generate your CV](#generate-your-cv)
+  - [Serve your CV](#serve-your-cv)
+    - [Watch for changes](#watch-for-changes)
+  - [Themes](#themes)
+    - [Default](#default)
+  - [Theme Functions](#theme-functions)
+  - [Docker](#docker)
+  - [Development](#development)
+    - [Run](#run)
+    - [Build](#build)
+    - [Test](#test)
+    - [VSCode](#vscode)
+  - [Contributing](#contributing)
+  - [Contributors](#contributors)
+  - [They use CV Wonder!](#they-use-cv-wonder)
+
 ## Getting started
 
 1) Download the latest release from the [releases page](https://github.com/germainlefebvre4/cvwonder/releases) OR in your terminal.
