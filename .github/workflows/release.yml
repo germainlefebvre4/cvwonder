@@ -58,6 +58,7 @@ jobs:
             path: dist/*
 
   docker-publish:
+    needs: goreleaser
     uses: ./.github/workflows/docker-publish.yml
     with:
       ref: ${{ github.ref_name }}
