@@ -29,6 +29,7 @@ Don't waste any more time formatting your CV, let CV Wonder do it for you and ju
     - [VSCode](#vscode)
   - [Contributing](#contributing)
   - [Contributors](#contributors)
+  - [Sponsors](#sponsors)
   - [They use CV Wonder!](#they-use-cv-wonder)
 
 ## Getting started
@@ -221,15 +222,22 @@ Contributions are welcome! Please read the [contributing guidelines](https://cvw
 <a href="https://github.com/germainlefebvre4/cvwonder/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=germainlefebvre4/cvwonder" />
 </a>
+
 ## Sponsors
 
-They helps CVWonder to grow 
-<a href="https://www.zatsit.fr" target="_blank" rel="noopener" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
-    <img src="https://www.zatsit.fr/wp-content/uploads/2024/02/SIGLE-ZATSIT-BLEU-1.svg" alt="zatsit" width="100px" />
-    </a>
+They help CV Wonder to grow.
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center; margin: 20px 0;">
+  <a href="https://www.zatsit.fr" target="_blank" rel="noopener" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+    <img src="https://zatsit-oss.github.io/signatures/logos/blue/zatsit-blue.png" alt="zatsit" width="100px" />
+  </a>
+</div>
+
 ## They use CV Wonder!
 
-<div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; align-items: center; text-align: center; margin: 20px 0;">
+Companies and organizations that use CV Wonder.
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center; margin: 20px 0;">
   <a href="https://www.zatsit.fr" target="_blank" rel="noopener" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
     <img src="https://zatsit-oss.github.io/signatures/logos/blue/zatsit-blue.png" alt="zatsit" width="100px" />
   </a>
