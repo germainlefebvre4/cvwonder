@@ -57,6 +57,7 @@ The person section is used to describe "you".
 | Email | Your email. |
 | Site | Your site. |
 | Phone | Your phone number. |
+| Experience | Your professional experience (optional). |
 
 <details className="details-example">
 <summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
@@ -70,6 +71,33 @@ person:
     email: germain@lefebvre.fr
     site: https://germainlefebvre.fr
     phone: +33 6 12 34 56 78
+    experience:
+        years: 10
+        since: 2014
+```
+</details>
+
+#### Experience
+
+The experience sub-section is optional and allows you to specify your total years of professional experience.
+
+| Field | Description |
+| --- | --- |
+| Years | Total years of professional experience (optional). |
+| Since | Year when your professional experience started (optional, must be between 1900 and 2100). |
+
+:::info
+You can provide either `years`, `since`, or both fields. All fields are optional and can be used by themes to display experience information on your CV.
+:::
+
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
+```yaml
+person:
+    name: John Doe
+    experience:
+        years: 10
+        since: 2014
 ```
 </details>
 

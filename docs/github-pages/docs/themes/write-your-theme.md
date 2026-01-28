@@ -69,6 +69,9 @@ For example, the dv data contains the details of the CV owner:
 person:
   name: Germain
   profession: Bâtisseur de Plateformes et de Nuages
+  experience:
+    years: 10
+    since: 2014
 
 [...]
 ```
@@ -78,6 +81,12 @@ Which can be used in the template like this:
 ```html
 <h1>{{ .Person.Name }}</h1>
 <h2>{{ .Person.Profession }}</h2>
+{{ if .Person.Experience.Years }}
+  <p>{{ .Person.Experience.Years }} years of experience</p>
+{{ end }}
+{{ if .Person.Experience.Since }}
+  <p>Since {{ .Person.Experience.Since }}</p>
+{{ end }}
 ```
 
 :::note Go template variable name
