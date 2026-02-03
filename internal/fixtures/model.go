@@ -161,8 +161,8 @@ references:
     date: Janvier 2024
     url: https://linkedin.com/in/janesmith
     socialNetworks:
-      - linkedin: janesmith
-        github: janesmith
+      linkedin: janesmith
+      github: janesmith
     description: "Une collaboration exceptionnelle. Germain a su transformer notre infrastructure."
 `)
 

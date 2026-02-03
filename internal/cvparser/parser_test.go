@@ -190,8 +190,8 @@ references:
     date: Jan 2024
     url: https://linkedin.com/in/janedoe
     socialNetworks:
-      - linkedin: janedoe
-        github: janedoe-gh
+      linkedin: janedoe
+      github: janedoe-gh
     description: "Great engineer!"
 `)
 		p := &ParserServices{}
@@ -202,8 +202,8 @@ references:
 		assert.Equal(t, "https://linkedin.com/in/janedoe", got.References[0].Url)
 		assert.Equal(t, "Great engineer!", got.References[0].Description)
 		assert.Len(t, got.References[0].SocialNetworks, 1)
-		assert.Equal(t, "janedoe", got.References[0].SocialNetworks[0].Linkedin)
-		assert.Equal(t, "janedoe-gh", got.References[0].SocialNetworks[0].Github)
+		assert.Equal(t, "janedoe", got.References[0].SocialNetworks.Linkedin)
+		assert.Equal(t, "janedoe-gh", got.References[0].SocialNetworks.Github)
 	})
 
 	t.Run("Should parse Reference without Url field", func(t *testing.T) {
