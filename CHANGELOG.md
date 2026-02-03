@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.5.2...v0.6.0) (2026-02-03)
+
+
+### Features
+
+* **model:** add reference in cv model ([#86](https://github.com/germainlefebvre4/cvwonder/issues/86)) ([d0b6e96](https://github.com/germainlefebvre4/cvwonder/commit/d0b6e96c3ec32f59d32edd384005723b0f8f7362))
+
 ## [0.5.2](https://github.com/germainlefebvre4/cvwonder/compare/v0.5.1...v0.5.2) (2026-01-28)
 
 
