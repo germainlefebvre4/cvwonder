@@ -11,6 +11,17 @@ type CV struct {
 	Certifications  []Certification `yaml:"certifications"`
 	Languages       []Language      `yaml:"languages"`
 	Education       []Education     `yaml:"education"`
+	References      []Reference     `yaml:"references"`
+}
+
+type Reference struct {
+	Name           string           `yaml:"name"`
+	Position       string           `yaml:"position"`
+	Company        string           `yaml:"company"`
+	Date           string           `yaml:"date"`
+	Url            string           `yaml:"url"`
+	SocialNetworks SocialNetworks `yaml:"socialNetworks"`
+	Description    string           `yaml:"description"`
 }
 
 type Company struct {

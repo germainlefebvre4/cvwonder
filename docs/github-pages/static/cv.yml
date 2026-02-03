@@ -163,3 +163,14 @@ education:
     location: Lens, France
     dates: 2019 - 2014
     link: https://ig2i.centralelille.fr
+
+references:
+  - name: Jane Doe
+    position: CTO
+    company: TechCorp
+    date: Jan 2024
+    url: https://linkedin.com/in/janedoe
+    socialNetworks:
+      linkedin: janedoe
+      github: janedoe-gh
+    description: "Germain est un excellent ingénieur, très compétent sur les sujets DevOps et Kubernetes. Je recommande vivement !"

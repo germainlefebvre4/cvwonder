@@ -153,6 +153,17 @@ education:
     location: Lens, France
     dates: 2019 - 2014
     link: https://ig2i.centralelille.fr
+
+references:
+  - name: Jane Smith
+    position: CTO
+    company: Tech Innovations
+    date: Janvier 2024
+    url: https://linkedin.com/in/janesmith
+    socialNetworks:
+      linkedin: janesmith
+      github: janesmith
+    description: "Une collaboration exceptionnelle. Germain a su transformer notre infrastructure."
 `)
 
 var CvYamlGood03 = []byte(`
@@ -309,6 +320,20 @@ var CvModelGood02 = model.CV{
 			Location:   "Lens, France",
 			Dates:      "2019 - 2014",
 			Link:       "https://ig2i.centralelille.fr",
+		},
+	},
+	References: []model.Reference{
+		{
+			Name:     "Jane Smith",
+			Position: "CTO",
+			Company:  "Tech Innovations",
+			Date:     "Janvier 2024",
+			Url:      "https://linkedin.com/in/janesmith",
+			SocialNetworks: model.SocialNetworks{
+				Linkedin: "janesmith",
+				Github:   "janesmith",
+			},
+			Description: "Une collaboration exceptionnelle. Germain a su transformer notre infrastructure.",
 		},
 	},
 }

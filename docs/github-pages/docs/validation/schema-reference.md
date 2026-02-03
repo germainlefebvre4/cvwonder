@@ -37,3 +37,43 @@ The validator uses a JSON Schema to define the CV structure. Key validation rule
 
 - `career.missions` - At least 1 mission per company
 - `technicalSkills.domains.competencies` - At least 1 competency per domain
+
+### References
+
+La section `references` permet d'ajouter des recommandations professionnelles à votre CV.
+
+#### Champs disponibles
+
+| Champ | Type | Description |
+|-------|------|-------------|
+| `name` | string | Nom de la personne qui vous recommande |
+| `position` | string | Poste occupé par cette personne |
+| `company` | string | Entreprise de cette personne |
+| `date` | string | Date de la recommandation |
+| `url` | string | Lien vers le profil (ex: LinkedIn) |
+| `socialNetworks` | object | Réseaux sociaux de la personne |
+| `description` | string | Texte de la recommandation |
+
+#### Structure de `socialNetworks`
+
+| Champ | Type | Description |
+|-------|------|-------------|
+| `linkedin` | string | Identifiant LinkedIn |
+| `github` | string | Identifiant GitHub |
+| `twitter` | string | Identifiant Twitter |
+| `stackoverflow` | string | Identifiant Stack Overflow |
+
+#### Exemple
+
+```yaml
+references:
+  - name: Jane Doe
+    position: CTO
+    company: TechCorp
+    date: Jan 2024
+    url: https://linkedin.com/in/janedoe
+    socialNetworks:
+      linkedin: janedoe
+      github: janedoe-gh
+    description: "Excellent ingénieur, très compétent !"
+```

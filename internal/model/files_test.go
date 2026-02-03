@@ -40,8 +40,11 @@ func TestBuildInputFile(t *testing.T) {
 	t.Run("Should build InputFile with relative path", func(t *testing.T) {
 		// Setup
 		tempDir := t.TempDir()
+		// Resolve symlinks for cross-platform compatibility (macOS /var -> /private/var)
+		tempDir, err := filepath.EvalSymlinks(tempDir)
+		require.NoError(t, err)
 		testFile := filepath.Join(tempDir, "test.yml")
-		err := os.WriteFile(testFile, []byte("test"), 0644)
+		err = os.WriteFile(testFile, []byte("test"), 0644)
 		require.NoError(t, err)
 
 		// Change to temp directory
