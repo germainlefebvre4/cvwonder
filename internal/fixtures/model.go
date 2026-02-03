@@ -329,11 +329,9 @@ var CvModelGood02 = model.CV{
 			Company:  "Tech Innovations",
 			Date:     "Janvier 2024",
 			Url:      "https://linkedin.com/in/janesmith",
-			SocialNetworks: []model.SocialNetworks{
-				{
-					Linkedin: "janesmith",
-					Github:   "janesmith",
-				},
+			SocialNetworks: model.SocialNetworks{
+				Linkedin: "janesmith",
+				Github:   "janesmith",
 			},
 			Description: "Une collaboration exceptionnelle. Germain a su transformer notre infrastructure.",
 		},

@@ -201,7 +201,6 @@ references:
 		assert.Equal(t, "Jane Doe", got.References[0].Name)
 		assert.Equal(t, "https://linkedin.com/in/janedoe", got.References[0].Url)
 		assert.Equal(t, "Great engineer!", got.References[0].Description)
-		assert.Len(t, got.References[0].SocialNetworks, 1)
 		assert.Equal(t, "janedoe", got.References[0].SocialNetworks.Linkedin)
 		assert.Equal(t, "janedoe-gh", got.References[0].SocialNetworks.Github)
 	})
