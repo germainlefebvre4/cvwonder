@@ -367,6 +367,36 @@ education:
 The `Dates` field is a text field. You can use any format you want. The theme will not parse it.
 :::
 
+### References
+
+The references section is used to describe professional recommendations you have received.
+
+| Field | Description |
+| --- | --- |
+| Name | The name of the person recommending you. |
+| Position | The position of the person. |
+| Company | The company of the person. |
+| Date | The date of the recommendation. |
+| Url | The URL to the person's profile (e.g., LinkedIn). |
+| SocialNetworks | The social networks of the person (see [Social Networks](#social-networks) for available fields). |
+| Description | The recommendation text. |
+
+<details className="details-example">
+<summary><FontAwesomeIcon icon="fa-solid fa-paper-plane" />  &nbsp; **Example**</summary>
+```yaml
+references:
+  - name: Jane Doe
+    position: CTO
+    company: TechCorp
+    date: Jan 2024
+    url: https://linkedin.com/in/janedoe
+    socialNetworks:
+      linkedin: janedoe
+      github: janedoe-gh
+    description: "Excellent engineer, highly skilled!"
+```
+</details>
+
 ## Full Example
 
 Here is a full example in a `cv.yml` file:
