@@ -85,6 +85,7 @@ socialNetworks:
   stackoverflow: germainlefebvre4
   linkedin: germainlefebvre4
   twitter: germainlefebvr4
+  bluesky: germainlefebvre4
 
 abstract:
   - "I am a Platform Engineer looking for people to share knowledge to each other."
@@ -231,6 +232,7 @@ var CvModelGood02 = model.CV{
 		Stackoverflow: "germainlefebvre4",
 		Linkedin:      "germainlefebvre4",
 		Twitter:       "germainlefebvr4",
+		Bluesky:       "germainlefebvre4",
 	},
 	Abstract: []string{
 		"I am a Platform Engineer looking for people to share knowledge to each other.",

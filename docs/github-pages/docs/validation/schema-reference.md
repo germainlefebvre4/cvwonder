@@ -62,6 +62,7 @@ La section `references` permet d'ajouter des recommandations professionnelles à
 | `github` | string | Identifiant GitHub |
 | `twitter` | string | Identifiant Twitter |
 | `stackoverflow` | string | Identifiant Stack Overflow |
+| `bluesky` | string | Identifiant Bluesky |
 
 #### Exemple
 

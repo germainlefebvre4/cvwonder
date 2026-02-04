@@ -180,6 +180,72 @@ func TestParseFile(t *testing.T) {
 	}
 }
 
+func TestSocialNetworksParsing(t *testing.T) {
+	type args struct {
+		content  []byte
+		filePath string
+	}
+	tests := []struct {
+		name    string
+		p       *ParserServices
+		args    args
+		want    model.CV
+		wantErr bool
+	}{
+		{
+			name: "Should parse SocialNetworks with all fields",
+			p:    &ParserServices{},
+			args: args{
+				content: []byte(`
+socialNetworks:
+  github: johndoe_gh
+  stackoverflow: johndoe_so
+  linkedin: johndoe_li
+  twitter: johndoe_tw
+  bluesky: johndoe_bs
+`),
+			},
+			want: model.CV{
+				SocialNetworks: model.SocialNetworks{
+					Github:        "johndoe_gh",
+					Stackoverflow: "johndoe_so",
+					Linkedin:      "johndoe_li",
+					Twitter:       "johndoe_tw",
+					Bluesky:       "johndoe_bs",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Should parse SocialNetworks with missing fields",
+			p:    &ParserServices{},
+			args: args{
+				content: []byte(`
+socialNetworks:
+  github: janedoe_gh
+  linkedin: janedoe_li
+`),
+			},
+			want: model.CV{
+				SocialNetworks: model.SocialNetworks{
+					Github:        "janedoe_gh",
+					Stackoverflow: "",
+					Linkedin:      "janedoe_li",
+					Twitter:       "",
+					Bluesky:       "",
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.p.convertFileContentToStruct(tt.args.content)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestReferenceUrlParsing(t *testing.T) {
 	t.Run("Should parse Reference with Url and SocialNetworks fields", func(t *testing.T) {
 		yamlContent := []byte(`

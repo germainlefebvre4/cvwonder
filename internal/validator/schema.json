@@ -102,6 +102,10 @@
         "twitter": {
           "type": "string",
           "description": "Twitter username"
+        },
+        "bluesky": {
+          "type": "string",
+          "description": "Bluesky username"
         }
       }
     },
