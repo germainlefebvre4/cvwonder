@@ -15,13 +15,13 @@ type CV struct {
 }
 
 type Reference struct {
-	Name           string           `yaml:"name"`
-	Position       string           `yaml:"position"`
-	Company        string           `yaml:"company"`
-	Date           string           `yaml:"date"`
-	Url            string           `yaml:"url"`
+	Name           string         `yaml:"name"`
+	Position       string         `yaml:"position"`
+	Company        string         `yaml:"company"`
+	Date           string         `yaml:"date"`
+	Url            string         `yaml:"url"`
 	SocialNetworks SocialNetworks `yaml:"socialNetworks"`
-	Description    string           `yaml:"description"`
+	Description    string         `yaml:"description"`
 }
 
 type Company struct {
@@ -51,6 +51,7 @@ type SocialNetworks struct {
 	Stackoverflow string `yaml:"stackoverflow"`
 	Linkedin      string `yaml:"linkedin"`
 	Twitter       string `yaml:"twitter"`
+	Bluesky       string `yaml:"bluesky"`
 }
 
 type Career struct {
