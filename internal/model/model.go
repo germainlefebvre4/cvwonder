@@ -47,11 +47,11 @@ type Experience struct {
 }
 
 type SocialNetworks struct {
-	Github        string `yaml:"github"`
-	Stackoverflow string `yaml:"stackoverflow"`
-	Linkedin      string `yaml:"linkedin"`
-	Twitter       string `yaml:"twitter"`
-	Bluesky       string `yaml:"bluesky"`
+	Github        string `yaml:"github,omitempty"`
+	Stackoverflow string `yaml:"stackoverflow,omitempty"`
+	Linkedin      string `yaml:"linkedin,omitempty"`
+	Twitter       string `yaml:"twitter,omitempty"`
+	Bluesky       string `yaml:"bluesky,omitempty"`
 }
 
 type Career struct {
