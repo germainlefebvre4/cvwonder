@@ -45,6 +45,13 @@ The generated HTML file name is based on the input YAML file name. For example, 
 It allows you to generate multiple CVs from different YAML files without overwriting the generated HTML file.
 :::
 
+:::tip Excluding Files with .cvwonderignore
+
+When generating your CV, you may want to exclude certain files from being copied from the theme directory to the output directory. 
+CVWonder supports a `.cvwonderignore` file that works like `.gitignore` to control which files are excluded during generation.
+
+:::
+
 ## Watch the changes
 
 You can automatically regenerate your CV when updating either the YAML file or the theme by adding the `--watch` flag to the `generate` command:
