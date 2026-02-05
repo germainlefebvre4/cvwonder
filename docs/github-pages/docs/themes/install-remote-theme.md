@@ -37,7 +37,7 @@ cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
 
 ### Install a specific branch/ref
 
-You can install a specific branch or ref by appending `@<branch>` to the repository URL:
+You can install a specific branch or ref by appending `@<ref>` to the repository URL:
 
 ```bash
 # Install from the develop branch
