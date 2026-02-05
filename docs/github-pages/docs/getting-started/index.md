@@ -24,9 +24,10 @@ CVWonder uses themes to style your CV. Install a theme from GitHub:
 # Install a public theme (uses default branch)
 cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
 
-# Install from a specific branch
+# Install from a specifics refs
 cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default@develop
-
+cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default@feat/with-logos
+cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default@12345f5
 # List installed themes
 cvwonder theme list
 ```
