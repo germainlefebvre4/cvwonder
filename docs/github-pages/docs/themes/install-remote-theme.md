@@ -63,8 +63,8 @@ cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
 # Later, switch to develop branch
 cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@develop
 
-# Switch back to main
-cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@main
+# Switch back to main and discard local changes
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@main --force
 ```
 
 **How it works:**
@@ -73,6 +73,19 @@ cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@main
 - The theme directory name remains the same (e.g., `themes/default/`)
 - Only the git branch inside the directory changes
 - You can verify the current branch when generating your CV
+
+**Handling local changes:**
+
+If you have made local modifications to the theme files, switching branches might fail. Use the `--force` flag to discard local changes:
+
+```bash
+# Force switch to a different branch, discarding local changes
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@develop --force
+```
+
+:::warning Local Changes
+Using `--force` will discard any uncommitted changes in the theme directory. Make sure to back up any customizations before using this flag.
+:::
 
 **Note:** Themes are installed in `themes/<theme-name>/` directories (e.g., `themes/default/`). The git branch is managed inside the directory, not in the directory name.
 

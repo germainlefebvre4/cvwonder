@@ -64,6 +64,21 @@ cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-defau
 cvwonder generate --input=cv.yml --output=generated/ --theme=default
 ```
 
+### Branch Management
+
+Install themes from specific branches or switch between them:
+
+```bash
+# Install from default branch
+cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-default
+
+# Install from specific branch
+cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-default@develop
+
+# Switch to another branch (use --force to discard local changes)
+cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-default@main --force
+```
+
 ### Installing Private Themes
 
 CVWonder supports installing themes from private GitHub repositories with automatic authentication detection:

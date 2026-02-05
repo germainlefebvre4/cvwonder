@@ -16,13 +16,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (t *ThemesService) Install(themeURL string) {
+func (t *ThemesService) Install(themeURL string, force bool) {
 	logrus.Debug("Install")
 	verifyTheme(themeURL)
 	githubRepo := parseGitHubURL(themeURL)
 	verifyThemeConfig(githubRepo)
 	createThemesDir()
-	downloadTheme(githubRepo)
+	downloadTheme(githubRepo, force)
 }
 
 func verifyTheme(themeURL string) {
@@ -74,11 +74,11 @@ func parseGitHubURL(themeURL string) theme_config.GithubRepo {
 	return theme_config.GithubRepo{URL: URL, Owner: path[1], Name: path[2], Ref: ref}
 }
 
-func checkoutRef(worktree *git.Worktree, repo *git.Repository, ref string) error {
+func checkoutRef(worktree *git.Worktree, repo *git.Repository, ref string, force bool) error {
 	// Try as a local branch first
 	err := worktree.Checkout(&git.CheckoutOptions{
 		Branch: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", ref)),
-		Force:  true,
+		Force:  force,
 	})
 	if err == nil {
 		return nil
@@ -92,7 +92,7 @@ func checkoutRef(worktree *git.Worktree, repo *git.Repository, ref string) error
 		err = worktree.Checkout(&git.CheckoutOptions{
 			Branch: localBranch,
 			Create: true,
-			Force:  true,
+			Force:  force,
 		})
 		if err == nil {
 			return nil
@@ -102,7 +102,7 @@ func checkoutRef(worktree *git.Worktree, repo *git.Repository, ref string) error
 	// Try as a tag
 	err = worktree.Checkout(&git.CheckoutOptions{
 		Branch: plumbing.ReferenceName(fmt.Sprintf("refs/tags/%s", ref)),
-		Force:  true,
+		Force:  force,
 	})
 	if err == nil {
 		return nil
@@ -113,7 +113,7 @@ func checkoutRef(worktree *git.Worktree, repo *git.Repository, ref string) error
 	if !hash.IsZero() {
 		err = worktree.Checkout(&git.CheckoutOptions{
 			Hash:  hash,
-			Force: true,
+			Force: force,
 		})
 		if err == nil {
 			return nil
@@ -123,7 +123,7 @@ func checkoutRef(worktree *git.Worktree, repo *git.Repository, ref string) error
 	return fmt.Errorf("unable to checkout ref '%s': not found as branch, tag, or commit", ref)
 }
 
-func downloadTheme(githubRepo theme_config.GithubRepo) {
+func downloadTheme(githubRepo theme_config.GithubRepo, force bool) {
 	logrus.Debug("Download theme")
 
 	themeConfig := theme_config.GetThemeConfigFromURL(githubRepo)
@@ -167,9 +167,12 @@ func downloadTheme(githubRepo theme_config.GithubRepo) {
 		}
 
 		// Checkout the requested ref
-		err = checkoutRef(worktree, repo, ref)
+		err = checkoutRef(worktree, repo, ref, force)
 		if err != nil {
-			logrus.Errorf("Error checking out ref '%s': %v", ref, err)
+			logrus.Errorf("Error switching ref '%s': %v", ref, err)
+			if !force {
+				logrus.Error("Hint: Use --force flag to discard local changes and force checkout")
+			}
 			return
 		}
 
@@ -201,9 +204,9 @@ func downloadTheme(githubRepo theme_config.GithubRepo) {
 		return
 	}
 
-	err = checkoutRef(worktree, repo, ref)
+	err = checkoutRef(worktree, repo, ref, force)
 	if err != nil {
-		logrus.Errorf("Error checking out ref '%s': %v", ref, err)
+		logrus.Errorf("Error switching ref '%s': %v", ref, err)
 		return
 	}
 

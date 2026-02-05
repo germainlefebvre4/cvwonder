@@ -53,9 +53,11 @@ func CmdInstall() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			themesService, err := themes.NewThemesService()
 			utils.CheckError(err)
-			themesService.Install(args[0])
+			themesService.Install(args[0], utils.CliArgs.ForceThemeInstall)
 		},
 	}
+
+	cobraCmd.Flags().BoolVar(&utils.CliArgs.ForceThemeInstall, "force", false, "Force switch ref, discarding local changes")
 
 	return cobraCmd
 }
