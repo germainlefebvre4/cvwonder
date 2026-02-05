@@ -35,6 +35,60 @@ cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
 # cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
 ```
 
+### Install a specific branch/ref
+
+You can install a specific branch or ref by appending `@<ref>` to the repository URL:
+
+```bash
+# Install from the develop branch
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@develop
+
+# Install from a feature branch
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@feat/new-design
+
+# Install from a tag
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@v1.0.0
+```
+
+If you don't specify a branch, CVWonder will automatically use the default branch of the repository (usually `main` or `master`).
+
+### Switching branches
+
+If a theme is already installed, running the install command with a different branch will switch to that branch:
+
+```bash
+# Install theme on main branch
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default
+
+# Later, switch to develop branch
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@develop
+
+# Switch back to main and discard local changes
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@main --force
+```
+
+**How it works:**
+- CVWonder uses git to manage theme repositories
+- Switching branches fetches the latest changes and checks out the requested branch
+- The theme directory name remains the same (e.g., `themes/default/`)
+- Only the git branch inside the directory changes
+- You can verify the current branch when generating your CV
+
+**Handling local changes:**
+
+If you have made local modifications to the theme files, switching branches might fail. Use the `--force` flag to discard local changes:
+
+```bash
+# Force switch to a different branch, discarding local changes
+cvwonder theme install github.com/germainlefebvre4/cvwonder-theme-default@develop --force
+```
+
+:::warning Local Changes
+Using `--force` will discard any uncommitted changes in the theme directory. Make sure to back up any customizations before using this flag.
+:::
+
+**Note:** Themes are installed in `themes/<theme-name>/` directories (e.g., `themes/default/`). The git branch is managed inside the directory, not in the directory name.
+
 :::info Private Repositories
 CVWonder supports installing themes from private GitHub repositories with automatic authentication detection.
 

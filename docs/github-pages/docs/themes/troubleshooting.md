@@ -91,6 +91,31 @@ Common issues and solutions when working with themes in CV Wonder.
    cvwonder theme install <theme-url>
    ```
 
+### Branch Switching Errors
+
+**Error**: `Error switching ref 'develop'` or `your local changes would be overwritten`
+
+**Cause**: You have uncommitted changes in the theme directory that would be overwritten when switching branches.
+
+**Solution**:
+
+1. **Use the --force flag** to discard local changes and switch anyway:
+   ```bash
+   cvwonder theme install github.com/user/repo@develop --force
+   ```
+
+2. **Or save your changes first:**
+   ```bash
+   cd themes/my-theme
+   git stash
+   cd ../..
+   cvwonder theme install github.com/user/repo@develop
+   ```
+
+:::warning
+Using `--force` will discard any uncommitted changes in the theme directory. Make sure to back up any customizations before using this flag.
+:::
+
 ### Template Rendering Errors
 
 **Error**: Template errors during generation

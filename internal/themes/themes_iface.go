@@ -2,7 +2,7 @@ package themes
 
 type ThemesInterface interface {
 	List()
-	Install(theme string)
+	Install(theme string, force bool)
 	Create(theme string)
 	Verify(theme string)
 }

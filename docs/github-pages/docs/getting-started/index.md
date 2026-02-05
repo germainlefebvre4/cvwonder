@@ -21,12 +21,30 @@ Follow these steps to generate your first CV:
 CVWonder uses themes to style your CV. Install a theme from GitHub:
 
 ```bash
-# Install a public theme
+# Install a public theme (uses default branch)
 cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default
 
+# Install from a specifics refs
+cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default@develop
+cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default@feat/with-logos
+cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default@12345f5
 # List installed themes
 cvwonder theme list
 ```
+
+### Branch Management
+
+You can switch between branches at any time:
+
+```bash
+# Switch to develop branch
+cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default@develop
+
+# Switch back to main
+cvwonder theme install https://github.com/germainlefebvre4/cvwonder-theme-default@main
+```
+
+The current branch is displayed when you generate your CV.
 
 ### Private Theme Repositories
 

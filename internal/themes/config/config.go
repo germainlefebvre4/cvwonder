@@ -6,6 +6,7 @@ import (
 
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
 	"github.com/goccy/go-yaml"
+	"github.com/google/go-github/github"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,7 +21,16 @@ type ThemeConfig struct {
 func GetThemeConfigFromURL(githubRepo GithubRepo) ThemeConfig {
 	// Download theme.yaml
 	client := utils.GetGitHubClient()
-	fileContent, _, _, err := client.Repositories.GetContents(context.TODO(), githubRepo.Owner, githubRepo.Name, "theme.yaml", nil)
+
+	// Create options with ref if specified
+	var opts *github.RepositoryContentGetOptions
+	if githubRepo.Ref != "" {
+		opts = &github.RepositoryContentGetOptions{
+			Ref: githubRepo.Ref,
+		}
+	}
+
+	fileContent, _, _, err := client.Repositories.GetContents(context.TODO(), githubRepo.Owner, githubRepo.Name, "theme.yaml", opts)
 	if err != nil {
 		logrus.Fatal("Error downloading theme.yaml: ", err)
 	}
@@ -60,6 +70,8 @@ func GetThemeConfigFromDir(dir string) ThemeConfig {
 }
 
 func GetThemeConfigFromThemeName(themeName string) ThemeConfig {
+	// This function now expects themeName to already be resolved to the actual directory name
+	// The caller should use GetThemeDirectory from themes package first
 	return GetThemeConfigFromDir("themes/" + themeName)
 }
 
@@ -73,4 +85,13 @@ func (tc *ThemeConfig) VerifyThemeMinimumVersion(cvwonderVersion string) bool {
 	logrus.Error("The theme minimum version not met. You might encounter issues with this theme.")
 	logrus.Error("")
 	return false
+}
+
+func GetDefaultBranch(githubRepo GithubRepo) string {
+	client := utils.GetGitHubClient()
+	repo, _, err := client.Repositories.Get(context.TODO(), githubRepo.Owner, githubRepo.Name)
+	if err != nil {
+		logrus.Fatal("Error getting repository info: ", err)
+	}
+	return repo.GetDefaultBranch()
 }

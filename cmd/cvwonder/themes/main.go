@@ -5,6 +5,7 @@ import (
 
 	"github.com/germainlefebvre4/cvwonder/internal/themes"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -34,7 +35,9 @@ func CmdList() *cobra.Command {
 		Long:    `List themes`,
 		Run: func(cmd *cobra.Command, args []string) {
 			themesService, err := themes.NewThemesService()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating themes service: ", err)
+			}
 			themesService.List()
 		},
 	}
@@ -52,10 +55,14 @@ func CmdInstall() *cobra.Command {
 		Long:    `Install theme`,
 		Run: func(cmd *cobra.Command, args []string) {
 			themesService, err := themes.NewThemesService()
-			utils.CheckError(err)
-			themesService.Install(args[0])
+			if err != nil {
+				logrus.Fatal("Error creating themes service: ", err)
+			}
+			themesService.Install(args[0], utils.CliArgs.ForceThemeInstall)
 		},
 	}
+
+	cobraCmd.Flags().BoolVar(&utils.CliArgs.ForceThemeInstall, "force", false, "Force switch ref, discarding local changes")
 
 	return cobraCmd
 }
@@ -69,7 +76,9 @@ func CmdCreate() *cobra.Command {
 		Long:    `Create a new theme`,
 		Run: func(cmd *cobra.Command, args []string) {
 			themesService, err := themes.NewThemesService()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating themes service: ", err)
+			}
 			themeName := strings.ReplaceAll(utils.CliArgs.CreateThemeName, "'", "")
 			themeName = strings.ReplaceAll(themeName, "\"", "")
 			themesService.Create(themeName)
@@ -91,7 +100,9 @@ func CmdCheck() *cobra.Command {
 		Long:    `Check themes`,
 		Run: func(cmd *cobra.Command, args []string) {
 			themesService, err := themes.NewThemesService()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating themes service: ", err)
+			}
 			themesService.Verify(args[0])
 		},
 	}

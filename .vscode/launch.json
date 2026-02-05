@@ -26,6 +26,8 @@
                 "themes",
                 "install",
                 "github.com/germainlefebvre4/cvwonder-theme-default",
+                // "github.com/germainlefebvre4/cvwonder-theme-default@develop",
+                // "github.com/germainlefebvre4/cvwonder-theme-default@v1.0.0",
                 // "github.com/germainlefebvre4/cvwonder-theme-horizon-timeline",
                 // "github.com/zatsit-oss/cvwonder-theme-zatsit",
 

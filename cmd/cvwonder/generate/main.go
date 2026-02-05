@@ -1,6 +1,7 @@
 package cmdGenerate
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
@@ -36,10 +37,24 @@ func GenerateCmd() *cobra.Command {
 			// Build OutputDirectory object
 			outputDir := model.BuildOutputDirectory(utils.CliArgs.OutputDirectory)
 
+			// Check Theme exists and get actual theme directory
+			err := themes.CheckThemeExists(utils.CliArgs.ThemeName)
+			if err != nil {
+				logrus.Fatal("Theme not found: ", utils.CliArgs.ThemeName)
+			}
+
+			// Get the actual ref being used from the git repository
+			themeRef := themes.ParseThemeName(utils.CliArgs.ThemeName)
+			actualRef := themes.GetThemeRef(utils.CliArgs.ThemeName)
+			themeDisplayName := themeRef.Name
+			if actualRef != "" {
+				themeDisplayName = fmt.Sprintf("%s (ref=%s)", themeRef.Name, actualRef)
+			}
+
 			logrus.Info("CV Wonder")
 			logrus.Info("  Input file: ", inputFile.RelativePath)
 			logrus.Info("  Output directory: ", outputDir.RelativePath)
-			logrus.Info("  Theme: ", utils.CliArgs.ThemeName)
+			logrus.Info("  Theme: ", themeDisplayName)
 			logrus.Info("  Format: ", utils.CliArgs.Format)
 			logrus.Info("")
 
@@ -47,10 +62,14 @@ func GenerateCmd() *cobra.Command {
 			if utils.CliArgs.Validate {
 				logrus.Info("Validating YAML file...")
 				validatorService, err := validator.NewValidatorServices()
-				utils.CheckError(err)
+				if err != nil {
+					logrus.Fatal("Error creating validator services: ", err)
+				}
 
 				result, err := validatorService.ValidateFile(inputFile.FullPath)
-				utils.CheckError(err)
+				if err != nil {
+					logrus.Fatal("Error validating file: ", err)
+				}
 
 				if !result.Valid {
 					output := validator.FormatValidationResult(result)
@@ -67,35 +86,55 @@ func GenerateCmd() *cobra.Command {
 				logrus.Info("")
 			}
 
-			// Check Theme exists
-			err := themes.CheckThemeExists(utils.CliArgs.ThemeName)
-			utils.CheckError(err)
+			// Get the actual theme directory path
+			themeDir, err := themes.GetThemeDirectory(utils.CliArgs.ThemeName)
+			if err != nil {
+				logrus.Fatal("Error getting theme directory: ", err)
+			}
 
 			// Check Theme version compatibility
-			themeConfig := theme_config.GetThemeConfigFromThemeName(utils.CliArgs.ThemeName)
+			themeConfig := theme_config.GetThemeConfigFromDir(themeDir)
 			themeConfig.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
 
 			// Parse the CV
 			parserService, err := cvparser.NewParserServices()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating parser services: ", err)
+			}
 			content, err := parserService.ParseFile(inputFile.FullPath)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error parsing file: ", err)
+			}
 
 			// Create render services
 			serveService, err := cvserve.NewServeServices()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating serve services: ", err)
+			}
 			renderHTMLService, err := render_html.NewRenderHTMLServices()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating render HTML services: ", err)
+			}
 			renderPDFService, err := render_pdf.NewRenderPDFServices(serveService)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating render PDF services: ", err)
+			}
 			renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating render services: ", err)
+			}
 
 			// Render the CV
 			baseDirectory, err := os.Getwd()
-			utils.CheckError(err)
-			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error getting current directory: ", err)
+			}
+
+			// Use the theme name (without ref) for rendering
+			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeRef.Name, utils.CliArgs.Format)
+			if err != nil {
+				logrus.Fatal("Error rendering CV: ", err)
+			}
 
 			logrus.Info("CV generated successfully")
 		},
