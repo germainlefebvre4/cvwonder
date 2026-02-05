@@ -39,7 +39,9 @@ func GenerateCmd() *cobra.Command {
 
 			// Check Theme exists and get actual theme directory
 			err := themes.CheckThemeExists(utils.CliArgs.ThemeName)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Theme not found: ", utils.CliArgs.ThemeName)
+			}
 
 			// Get the actual ref being used from the git repository
 			themeRef := themes.ParseThemeName(utils.CliArgs.ThemeName)
@@ -60,10 +62,14 @@ func GenerateCmd() *cobra.Command {
 			if utils.CliArgs.Validate {
 				logrus.Info("Validating YAML file...")
 				validatorService, err := validator.NewValidatorServices()
-				utils.CheckError(err)
+				if err != nil {
+					logrus.Fatal("Error creating validator services: ", err)
+				}
 
 				result, err := validatorService.ValidateFile(inputFile.FullPath)
-				utils.CheckError(err)
+				if err != nil {
+					logrus.Fatal("Error validating file: ", err)
+				}
 
 				if !result.Valid {
 					output := validator.FormatValidationResult(result)
@@ -82,7 +88,9 @@ func GenerateCmd() *cobra.Command {
 
 			// Get the actual theme directory path
 			themeDir, err := themes.GetThemeDirectory(utils.CliArgs.ThemeName)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error getting theme directory: ", err)
+			}
 
 			// Check Theme version compatibility
 			themeConfig := theme_config.GetThemeConfigFromDir(themeDir)
@@ -90,27 +98,43 @@ func GenerateCmd() *cobra.Command {
 
 			// Parse the CV
 			parserService, err := cvparser.NewParserServices()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating parser services: ", err)
+			}
 			content, err := parserService.ParseFile(inputFile.FullPath)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error parsing file: ", err)
+			}
 
 			// Create render services
 			serveService, err := cvserve.NewServeServices()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating serve services: ", err)
+			}
 			renderHTMLService, err := render_html.NewRenderHTMLServices()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating render HTML services: ", err)
+			}
 			renderPDFService, err := render_pdf.NewRenderPDFServices(serveService)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating render PDF services: ", err)
+			}
 			renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error creating render services: ", err)
+			}
 
 			// Render the CV
 			baseDirectory, err := os.Getwd()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error getting current directory: ", err)
+			}
 
 			// Use the theme name (without ref) for rendering
 			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeRef.Name, utils.CliArgs.Format)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal("Error rendering CV: ", err)
+			}
 
 			logrus.Info("CV generated successfully")
 		},
