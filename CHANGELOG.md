@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.6.0...v0.7.0) (2026-02-05)
+
+
+### Features
+
+* **theme:** Install a theme based on the github ref ([#115](https://github.com/germainlefebvre4/cvwonder/issues/115)) ([2777ddf](https://github.com/germainlefebvre4/cvwonder/commit/2777ddfd631397776078ac6b5fae1c94bb5a3272))
+
+
+### Bug Fixes
+
+* **model:** Add Bluesky in Social Networks ([#112](https://github.com/germainlefebvre4/cvwonder/issues/112)) ([7035619](https://github.com/germainlefebvre4/cvwonder/commit/70356195e4cb7810a7b685857bda7ab69238de31))
+
 ## [0.6.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.5.2...v0.6.0) (2026-02-03)
 
 
