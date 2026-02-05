@@ -72,7 +72,7 @@ func ServeCmd() *cobra.Command {
 			// Render the CV
 			baseDirectory, err := os.Getwd()
 			utils.CheckError(err)
-			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
+			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format, true)
 			utils.CheckError(err)
 
 			if utils.CliArgs.Watch {

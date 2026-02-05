@@ -59,7 +59,7 @@ func TestObserveFileEvents(t *testing.T) {
 		}
 
 		parserMock.On("ParseFile", inputFile).Return(cv, nil)
-		renderMock.On("Render", cv, tempDir, outputDir, inputFile, "default", "html").Return(nil)
+		renderMock.On("Render", cv, tempDir, outputDir, inputFile, "default", "html", true).Return(nil)
 
 		// Create service
 		service := &WatcherServices{
@@ -82,7 +82,7 @@ func TestObserveFileEvents(t *testing.T) {
 
 		// Verify mocks were called
 		parserMock.AssertCalled(t, "ParseFile", inputFile)
-		renderMock.AssertCalled(t, "Render", cv, tempDir, outputDir, inputFile, "default", "html")
+		renderMock.AssertCalled(t, "Render", cv, tempDir, outputDir, inputFile, "default", "html", true)
 	})
 
 	t.Run("Should watch theme file changes", func(t *testing.T) {

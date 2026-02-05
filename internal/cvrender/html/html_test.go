@@ -88,12 +88,13 @@ func TestRenderFormatHTML(t *testing.T) {
 			assert.Equalf(
 				t,
 				tt.wantErr,
-				service.RenderFormatHTML(tt.args.cv, tt.args.baseDirectory, tt.args.outputDirectory, tt.args.inputFilename, tt.args.themeName),
-				"RenderFormatHTML(%v, %v, %v, %v)",
+				service.RenderFormatHTML(tt.args.cv, tt.args.baseDirectory, tt.args.outputDirectory, tt.args.inputFilename, tt.args.themeName, false),
+				"RenderFormatHTML(%v, %v, %v, %v, %v)",
 				tt.args.cv,
 				tt.args.outputDirectory,
 				tt.args.inputFilename,
 				tt.args.themeName,
+				false,
 			)
 		})
 
