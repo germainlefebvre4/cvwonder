@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/germainlefebvre4/cvwonder/compare/v0.7.0...v0.7.1) (2026-02-06)
+
+
+### Bug Fixes
+
+* **generate:** Remove livereload js script on generate cmd ([#116](https://github.com/germainlefebvre4/cvwonder/issues/116)) ([5efcfa5](https://github.com/germainlefebvre4/cvwonder/commit/5efcfa556b3eb94f9223087bd2af92ecf434cbad))
+
 ## [0.7.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.6.0...v0.7.0) (2026-02-05)
 
 
