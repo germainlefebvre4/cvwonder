@@ -27,14 +27,14 @@ func NewRenderServices(
 }
 
 // CVRender renders the CV based on html template located at internal/templates/index.html
-func (r *RenderServices) Render(cv model.CV, baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, watch bool) {
+func (r *RenderServices) Render(cv model.CV, baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, isWatch bool) {
 	logrus.Debug("Rendering CV")
 
 	inputFilenameExt := path.Base(inputFilePath)
 	inputFilename := inputFilenameExt[:len(inputFilenameExt)-len(path.Ext(inputFilenameExt))]
 
 	// Generate HTML
-	err := r.RenderHTMLService.RenderFormatHTML(cv, baseDirectory, outputDirectory, inputFilename, themeName, watch)
+	err := r.RenderHTMLService.RenderFormatHTML(cv, baseDirectory, outputDirectory, inputFilename, themeName, isWatch)
 	utils.CheckError(err)
 
 	if exportFormat == "pdf" {
