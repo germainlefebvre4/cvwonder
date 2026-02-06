@@ -139,6 +139,282 @@ func TestCopyDirectory(t *testing.T) {
 	})
 }
 
+func TestLoadIgnoreMatcher(t *testing.T) {
+	t.Run("Should return nil when .cvwonderignore does not exist", func(t *testing.T) {
+		tempDir := t.TempDir()
+
+		matcher, err := LoadIgnoreMatcher(tempDir)
+
+		assert.NoError(t, err)
+		assert.Nil(t, matcher)
+	})
+
+	t.Run("Should load .cvwonderignore successfully", func(t *testing.T) {
+		tempDir := t.TempDir()
+		ignorePath := filepath.Join(tempDir, ".cvwonderignore")
+
+		// Create .cvwonderignore with patterns
+		ignoreContent := `*.log
+temp/
+`
+		err := os.WriteFile(ignorePath, []byte(ignoreContent), 0644)
+		require.NoError(t, err)
+
+		matcher, err := LoadIgnoreMatcher(tempDir)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, matcher)
+	})
+}
+
+func TestCopyDirectoryWithIgnore(t *testing.T) {
+	t.Run("Should copy directory and respect ignore patterns", func(t *testing.T) {
+		tempDir := t.TempDir()
+		srcDir := filepath.Join(tempDir, "source")
+		dstDir := filepath.Join(tempDir, "destination")
+
+		// Create source directory structure
+		err := os.MkdirAll(filepath.Join(srcDir, "subdir"), 0750)
+		require.NoError(t, err)
+
+		// Create files
+		file1 := filepath.Join(srcDir, "file1.txt")
+		file2 := filepath.Join(srcDir, "file2.log")
+		file3 := filepath.Join(srcDir, "subdir", "file3.txt")
+		file4 := filepath.Join(srcDir, "subdir", "file4.log")
+
+		err = os.WriteFile(file1, []byte("content1"), 0644)
+		require.NoError(t, err)
+		err = os.WriteFile(file2, []byte("content2"), 0644)
+		require.NoError(t, err)
+		err = os.WriteFile(file3, []byte("content3"), 0644)
+		require.NoError(t, err)
+		err = os.WriteFile(file4, []byte("content4"), 0644)
+		require.NoError(t, err)
+
+		// Create .cvwonderignore in tempDir to ignore .log files
+		ignorePath := filepath.Join(tempDir, ".cvwonderignore")
+		ignoreContent := `*.log`
+		err = os.WriteFile(ignorePath, []byte(ignoreContent), 0644)
+		require.NoError(t, err)
+
+		// Load ignore matcher
+		matcher, err := LoadIgnoreMatcher(tempDir)
+		require.NoError(t, err)
+		require.NotNil(t, matcher)
+
+		// Create destination directory
+		err = os.MkdirAll(dstDir, 0750)
+		require.NoError(t, err)
+
+		// Test - copy with ignore patterns
+		err = CopyDirectoryWithIgnore(srcDir, dstDir, matcher)
+
+		// Assert
+		assert.NoError(t, err)
+
+		// Verify .txt files were copied
+		_, err = os.Stat(filepath.Join(dstDir, "file1.txt"))
+		assert.NoError(t, err)
+		_, err = os.Stat(filepath.Join(dstDir, "subdir", "file3.txt"))
+		assert.NoError(t, err)
+
+		// Verify .log files were NOT copied
+		_, err = os.Stat(filepath.Join(dstDir, "file2.log"))
+		assert.True(t, os.IsNotExist(err))
+		_, err = os.Stat(filepath.Join(dstDir, "subdir", "file4.log"))
+		assert.True(t, os.IsNotExist(err))
+	})
+
+	t.Run("Should respect inclusion patterns (negation)", func(t *testing.T) {
+		tempDir := t.TempDir()
+		srcDir := filepath.Join(tempDir, "source")
+		dstDir := filepath.Join(tempDir, "destination")
+
+		// Create source directory structure
+		err := os.MkdirAll(srcDir, 0750)
+		require.NoError(t, err)
+
+		// Create files
+		file1 := filepath.Join(srcDir, "debug.log")
+		file2 := filepath.Join(srcDir, "important.log")
+		file3 := filepath.Join(srcDir, "app.log")
+
+		err = os.WriteFile(file1, []byte("debug"), 0644)
+		require.NoError(t, err)
+		err = os.WriteFile(file2, []byte("important"), 0644)
+		require.NoError(t, err)
+		err = os.WriteFile(file3, []byte("app"), 0644)
+		require.NoError(t, err)
+
+		// Create .cvwonderignore: ignore all .log but keep important.log
+		ignorePath := filepath.Join(tempDir, ".cvwonderignore")
+		ignoreContent := `*.log
+!important.log
+`
+		err = os.WriteFile(ignorePath, []byte(ignoreContent), 0644)
+		require.NoError(t, err)
+
+		// Load ignore matcher
+		matcher, err := LoadIgnoreMatcher(tempDir)
+		require.NoError(t, err)
+		require.NotNil(t, matcher)
+
+		// Create destination directory
+		err = os.MkdirAll(dstDir, 0750)
+		require.NoError(t, err)
+
+		// Test
+		err = CopyDirectoryWithIgnore(srcDir, dstDir, matcher)
+
+		// Assert
+		assert.NoError(t, err)
+
+		// Verify important.log was copied (negation pattern)
+		_, err = os.Stat(filepath.Join(dstDir, "important.log"))
+		assert.NoError(t, err)
+
+		// Verify other .log files were NOT copied
+		_, err = os.Stat(filepath.Join(dstDir, "debug.log"))
+		assert.True(t, os.IsNotExist(err))
+		_, err = os.Stat(filepath.Join(dstDir, "app.log"))
+		assert.True(t, os.IsNotExist(err))
+	})
+
+	t.Run("Should ignore entire directories", func(t *testing.T) {
+		tempDir := t.TempDir()
+		srcDir := filepath.Join(tempDir, "source")
+		dstDir := filepath.Join(tempDir, "destination")
+
+		// Create source directory structure
+		err := os.MkdirAll(filepath.Join(srcDir, "node_modules"), 0750)
+		require.NoError(t, err)
+		err = os.MkdirAll(filepath.Join(srcDir, "src"), 0750)
+		require.NoError(t, err)
+
+		// Create files
+		nodeFile := filepath.Join(srcDir, "node_modules", "package.json")
+		srcFile := filepath.Join(srcDir, "src", "main.go")
+
+		err = os.WriteFile(nodeFile, []byte("{}"), 0644)
+		require.NoError(t, err)
+		err = os.WriteFile(srcFile, []byte("package main"), 0644)
+		require.NoError(t, err)
+
+		// Create .cvwonderignore to ignore node_modules directory
+		ignorePath := filepath.Join(tempDir, ".cvwonderignore")
+		ignoreContent := `node_modules/`
+		err = os.WriteFile(ignorePath, []byte(ignoreContent), 0644)
+		require.NoError(t, err)
+
+		// Load ignore matcher
+		matcher, err := LoadIgnoreMatcher(tempDir)
+		require.NoError(t, err)
+		require.NotNil(t, matcher)
+
+		// Create destination directory
+		err = os.MkdirAll(dstDir, 0750)
+		require.NoError(t, err)
+
+		// Test
+		err = CopyDirectoryWithIgnore(srcDir, dstDir, matcher)
+
+		// Assert
+		assert.NoError(t, err)
+
+		// Verify src directory was copied
+		_, err = os.Stat(filepath.Join(dstDir, "src", "main.go"))
+		assert.NoError(t, err)
+
+		// Verify node_modules directory was NOT copied
+		_, err = os.Stat(filepath.Join(dstDir, "node_modules"))
+		assert.True(t, os.IsNotExist(err))
+	})
+
+	t.Run("Should support subdirectory negation patterns", func(t *testing.T) {
+		tempDir := t.TempDir()
+		srcDir := filepath.Join(tempDir, "source")
+		dstDir := filepath.Join(tempDir, "destination")
+
+		// Create source directory structure with subdirectory
+		err := os.MkdirAll(filepath.Join(srcDir, "fdfd"), 0750)
+		require.NoError(t, err)
+
+		// Create files in subdirectory
+		file1 := filepath.Join(srcDir, "fdfd", "fd")
+		file2 := filepath.Join(srcDir, "fdfd", "include")
+		file3 := filepath.Join(srcDir, "other.txt")
+
+		err = os.WriteFile(file1, []byte("fd content"), 0644)
+		require.NoError(t, err)
+		err = os.WriteFile(file2, []byte("include content"), 0644)
+		require.NoError(t, err)
+		err = os.WriteFile(file3, []byte("other content"), 0644)
+		require.NoError(t, err)
+
+		// Create .cvwonderignore: ignore fdfd directory but keep fdfd/include
+		ignorePath := filepath.Join(tempDir, ".cvwonderignore")
+		ignoreContent := `fdfd
+!fdfd/include
+`
+		err = os.WriteFile(ignorePath, []byte(ignoreContent), 0644)
+		require.NoError(t, err)
+
+		// Load ignore matcher
+		matcher, err := LoadIgnoreMatcher(tempDir)
+		require.NoError(t, err)
+		require.NotNil(t, matcher)
+
+		// Create destination directory
+		err = os.MkdirAll(dstDir, 0750)
+		require.NoError(t, err)
+
+		// Test
+		err = CopyDirectoryWithIgnore(srcDir, dstDir, matcher)
+
+		// Assert
+		assert.NoError(t, err)
+
+		// Verify fdfd/include was copied (negation pattern)
+		_, err = os.Stat(filepath.Join(dstDir, "fdfd", "include"))
+		assert.NoError(t, err, "fdfd/include should be copied due to negation pattern")
+
+		// Verify fdfd/fd was NOT copied (matched ignore pattern)
+		_, err = os.Stat(filepath.Join(dstDir, "fdfd", "fd"))
+		assert.True(t, os.IsNotExist(err), "fdfd/fd should be ignored")
+
+		// Verify other.txt was copied (not matched by any pattern)
+		_, err = os.Stat(filepath.Join(dstDir, "other.txt"))
+		assert.NoError(t, err, "other.txt should be copied")
+	})
+
+	t.Run("Should work without ignore matcher (backward compatibility)", func(t *testing.T) {
+		tempDir := t.TempDir()
+		srcDir := filepath.Join(tempDir, "source")
+		dstDir := filepath.Join(tempDir, "destination")
+
+		// Create source directory
+		err := os.MkdirAll(srcDir, 0750)
+		require.NoError(t, err)
+
+		file1 := filepath.Join(srcDir, "file1.txt")
+		err = os.WriteFile(file1, []byte("content"), 0644)
+		require.NoError(t, err)
+
+		// Create destination directory
+		err = os.MkdirAll(dstDir, 0750)
+		require.NoError(t, err)
+
+		// Test with nil matcher
+		err = CopyDirectoryWithIgnore(srcDir, dstDir, nil)
+
+		// Assert
+		assert.NoError(t, err)
+		_, err = os.Stat(filepath.Join(dstDir, "file1.txt"))
+		assert.NoError(t, err)
+	})
+}
+
 func TestCreateIfNotExists(t *testing.T) {
 	t.Run("Should create directory if not exists", func(t *testing.T) {
 		tempDir := t.TempDir()

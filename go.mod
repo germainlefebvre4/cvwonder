@@ -4,6 +4,7 @@ go 1.25.0
 
 require (
 	github.com/cli/go-gh/v2 v2.13.0
+	github.com/codeglyph/go-dotignore v1.1.1
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/go-git/go-git/v5 v5.13.1
 	github.com/go-rod/rod v0.116.2

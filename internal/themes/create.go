@@ -26,6 +26,9 @@ func (t *ThemesService) Create(themeName string) {
 		// Create theme index.html
 		createThemeIndexHTML(themeName, themeSlugName)
 
+		// Create .cvwonderignore
+		createThemeCVWonderIgnore(themeSlugName)
+
 		logrus.Info("Your theme '" + themeName + "' has been created in the directory themes/" + themeSlugName + "/.")
 	} else {
 		logrus.Error("Theme '" + themeSlugName + "' already exists.")
@@ -86,5 +89,31 @@ func createThemeIndexHTML(themeName string, themeSlugName string) {
 	err = os.WriteFile("themes/"+themeSlugName+"/index.html", []byte(indexHTML), 0600)
 	if err != nil {
 		logrus.Error("Error writing index.html: ", err)
+	}
+}
+
+func createThemeCVWonderIgnore(themeSlugName string) {
+	// Write .cvwonderignore with default patterns
+	cvwonderignoreContent := `# CVWonder ignore file
+# This file uses gitignore-style syntax to exclude files from being copied
+# to the output directory during CV generation.
+
+# Exclude GitHub Actions workflows and configuration
+.github/
+
+# Exclude common development files
+.git/
+.gitignore
+README.md
+LICENSE
+
+# Exclude logs and temporary files
+*.log
+*.tmp
+*.bak
+`
+	err := os.WriteFile("themes/"+themeSlugName+"/.cvwonderignore", []byte(cvwonderignoreContent), 0600)
+	if err != nil {
+		logrus.Error("Error writing .cvwonderignore: ", err)
 	}
 }

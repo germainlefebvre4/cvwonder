@@ -40,8 +40,17 @@ func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string,
 	// Copy template file to output directory
 	copyTemplateFileContent(outputTmpFilePath, outputFilePath)
 
-	// Copy theme assets to output directory
-	err = utils.CopyDirectory(themeDirectory, outputDirectory)
+	// Load .cvwonderignore from theme directory
+	ignoreMatcher, err := utils.LoadIgnoreMatcher(themeDirectory)
+	if err != nil {
+		logrus.Fatal(fmt.Sprintf("Error loading .cvwonderignore: %s", err))
+	}
+	if ignoreMatcher != nil {
+		logrus.Debug("Using .cvwonderignore for theme asset filtering")
+	}
+
+	// Copy theme assets to output directory with ignore patterns
+	err = utils.CopyDirectoryWithIgnore(themeDirectory, outputDirectory, ignoreMatcher)
 	if err != nil {
 		logrus.Fatal(fmt.Sprintf("Error copying theme assets from: %s to: %s", themeDirectory, outputDirectory), err)
 	}
