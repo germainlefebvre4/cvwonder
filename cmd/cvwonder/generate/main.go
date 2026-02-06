@@ -131,7 +131,7 @@ func GenerateCmd() *cobra.Command {
 			}
 
 			// Use the theme name (without ref) for rendering
-			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeRef.Name, utils.CliArgs.Format)
+			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeRef.Name, utils.CliArgs.Format, false)
 			if err != nil {
 				logrus.Fatal("Error rendering CV: ", err)
 			}

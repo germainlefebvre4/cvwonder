@@ -30,7 +30,7 @@ func (w *WatcherServices) ObserveFileEvents(baseDirectory string, outputDirector
 					content, err := w.ParserService.ParseFile(inputFilePath)
 					utils.CheckError(err)
 
-					w.RenderService.Render(content, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat)
+					w.RenderService.Render(content, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, true)
 					utils.CheckError(err)
 				}
 			case err := <-watcher.Errors:

@@ -50,9 +50,9 @@ func (_c *ThemesInterfaceMock_Create_Call) RunAndReturn(run func(string)) *Theme
 	return _c
 }
 
-// Install provides a mock function with given fields: theme
-func (_m *ThemesInterfaceMock) Install(theme string) {
-	_m.Called(theme)
+// Install provides a mock function with given fields: theme, force
+func (_m *ThemesInterfaceMock) Install(theme string, force bool) {
+	_m.Called(theme, force)
 }
 
 // ThemesInterfaceMock_Install_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Install'
@@ -62,13 +62,14 @@ type ThemesInterfaceMock_Install_Call struct {
 
 // Install is a helper method to define mock.On call
 //   - theme string
-func (_e *ThemesInterfaceMock_Expecter) Install(theme interface{}) *ThemesInterfaceMock_Install_Call {
-	return &ThemesInterfaceMock_Install_Call{Call: _e.mock.On("Install", theme)}
+//   - force bool
+func (_e *ThemesInterfaceMock_Expecter) Install(theme interface{}, force interface{}) *ThemesInterfaceMock_Install_Call {
+	return &ThemesInterfaceMock_Install_Call{Call: _e.mock.On("Install", theme, force)}
 }
 
-func (_c *ThemesInterfaceMock_Install_Call) Run(run func(theme string)) *ThemesInterfaceMock_Install_Call {
+func (_c *ThemesInterfaceMock_Install_Call) Run(run func(theme string, force bool)) *ThemesInterfaceMock_Install_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string))
+		run(args[0].(string), args[1].(bool))
 	})
 	return _c
 }
@@ -78,7 +79,7 @@ func (_c *ThemesInterfaceMock_Install_Call) Return() *ThemesInterfaceMock_Instal
 	return _c
 }
 
-func (_c *ThemesInterfaceMock_Install_Call) RunAndReturn(run func(string)) *ThemesInterfaceMock_Install_Call {
+func (_c *ThemesInterfaceMock_Install_Call) RunAndReturn(run func(string, bool)) *ThemesInterfaceMock_Install_Call {
 	_c.Run(run)
 	return _c
 }

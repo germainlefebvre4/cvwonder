@@ -14,7 +14,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string, outputDirectory string, inputFilename string, themeName string) error {
+func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string, outputDirectory string, inputFilename string, themeName string, isWatch bool) error {
 	logrus.Debug("Generating HTML")
 
 	// Theme directory
@@ -32,8 +32,10 @@ func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string,
 	// Generate template file
 	r.generateTemplateFile(themeDirectory, outputDirectory, outputFilePath, outputTmpFilePath, cv)
 
-	// Add livereload script to the end of the tmp file
-	appendLivereloaderScript(outputTmpFilePath)
+	// On serve with watch, add livereload script to the end of the tmp file
+	if isWatch {
+		appendLivereloaderScript(outputTmpFilePath)
+	}
 
 	// Copy template file to output directory
 	copyTemplateFileContent(outputTmpFilePath, outputFilePath)
