@@ -1,7 +1,7 @@
 package cvrender
 
 import (
-	"path"
+	"path/filepath"
 
 	render_html "github.com/germainlefebvre4/cvwonder/internal/cvrender/html"
 	render_pdf "github.com/germainlefebvre4/cvwonder/internal/cvrender/pdf"
@@ -30,8 +30,8 @@ func NewRenderServices(
 func (r *RenderServices) Render(cv model.CV, baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, isWatch bool) {
 	logrus.Debug("Rendering CV")
 
-	inputFilenameExt := path.Base(inputFilePath)
-	inputFilename := inputFilenameExt[:len(inputFilenameExt)-len(path.Ext(inputFilenameExt))]
+	inputFilenameExt := filepath.Base(inputFilePath)
+	inputFilename := inputFilenameExt[:len(inputFilenameExt)-len(filepath.Ext(inputFilenameExt))]
 
 	// Generate HTML
 	err := r.RenderHTMLService.RenderFormatHTML(cv, baseDirectory, outputDirectory, inputFilename, themeName, isWatch)

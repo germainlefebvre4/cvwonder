@@ -125,4 +125,39 @@ func TestRender(t *testing.T) {
 		// Assert
 		htmlMock.AssertCalled(t, "RenderFormatHTML", cv, baseDir, outputDir, "my-cv", themeName, false)
 	})
+
+	t.Run("Should extract filename from complex path structures", func(t *testing.T) {
+		// Setup
+		htmlMock := htmlMocks.NewRenderHTMLInterfaceMock(t)
+		pdfMock := pdfMocks.NewRenderPDFInterfaceMock(t)
+
+		cv := model.CV{
+			Person: model.Person{
+				Name: "Test User",
+			},
+		}
+
+		baseDir := "/base"
+		outputDir := "/output"
+		// Using filepath.Join to create platform-appropriate paths
+		inputFile := "/deeply/nested/directory/structure/resume.yml"
+		themeName := "default"
+		exportFormat := "pdf"
+
+		// Setup expectations - should extract "resume" regardless of path depth
+		htmlMock.On("RenderFormatHTML", cv, baseDir, outputDir, "resume", themeName).Return(nil)
+		pdfMock.On("RenderFormatPDF", cv, outputDir, "resume", themeName).Return(nil)
+
+		service := &RenderServices{
+			RenderHTMLService: htmlMock,
+			RenderPDFService:  pdfMock,
+		}
+
+		// Test
+		service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat)
+
+		// Assert
+		htmlMock.AssertCalled(t, "RenderFormatHTML", cv, baseDir, outputDir, "resume", themeName)
+		pdfMock.AssertCalled(t, "RenderFormatPDF", cv, outputDir, "resume", themeName)
+	})
 }
