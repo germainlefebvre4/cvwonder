@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/codeglyph/go-dotignore"
+	dotignore "github.com/codeglyph/go-dotignore/v2"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/exp/rand"
 )
