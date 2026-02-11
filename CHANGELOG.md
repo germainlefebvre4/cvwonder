@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.7.1...v0.8.0) (2026-02-11)
+
+
+### Features
+
+* Support of .cvwonderignore ([#118](https://github.com/germainlefebvre4/cvwonder/issues/118)) ([a13e914](https://github.com/germainlefebvre4/cvwonder/commit/a13e914578d70df3cac7e5813b9902c8b0cf87c3))
+
 ## [0.7.1](https://github.com/germainlefebvre4/cvwonder/compare/v0.7.0...v0.7.1) (2026-02-06)
 
 
