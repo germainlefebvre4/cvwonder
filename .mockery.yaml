@@ -31,3 +31,6 @@ packages:
   github.com/germainlefebvre4/cvwonder/internal/validator:
     interfaces:
       ValidatorInterface: {}
+  github.com/germainlefebvre4/cvwonder/internal/cvbulk:
+    interfaces:
+      BulkGenerateInterface: {}

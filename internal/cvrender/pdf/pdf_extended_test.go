@@ -3,12 +3,14 @@ package render_pdf
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
 	serveMocks "github.com/germainlefebvre4/cvwonder/internal/cvserve/mocks"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -82,73 +84,52 @@ func TestRunWebServer_New(t *testing.T) {
 		tempDir := t.TempDir()
 		serveMock := serveMocks.NewServeInterfaceMock(t)
 
-		// Setup mock expectation
-		serveMock.On("StartServer", 9889, tempDir).Return()
+		// Setup mock expectation: StartServerOnListener is called with any listener and the output dir
+		serveMock.On("StartServerOnListener", mock.Anything, tempDir).Return()
 
 		service := &RenderPDFServices{
 			ServeService: serveMock,
 		}
 
 		// Test
-		url := service.runWebServer(9889, "test-cv", tempDir)
+		url := service.runWebServer("test-cv", tempDir)
 
 		// Wait for goroutine to execute
 		time.Sleep(10 * time.Millisecond)
 
-		// Assert
-		assert.Equal(t, "http://localhost:9889/test-cv.html", url)
-		serveMock.AssertExpectations(t)
-	})
-
-	t.Run("Should use default port 8080 when port is 0", func(t *testing.T) {
-		tempDir := t.TempDir()
-		serveMock := serveMocks.NewServeInterfaceMock(t)
-
-		serveMock.On("StartServer", 8080, tempDir).Return()
-
-		service := &RenderPDFServices{
-			ServeService: serveMock,
-		}
-
-		// Test with port 0
-		url := service.runWebServer(0, "test-cv", tempDir)
-
-		// Wait for goroutine to execute
-		time.Sleep(10 * time.Millisecond)
-
-		// Assert - should use port 8080
-		assert.Equal(t, "http://localhost:8080/test-cv.html", url)
+		// Assert URL is well-formed; port is dynamic so we check prefix and suffix
+		assert.True(t, strings.HasPrefix(url, "http://localhost:"), "URL should start with http://localhost:")
+		assert.True(t, strings.HasSuffix(url, "/test-cv.html"), "URL should end with /test-cv.html")
 		serveMock.AssertExpectations(t)
 	})
 
 	t.Run("Should handle different filenames in URL", func(t *testing.T) {
-		tempDir := t.TempDir()
-		serveMock := serveMocks.NewServeInterfaceMock(t)
-
-		serveMock.On("StartServer", 9889, tempDir).Return()
-
-		service := &RenderPDFServices{
-			ServeService: serveMock,
-		}
-
 		testCases := []struct {
-			filename    string
-			expectedURL string
+			filename string
+			expectedSuffix string
 		}{
-			{"cv", "http://localhost:9889/cv.html"},
-			{"resume", "http://localhost:9889/resume.html"},
-			{"my-cv", "http://localhost:9889/my-cv.html"},
+			{"cv", "/cv.html"},
+			{"resume", "/resume.html"},
+			{"my-cv", "/my-cv.html"},
 		}
 
 		for _, tc := range testCases {
-			url := service.runWebServer(9889, tc.filename, tempDir)
-			assert.Equal(t, tc.expectedURL, url)
+			t.Run(tc.filename, func(t *testing.T) {
+				tempDir := t.TempDir()
+				serveMock := serveMocks.NewServeInterfaceMock(t)
+				serveMock.On("StartServerOnListener", mock.Anything, tempDir).Return()
+
+				service := &RenderPDFServices{ServeService: serveMock}
+
+				url := service.runWebServer(tc.filename, tempDir)
+				assert.True(t, strings.HasSuffix(url, tc.expectedSuffix))
+				assert.True(t, strings.HasPrefix(url, "http://localhost:"))
+
+				// Wait for goroutine
+				time.Sleep(10 * time.Millisecond)
+				serveMock.AssertExpectations(t)
+			})
 		}
-
-		// Wait for goroutines to execute
-		time.Sleep(30 * time.Millisecond)
-
-		serveMock.AssertExpectations(t)
 	})
 }
 

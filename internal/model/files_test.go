@@ -171,3 +171,103 @@ func TestBuildOutputDirectory(t *testing.T) {
 		assert.Equal(t, filepath.Separator, rune(result.FullPath[len(result.FullPath)-1]))
 	})
 }
+func TestScanInputDirectory(t *testing.T) {
+	t.Run("Flat directory with YAML files", func(t *testing.T) {
+		tempDir := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "alice.yml"), []byte("a"), 0644))
+		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "bob.yaml"), []byte("b"), 0644))
+		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "notes.md"), []byte("c"), 0644))
+
+		files, err := ScanInputDirectory(tempDir)
+		require.NoError(t, err)
+		assert.Len(t, files, 2)
+
+		names := make([]string, len(files))
+		for i, f := range files {
+			names[i] = f.FileName
+		}
+		assert.ElementsMatch(t, []string{"alice.yml", "bob.yaml"}, names)
+	})
+
+	t.Run("Nested directory", func(t *testing.T) {
+		tempDir := t.TempDir()
+		subDir := filepath.Join(tempDir, "managers")
+		require.NoError(t, os.MkdirAll(subDir, 0750))
+		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "alice.yml"), []byte("a"), 0644))
+		require.NoError(t, os.WriteFile(filepath.Join(subDir, "bob.yml"), []byte("b"), 0644))
+
+		files, err := ScanInputDirectory(tempDir)
+		require.NoError(t, err)
+		assert.Len(t, files, 2)
+
+		names := make([]string, len(files))
+		for i, f := range files {
+			names[i] = f.FileName
+		}
+		assert.ElementsMatch(t, []string{"alice.yml", "bob.yml"}, names)
+	})
+
+	t.Run("No YAML files", func(t *testing.T) {
+		tempDir := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "notes.md"), []byte("n"), 0644))
+		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "data.json"), []byte("{}"), 0644))
+
+		files, err := ScanInputDirectory(tempDir)
+		require.NoError(t, err)
+		assert.Empty(t, files)
+	})
+
+	t.Run("Mixed extensions", func(t *testing.T) {
+		tempDir := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "cv.yml"), []byte("y"), 0644))
+		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "cv.yaml"), []byte("y"), 0644))
+		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "cv.json"), []byte("j"), 0644))
+		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "cv.txt"), []byte("t"), 0644))
+
+		files, err := ScanInputDirectory(tempDir)
+		require.NoError(t, err)
+		assert.Len(t, files, 2)
+	})
+
+	t.Run("FullPath is absolute for each file", func(t *testing.T) {
+		tempDir := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(tempDir, "cv.yml"), []byte("y"), 0644))
+
+		files, err := ScanInputDirectory(tempDir)
+		require.NoError(t, err)
+		require.Len(t, files, 1)
+		assert.True(t, filepath.IsAbs(files[0].FullPath))
+	})
+}
+
+func TestValidateInputFileExtension(t *testing.T) {
+	t.Run("Valid .yml extension", func(t *testing.T) {
+		assert.NoError(t, ValidateInputFileExtension("cv.yml"))
+	})
+
+	t.Run("Valid .yaml extension", func(t *testing.T) {
+		assert.NoError(t, ValidateInputFileExtension("cv.yaml"))
+	})
+
+	t.Run("Valid uppercase .YML extension", func(t *testing.T) {
+		assert.NoError(t, ValidateInputFileExtension("cv.YML"))
+	})
+
+	t.Run("Invalid .json extension", func(t *testing.T) {
+		err := ValidateInputFileExtension("cv.json")
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "must have a .yml or .yaml extension")
+	})
+
+	t.Run("Invalid .txt extension", func(t *testing.T) {
+		err := ValidateInputFileExtension("cv.txt")
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "must have a .yml or .yaml extension")
+	})
+
+	t.Run("No extension", func(t *testing.T) {
+		err := ValidateInputFileExtension("cv")
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "must have a .yml or .yaml extension")
+	})
+}

@@ -2,6 +2,7 @@ package render_pdf
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 
@@ -20,7 +21,7 @@ func (r *RenderPDFServices) RenderFormatPDF(cv model.CV, outputDirectory string,
 	outputFilePath := r.generateOutputFile(outputDirectory, inputFilename)
 
 	// Run the server to output the HTML
-	localServerUrl := r.runWebServer(utils.CliArgs.Port, inputFilename, outputDirectory)
+	localServerUrl := r.runWebServer(inputFilename, outputDirectory)
 
 	// Open the browser and convert the page to PDF
 	r.convertPageToPDF(localServerUrl, outputFilePath)
@@ -42,15 +43,20 @@ func (r *RenderPDFServices) convertPageToPDF(localServerUrl string, outputFilePa
 	}
 }
 
-func (r *RenderPDFServices) runWebServer(port int, inputFilename string, outputDirectory string) string {
-	if port == 0 {
-		port = 8080
+// runWebServer binds a listener on a random free port and starts serving
+// outputDirectory over HTTP. The listener is bound before the goroutine is
+// launched, so no other caller can steal the port between allocation and use.
+func (r *RenderPDFServices) runWebServer(inputFilename string, outputDirectory string) string {
+	listener, err := net.Listen("tcp", ":0")
+	if err != nil {
+		logrus.Fatal("Failed to bind listener for PDF server: ", err)
 	}
+	port := listener.Addr().(*net.TCPAddr).Port
 
 	localServerUrl := fmt.Sprintf("http://localhost:%d/%s.html", port, inputFilename)
 	logrus.Info("Serve temporary the CV on server at address ", localServerUrl)
 	go func() {
-		r.ServeService.StartServer(port, outputDirectory)
+		r.ServeService.StartServerOnListener(listener, outputDirectory)
 	}()
 	return localServerUrl
 }

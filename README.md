@@ -128,6 +128,41 @@ cvwonder generate
 # cvwonder generate --input=cv.yml --output=generated/ --theme=default
 ```
 
+### Bulk generation
+
+When `--input` points to a **directory**, `cvwonder generate` automatically enters bulk mode and processes all `.yml` / `.yaml` files found recursively under that directory.
+
+The output mirrors the input directory structure under the output directory.
+
+```bash
+# Generate all CVs found under ./cvs/ into generated/
+cvwonder generate --input=./cvs/ --output=generated/ --theme=default
+
+# Control the number of parallel workers (default: 4)
+cvwonder generate --input=./cvs/ --output=generated/ --concurrency=8
+```
+
+**Example directory layout:**
+
+```
+cvs/
+  alice.yml          → generated/alice.html
+  managers/
+    bob.yml          → generated/managers/bob.html
+```
+
+A summary report is printed after bulk generation completes:
+
+```
+Total: 3 | Success: 3 | Failed: 0
+```
+
+**Flags:**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--concurrency` | `4` | Number of parallel workers in bulk mode. Silently ignored in single-file mode. |
+
 ## Serve your CV
 
 Serve your CV on a local server to preview it in your browser:
