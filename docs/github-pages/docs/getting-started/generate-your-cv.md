@@ -52,6 +52,42 @@ CVWonder supports a `.cvwonderignore` file that works like `.gitignore` to contr
 
 :::
 
+## Bulk generation
+
+When the `--input` flag points to a **directory**, `cvwonder generate` automatically enters bulk mode and processes all `.yml` / `.yaml` files found recursively under that directory.
+
+```bash
+# Generate all CVs in ./cvs/ into generated/
+cvwonder generate --input=./cvs/ --output=generated/ --theme=default
+```
+
+The output mirrors the input directory structure:
+
+```
+cvs/
+  alice.yml          → generated/alice.html
+  managers/
+    bob.yml          → generated/managers/bob.html
+```
+
+You can control the number of parallel workers with `--concurrency` (default: 4):
+
+```bash
+cvwonder generate --input=./cvs/ --output=generated/ --concurrency=8
+```
+
+A summary report is printed at the end:
+
+```
+Total: 3 | Success: 3 | Failed: 0
+```
+
+:::note
+- Files with non-`.yml`/`.yaml` extensions are silently ignored in bulk mode.
+- If a single file fails (parse error, validation error, render error), processing continues for the remaining files.
+- The `--concurrency` flag is silently ignored in single-file mode.
+:::
+
 ## Watch the changes
 
 You can automatically regenerate your CV when updating either the YAML file or the theme by adding the `--watch` flag to the `generate` command:

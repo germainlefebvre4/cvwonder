@@ -30,8 +30,9 @@ Here are the options that can be used with the `generate` subcommand:
 
 | Option | Description | Required | Default |
 |--------|-------------|----------|---------|
-| `--port` | The port to be used when generating the PDF format. | No | `3000` |
+| `--port` | The port to be used when generating the PDF format. | No | `9889` |
 | `--validate` | Validate YAML before generating the CV. | No | `false` |
+| `--concurrency` | Number of parallel workers in bulk mode (ignored for single-file input). | No | `4` |
 
 ### Serve options
 

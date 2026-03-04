@@ -12,6 +12,7 @@ type Configuration struct {
 	Port              int    `mapstructure:"PORT"`
 	Validate          bool   `mapstructure:"VALIDATE"`
 	ForceThemeInstall bool   `mapstructure:"FORCE_THEME_INSTALL"`
+	Concurrency       int    `mapstructure:"CONCURRENCY"`
 }
 
 var CliArgs Configuration

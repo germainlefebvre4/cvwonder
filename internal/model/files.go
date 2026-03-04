@@ -1,6 +1,8 @@
 package model
 
 import (
+	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -38,6 +40,15 @@ func BuildInputFile(filePath string) InputFile {
 	}
 }
 
+// ValidateInputFileExtension returns an error if the file does not have a .yml or .yaml extension.
+func ValidateInputFileExtension(filePath string) error {
+	ext := strings.ToLower(filepath.Ext(filePath))
+	if ext != ".yml" && ext != ".yaml" {
+		return fmt.Errorf("input file must have a .yml or .yaml extension (got %q)", filepath.Ext(filePath))
+	}
+	return nil
+}
+
 type OutputDirectory struct {
 	FullPath     string
 	RelativePath string
@@ -59,4 +70,45 @@ func BuildOutputDirectory(dirPath string) OutputDirectory {
 		FullPath:     outputDirectoryPath,
 		RelativePath: relativePath,
 	}
+}
+
+// ScanInputDirectory recursively walks dirPath and returns an InputFile for each
+// .yml or .yaml file found. Files with other extensions are silently ignored.
+func ScanInputDirectory(dirPath string) ([]InputFile, error) {
+	absDir, err := filepath.Abs(dirPath)
+	if err != nil {
+		return nil, fmt.Errorf("resolving directory path: %w", err)
+	}
+
+	currentDirectory, err := os.Getwd()
+	if err != nil {
+		return nil, fmt.Errorf("getting current directory: %w", err)
+	}
+	currentDirectory = currentDirectory + string(filepath.Separator)
+
+	var files []InputFile
+	err = filepath.WalkDir(absDir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+		ext := strings.ToLower(filepath.Ext(path))
+		if ext != ".yml" && ext != ".yaml" {
+			return nil
+		}
+		relativePath := strings.Replace(path, currentDirectory, "", 1)
+		files = append(files, InputFile{
+			FullPath:     path,
+			RelativePath: relativePath,
+			FileName:     filepath.Base(path),
+			Directory:    filepath.Dir(path),
+		})
+		return nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("scanning directory %q: %w", dirPath, err)
+	}
+	return files, nil
 }
