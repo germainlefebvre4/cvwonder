@@ -88,7 +88,7 @@ func TestRenderFormatHTML(t *testing.T) {
 			assert.Equalf(
 				t,
 				tt.wantErr,
-				service.RenderFormatHTML(tt.args.cv, tt.args.baseDirectory, tt.args.outputDirectory, tt.args.inputFilename, tt.args.themeName, false),
+				service.RenderFormatHTML(tt.args.cv, tt.args.baseDirectory, tt.args.outputDirectory, tt.args.inputFilename, tt.args.themeName, false, nil),
 				"RenderFormatHTML(%v, %v, %v, %v, %v)",
 				tt.args.cv,
 				tt.args.outputDirectory,
@@ -410,7 +410,7 @@ func TestGenerateTemplateFile(t *testing.T) {
 		// Run test
 		t.Run(tt.name, func(t *testing.T) {
 			service := NewRenderHTMLServicesTest()
-			service.generateTemplateFile(tt.args.themeDirectory, tt.args.outputDirectory, tt.args.outputFilePath, tt.args.outputTmpFilePath, tt.args.cv)
+			service.generateTemplateFile(tt.args.themeDirectory, tt.args.outputDirectory, tt.args.outputFilePath, tt.args.outputTmpFilePath, tt.args.cv, nil)
 			assert.DirExists(t, tt.args.outputDirectory)
 			assert.FileExists(t, tt.args.outputFilePath)
 			assert.FileExists(t, tt.args.outputTmpFilePath)
@@ -530,6 +530,58 @@ func TestAppendLivereloaderScript(t *testing.T) {
 	// Clean
 	err = os.RemoveAll(outputDirectory)
 	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGenerateTemplateFileWithConfig(t *testing.T) {
+	testDirectory, _ := os.Getwd()
+	baseDirectory, err := filepath.Abs(testDirectory + "/../../..")
+	randomString := utils.GenerateRandomString(5)
+	outputDirectory := baseDirectory + "/generated-test-" + randomString
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	themeDirectory := baseDirectory + "/themes/test"
+	outputFilePath := outputDirectory + "/cv.html"
+	outputTmpFilePath := outputDirectory + "/cv.html.tmp"
+
+	// Prepare theme directory and template
+	if _, err := os.Stat(baseDirectory + "/themes"); os.IsNotExist(err) {
+		if err := os.Mkdir(baseDirectory+"/themes", os.ModePerm); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, err := os.Stat(themeDirectory); os.IsNotExist(err) {
+		if err := os.Mkdir(themeDirectory, os.ModePerm); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := os.WriteFile(themeDirectory+"/index.html", fixtures.CvHtmlTemplateWithConfig01, os.ModePerm); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(themeDirectory+"/theme.yaml", theme_config.ThemeConfigYamlGood01, os.ModePerm); err != nil {
+		t.Fatal(err)
+	}
+
+	cfgMap := map[string]interface{}{"displayName": "My CV"}
+
+	t.Run("Should render .Config fields from template", func(t *testing.T) {
+		service := NewRenderHTMLServicesTest()
+		service.generateTemplateFile(themeDirectory, outputDirectory, outputFilePath, outputTmpFilePath, fixtures.CvModelGood01, cfgMap)
+
+		// Content is written to the tmp file by generateTemplateFile
+		assert.FileExists(t, outputTmpFilePath)
+		content, err := os.ReadFile(outputTmpFilePath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, string(fixtures.CvHtmlWithConfig01), string(content))
+	})
+
+	// Clean
+	if err := os.RemoveAll(outputDirectory); err != nil {
 		t.Fatal(err)
 	}
 }

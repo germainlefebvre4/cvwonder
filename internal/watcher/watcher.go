@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (w *WatcherServices) ObserveFileEvents(baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string) {
+func (w *WatcherServices) ObserveFileEvents(baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, config map[string]interface{}) {
 	// setup watcher
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -30,7 +30,7 @@ func (w *WatcherServices) ObserveFileEvents(baseDirectory string, outputDirector
 					content, err := w.ParserService.ParseFile(inputFilePath)
 					utils.CheckError(err)
 
-					w.RenderService.Render(content, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, true)
+					w.RenderService.Render(content, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, true, config)
 					utils.CheckError(err)
 				}
 			case err := <-watcher.Errors:

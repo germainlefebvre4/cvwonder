@@ -346,6 +346,9 @@ var CvModelError01 = model.CV{}
 
 var CvHtmlTemplate01 = []byte(`{{ .Person.Name }}`)
 
+var CvHtmlTemplateWithConfig01 = []byte(`{{ index .Config "displayName" }}`)
+var CvHtmlWithConfig01 = []byte(`My CV`)
+
 var CvHtmlGood01 = []byte(`John Doe`)
 
 var CvHtmlTemplateFunctionsTemplateInc01 = []byte(`{{ inc 1 }}`)

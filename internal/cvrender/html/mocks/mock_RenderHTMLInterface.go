@@ -20,17 +20,17 @@ func (_m *RenderHTMLInterfaceMock) EXPECT() *RenderHTMLInterfaceMock_Expecter {
 	return &RenderHTMLInterfaceMock_Expecter{mock: &_m.Mock}
 }
 
-// RenderFormatHTML provides a mock function with given fields: cv, baseDirectory, outputDirectory, inputFilename, themeName, isWatch
-func (_m *RenderHTMLInterfaceMock) RenderFormatHTML(cv model.CV, baseDirectory string, outputDirectory string, inputFilename string, themeName string, isWatch bool) error {
-	ret := _m.Called(cv, baseDirectory, outputDirectory, inputFilename, themeName, isWatch)
+// RenderFormatHTML provides a mock function with given fields: cv, baseDirectory, outputDirectory, inputFilename, themeName, isWatch, config
+func (_m *RenderHTMLInterfaceMock) RenderFormatHTML(cv model.CV, baseDirectory string, outputDirectory string, inputFilename string, themeName string, isWatch bool, config map[string]interface{}) error {
+	ret := _m.Called(cv, baseDirectory, outputDirectory, inputFilename, themeName, isWatch, config)
 
 	if len(ret) == 0 {
 		panic("no return value specified for RenderFormatHTML")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(model.CV, string, string, string, string, bool) error); ok {
-		r0 = rf(cv, baseDirectory, outputDirectory, inputFilename, themeName, isWatch)
+	if rf, ok := ret.Get(0).(func(model.CV, string, string, string, string, bool, map[string]interface{}) error); ok {
+		r0 = rf(cv, baseDirectory, outputDirectory, inputFilename, themeName, isWatch, config)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -50,13 +50,14 @@ type RenderHTMLInterfaceMock_RenderFormatHTML_Call struct {
 //   - inputFilename string
 //   - themeName string
 //   - isWatch bool
-func (_e *RenderHTMLInterfaceMock_Expecter) RenderFormatHTML(cv interface{}, baseDirectory interface{}, outputDirectory interface{}, inputFilename interface{}, themeName interface{}, isWatch interface{}) *RenderHTMLInterfaceMock_RenderFormatHTML_Call {
-	return &RenderHTMLInterfaceMock_RenderFormatHTML_Call{Call: _e.mock.On("RenderFormatHTML", cv, baseDirectory, outputDirectory, inputFilename, themeName, isWatch)}
+//   - config map[string]interface{}
+func (_e *RenderHTMLInterfaceMock_Expecter) RenderFormatHTML(cv interface{}, baseDirectory interface{}, outputDirectory interface{}, inputFilename interface{}, themeName interface{}, isWatch interface{}, config interface{}) *RenderHTMLInterfaceMock_RenderFormatHTML_Call {
+	return &RenderHTMLInterfaceMock_RenderFormatHTML_Call{Call: _e.mock.On("RenderFormatHTML", cv, baseDirectory, outputDirectory, inputFilename, themeName, isWatch, config)}
 }
 
-func (_c *RenderHTMLInterfaceMock_RenderFormatHTML_Call) Run(run func(cv model.CV, baseDirectory string, outputDirectory string, inputFilename string, themeName string, isWatch bool)) *RenderHTMLInterfaceMock_RenderFormatHTML_Call {
+func (_c *RenderHTMLInterfaceMock_RenderFormatHTML_Call) Run(run func(cv model.CV, baseDirectory string, outputDirectory string, inputFilename string, themeName string, isWatch bool, config map[string]interface{})) *RenderHTMLInterfaceMock_RenderFormatHTML_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(model.CV), args[1].(string), args[2].(string), args[3].(string), args[4].(string), args[5].(bool))
+		run(args[0].(model.CV), args[1].(string), args[2].(string), args[3].(string), args[4].(string), args[5].(bool), args[6].(map[string]interface{}))
 	})
 	return _c
 }
@@ -66,7 +67,7 @@ func (_c *RenderHTMLInterfaceMock_RenderFormatHTML_Call) Return(_a0 error) *Rend
 	return _c
 }
 
-func (_c *RenderHTMLInterfaceMock_RenderFormatHTML_Call) RunAndReturn(run func(model.CV, string, string, string, string, bool) error) *RenderHTMLInterfaceMock_RenderFormatHTML_Call {
+func (_c *RenderHTMLInterfaceMock_RenderFormatHTML_Call) RunAndReturn(run func(model.CV, string, string, string, string, bool, map[string]interface{}) error) *RenderHTMLInterfaceMock_RenderFormatHTML_Call {
 	_c.Call.Return(run)
 	return _c
 }

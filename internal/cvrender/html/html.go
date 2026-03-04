@@ -14,7 +14,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string, outputDirectory string, inputFilename string, themeName string, isWatch bool) error {
+func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string, outputDirectory string, inputFilename string, themeName string, isWatch bool, config map[string]interface{}) error {
 	logrus.Debug("Generating HTML")
 
 	// Theme directory
@@ -30,7 +30,7 @@ func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string,
 	outputTmpFilePath := outputFilePath + ".tmp"
 
 	// Generate template file
-	r.generateTemplateFile(themeDirectory, outputDirectory, outputFilePath, outputTmpFilePath, cv)
+	r.generateTemplateFile(themeDirectory, outputDirectory, outputFilePath, outputTmpFilePath, cv, config)
 
 	// On serve with watch, add livereload script to the end of the tmp file
 	if isWatch {
@@ -93,7 +93,7 @@ func getTemplateFunctions() template.FuncMap {
 	return funcMap
 }
 
-func (r *RenderHTMLServices) generateTemplateFile(themeDirectory string, outputDirectory string, outputFilePath string, outputTmpFilePath string, cv model.CV) {
+func (r *RenderHTMLServices) generateTemplateFile(themeDirectory string, outputDirectory string, outputFilePath string, outputTmpFilePath string, cv model.CV, config map[string]interface{}) {
 	// Inject custom functions in template
 	funcMap := getTemplateFunctions()
 
@@ -126,7 +126,8 @@ func (r *RenderHTMLServices) generateTemplateFile(themeDirectory string, outputD
 	}
 
 	// Generate output
-	err = tmpl.ExecuteTemplate(outputTmpFile, "index.html", cv)
+	renderCtx := RenderContext{CV: cv, Config: config}
+	err = tmpl.ExecuteTemplate(outputTmpFile, "index.html", renderCtx)
 	if err != nil {
 		errFile := os.Remove(outputTmpFilePath)
 		if errFile != nil {
