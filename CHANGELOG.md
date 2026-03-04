@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.8.0...v0.9.0) (2026-03-04)
+
+
+### Features
+
+* **generate:** Bulk generation with pdf gen parallelism ([#120](https://github.com/germainlefebvre4/cvwonder/issues/120)) ([235a652](https://github.com/germainlefebvre4/cvwonder/commit/235a6528ed2de25a218a3935ac9f96ff6fca94c2))
+* **theme:** Add theme customization in theme configuration ([#121](https://github.com/germainlefebvre4/cvwonder/issues/121)) ([0b19801](https://github.com/germainlefebvre4/cvwonder/commit/0b19801da56213419f12870141d7d22b06cdcceb))
+
 ## [0.8.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.7.1...v0.8.0) (2026-02-11)
 
 
