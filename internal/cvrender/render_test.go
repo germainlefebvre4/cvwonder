@@ -44,7 +44,7 @@ func TestRender(t *testing.T) {
 		exportFormat := "html"
 
 		// Setup expectations
-		htmlMock.On("RenderFormatHTML", cv, baseDir, outputDir, "cv", themeName, false).Return(nil)
+		htmlMock.On("RenderFormatHTML", cv, baseDir, outputDir, "cv", themeName, false, map[string]interface{}(nil)).Return(nil)
 		// PDF should NOT be called
 
 		service := &RenderServices{
@@ -53,10 +53,10 @@ func TestRender(t *testing.T) {
 		}
 
 		// Test
-		service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat, false)
+		service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat, false, nil)
 
 		// Assert
-		htmlMock.AssertCalled(t, "RenderFormatHTML", cv, baseDir, outputDir, "cv", themeName, false)
+		htmlMock.AssertCalled(t, "RenderFormatHTML", cv, baseDir, outputDir, "cv", themeName, false, map[string]interface{}(nil))
 		pdfMock.AssertNotCalled(t, "RenderFormatPDF", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
 	})
 
@@ -78,7 +78,7 @@ func TestRender(t *testing.T) {
 		exportFormat := "pdf"
 
 		// Setup expectations
-		htmlMock.On("RenderFormatHTML", cv, baseDir, outputDir, "cv", themeName, false).Return(nil)
+		htmlMock.On("RenderFormatHTML", cv, baseDir, outputDir, "cv", themeName, false, map[string]interface{}(nil)).Return(nil)
 		pdfMock.On("RenderFormatPDF", cv, outputDir, "cv", themeName).Return(nil)
 
 		service := &RenderServices{
@@ -87,10 +87,10 @@ func TestRender(t *testing.T) {
 		}
 
 		// Test
-		service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat, false)
+		service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat, false, nil)
 
 		// Assert
-		htmlMock.AssertCalled(t, "RenderFormatHTML", cv, baseDir, outputDir, "cv", themeName, false)
+		htmlMock.AssertCalled(t, "RenderFormatHTML", cv, baseDir, outputDir, "cv", themeName, false, map[string]interface{}(nil))
 		pdfMock.AssertCalled(t, "RenderFormatPDF", cv, outputDir, "cv", themeName)
 	})
 
@@ -112,7 +112,7 @@ func TestRender(t *testing.T) {
 		exportFormat := "html"
 
 		// Setup expectations - should use "my-cv" as filename
-		htmlMock.On("RenderFormatHTML", cv, baseDir, outputDir, "my-cv", themeName, false).Return(nil)
+		htmlMock.On("RenderFormatHTML", cv, baseDir, outputDir, "my-cv", themeName, false, map[string]interface{}(nil)).Return(nil)
 
 		service := &RenderServices{
 			RenderHTMLService: htmlMock,
@@ -120,9 +120,9 @@ func TestRender(t *testing.T) {
 		}
 
 		// Test
-		service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat, false)
+		service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat, false, nil)
 
 		// Assert
-		htmlMock.AssertCalled(t, "RenderFormatHTML", cv, baseDir, outputDir, "my-cv", themeName, false)
+		htmlMock.AssertCalled(t, "RenderFormatHTML", cv, baseDir, outputDir, "my-cv", themeName, false, map[string]interface{}(nil))
 	})
 }

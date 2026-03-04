@@ -87,6 +87,7 @@ func GenerateCmd() *cobra.Command {
 	cobraCmd.Flags().IntVarP(&utils.CliArgs.Port, "port", "p", 9889, "Listening port for PDF generation")
 	cobraCmd.Flags().BoolVar(&utils.CliArgs.Validate, "validate", false, "Validate the YAML file before generating the CV")
 	cobraCmd.Flags().IntVar(&utils.CliArgs.Concurrency, "concurrency", 4, "Number of concurrent workers for bulk mode (ignored in single-file mode)")
+	cobraCmd.Flags().StringArrayVar(&utils.CliArgs.ConfigOverrides, "config", []string{}, "Override theme configuration key (key=value, dot-notation for nested keys, repeatable)")
 
 	return cobraCmd
 }
@@ -161,6 +162,12 @@ func generateSingle() {
 	themeConf := theme_config.GetThemeConfigFromDir(themeDir)
 	themeConf.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
 
+	// Build merged config: theme defaults + CLI overrides.
+	mergedConfig, err := theme_config.ParseConfigOverrides(utils.CliArgs.ConfigOverrides, themeConf.Configuration)
+	if err != nil {
+		logrus.Fatal("Error parsing --config overrides: ", err)
+	}
+
 	// Parse the CV.
 	parserService, err := cvparser.NewParserServices()
 	if err != nil {
@@ -196,7 +203,7 @@ func generateSingle() {
 	}
 
 	// Use the theme name (without ref) for rendering.
-	renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeRef.Name, utils.CliArgs.Format, false)
+	renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeRef.Name, utils.CliArgs.Format, false, mergedConfig)
 	if err != nil {
 		logrus.Fatal("Error rendering CV: ", err)
 	}

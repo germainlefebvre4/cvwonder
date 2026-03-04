@@ -20,9 +20,9 @@ func (_m *RenderInterfaceMock) EXPECT() *RenderInterfaceMock_Expecter {
 	return &RenderInterfaceMock_Expecter{mock: &_m.Mock}
 }
 
-// Render provides a mock function with given fields: cv, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, isWatch
-func (_m *RenderInterfaceMock) Render(cv model.CV, baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, isWatch bool) {
-	_m.Called(cv, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, isWatch)
+// Render provides a mock function with given fields: cv, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, isWatch, config
+func (_m *RenderInterfaceMock) Render(cv model.CV, baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, isWatch bool, config map[string]interface{}) {
+	_m.Called(cv, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, isWatch, config)
 }
 
 // RenderInterfaceMock_Render_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Render'
@@ -38,13 +38,14 @@ type RenderInterfaceMock_Render_Call struct {
 //   - themeName string
 //   - exportFormat string
 //   - isWatch bool
-func (_e *RenderInterfaceMock_Expecter) Render(cv interface{}, baseDirectory interface{}, outputDirectory interface{}, inputFilePath interface{}, themeName interface{}, exportFormat interface{}, isWatch interface{}) *RenderInterfaceMock_Render_Call {
-	return &RenderInterfaceMock_Render_Call{Call: _e.mock.On("Render", cv, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, isWatch)}
+//   - config map[string]interface{}
+func (_e *RenderInterfaceMock_Expecter) Render(cv interface{}, baseDirectory interface{}, outputDirectory interface{}, inputFilePath interface{}, themeName interface{}, exportFormat interface{}, isWatch interface{}, config interface{}) *RenderInterfaceMock_Render_Call {
+	return &RenderInterfaceMock_Render_Call{Call: _e.mock.On("Render", cv, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, isWatch, config)}
 }
 
-func (_c *RenderInterfaceMock_Render_Call) Run(run func(cv model.CV, baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, isWatch bool)) *RenderInterfaceMock_Render_Call {
+func (_c *RenderInterfaceMock_Render_Call) Run(run func(cv model.CV, baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, isWatch bool, config map[string]interface{})) *RenderInterfaceMock_Render_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(model.CV), args[1].(string), args[2].(string), args[3].(string), args[4].(string), args[5].(string), args[6].(bool))
+		run(args[0].(model.CV), args[1].(string), args[2].(string), args[3].(string), args[4].(string), args[5].(string), args[6].(bool), args[7].(map[string]interface{}))
 	})
 	return _c
 }
@@ -54,7 +55,7 @@ func (_c *RenderInterfaceMock_Render_Call) Return() *RenderInterfaceMock_Render_
 	return _c
 }
 
-func (_c *RenderInterfaceMock_Render_Call) RunAndReturn(run func(model.CV, string, string, string, string, string, bool)) *RenderInterfaceMock_Render_Call {
+func (_c *RenderInterfaceMock_Render_Call) RunAndReturn(run func(model.CV, string, string, string, string, string, bool, map[string]interface{})) *RenderInterfaceMock_Render_Call {
 	_c.Run(run)
 	return _c
 }

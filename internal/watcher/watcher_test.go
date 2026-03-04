@@ -59,7 +59,7 @@ func TestObserveFileEvents(t *testing.T) {
 		}
 
 		parserMock.On("ParseFile", inputFile).Return(cv, nil)
-		renderMock.On("Render", cv, tempDir, outputDir, inputFile, "default", "html", true).Return(nil)
+		renderMock.On("Render", cv, tempDir, outputDir, inputFile, "default", "html", true, map[string]interface{}(nil)).Return(nil)
 
 		// Create service
 		service := &WatcherServices{
@@ -68,7 +68,7 @@ func TestObserveFileEvents(t *testing.T) {
 		}
 
 		// Start watcher in goroutine
-		go service.ObserveFileEvents(tempDir, outputDir, inputFile, "default", "html")
+		go service.ObserveFileEvents(tempDir, outputDir, inputFile, "default", "html", nil)
 
 		// Give watcher time to start
 		time.Sleep(100 * time.Millisecond)
@@ -82,7 +82,7 @@ func TestObserveFileEvents(t *testing.T) {
 
 		// Verify mocks were called
 		parserMock.AssertCalled(t, "ParseFile", inputFile)
-		renderMock.AssertCalled(t, "Render", cv, tempDir, outputDir, inputFile, "default", "html", true)
+		renderMock.AssertCalled(t, "Render", cv, tempDir, outputDir, inputFile, "default", "html", true, map[string]interface{}(nil))
 	})
 
 	t.Run("Should watch theme file changes", func(t *testing.T) {
@@ -115,7 +115,7 @@ func TestObserveFileEvents(t *testing.T) {
 
 		// Make the mock expectations more lenient
 		parserMock.On("ParseFile", inputFile).Return(cv, nil).Maybe()
-		renderMock.On("Render", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Maybe()
+		renderMock.On("Render", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Maybe()
 
 		// Create service
 		service := &WatcherServices{
@@ -124,7 +124,7 @@ func TestObserveFileEvents(t *testing.T) {
 		}
 
 		// Start watcher in goroutine
-		go service.ObserveFileEvents(tempDir, outputDir, inputFile, "custom-theme", "html")
+		go service.ObserveFileEvents(tempDir, outputDir, inputFile, "custom-theme", "html", nil)
 
 		// Give watcher time to start
 		time.Sleep(200 * time.Millisecond)

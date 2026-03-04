@@ -50,8 +50,14 @@ func ServeCmd() *cobra.Command {
 			utils.CheckError(err)
 
 			// Check Theme version compatibility
-			themeConfig := theme_config.GetThemeConfigFromThemeName(utils.CliArgs.ThemeName)
-			themeConfig.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
+			themeCfg := theme_config.GetThemeConfigFromThemeName(utils.CliArgs.ThemeName)
+			themeCfg.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
+
+			// Build merged config: theme defaults + CLI overrides.
+			mergedConfig, err := theme_config.ParseConfigOverrides(utils.CliArgs.ConfigOverrides, themeCfg.Configuration)
+			if err != nil {
+				logrus.Fatal("Error parsing --config overrides: ", err)
+			}
 
 			// Parse the CV
 			parserService, err := cvparser.NewParserServices()
@@ -72,13 +78,13 @@ func ServeCmd() *cobra.Command {
 			// Render the CV
 			baseDirectory, err := os.Getwd()
 			utils.CheckError(err)
-			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format, utils.CliArgs.Watch)
+			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format, utils.CliArgs.Watch, mergedConfig)
 			utils.CheckError(err)
 
 			if utils.CliArgs.Watch {
 				watcherService, err := watcher.NewWatcherServices(parserService, renderService)
 				utils.CheckError(err)
-				go watcherService.ObserveFileEvents(baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format)
+				go watcherService.ObserveFileEvents(baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format, mergedConfig)
 			}
 			// Serve the CV
 			if utils.CliArgs.Browser {
@@ -90,6 +96,7 @@ func ServeCmd() *cobra.Command {
 	cobraCmd.Flags().BoolVarP(&utils.CliArgs.Browser, "browser", "b", false, "Open the browser.")
 	cobraCmd.Flags().BoolVarP(&utils.CliArgs.Watch, "watch", "w", false, "Watch for file changes")
 	cobraCmd.Flags().IntVarP(&utils.CliArgs.Port, "port", "p", 3000, "Listening port for local server")
+	cobraCmd.Flags().StringArrayVar(&utils.CliArgs.ConfigOverrides, "config", []string{}, "Override theme configuration key (key=value, dot-notation for nested keys, repeatable)")
 
 	return cobraCmd
 }

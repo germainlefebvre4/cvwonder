@@ -6,7 +6,7 @@ import (
 )
 
 type WatcherInterface interface {
-	ObserveFileEvents(baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string)
+	ObserveFileEvents(baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, config map[string]interface{})
 }
 
 type WatcherServices struct {

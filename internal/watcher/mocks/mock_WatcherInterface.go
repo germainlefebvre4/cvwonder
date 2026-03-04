@@ -17,9 +17,9 @@ func (_m *WatcherInterfaceMock) EXPECT() *WatcherInterfaceMock_Expecter {
 	return &WatcherInterfaceMock_Expecter{mock: &_m.Mock}
 }
 
-// ObserveFileEvents provides a mock function with given fields: baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat
-func (_m *WatcherInterfaceMock) ObserveFileEvents(baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string) {
-	_m.Called(baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat)
+// ObserveFileEvents provides a mock function with given fields: baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, config
+func (_m *WatcherInterfaceMock) ObserveFileEvents(baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, config map[string]interface{}) {
+	_m.Called(baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, config)
 }
 
 // WatcherInterfaceMock_ObserveFileEvents_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ObserveFileEvents'
@@ -33,13 +33,14 @@ type WatcherInterfaceMock_ObserveFileEvents_Call struct {
 //   - inputFilePath string
 //   - themeName string
 //   - exportFormat string
-func (_e *WatcherInterfaceMock_Expecter) ObserveFileEvents(baseDirectory interface{}, outputDirectory interface{}, inputFilePath interface{}, themeName interface{}, exportFormat interface{}) *WatcherInterfaceMock_ObserveFileEvents_Call {
-	return &WatcherInterfaceMock_ObserveFileEvents_Call{Call: _e.mock.On("ObserveFileEvents", baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat)}
+//   - config map[string]interface{}
+func (_e *WatcherInterfaceMock_Expecter) ObserveFileEvents(baseDirectory interface{}, outputDirectory interface{}, inputFilePath interface{}, themeName interface{}, exportFormat interface{}, config interface{}) *WatcherInterfaceMock_ObserveFileEvents_Call {
+	return &WatcherInterfaceMock_ObserveFileEvents_Call{Call: _e.mock.On("ObserveFileEvents", baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, config)}
 }
 
-func (_c *WatcherInterfaceMock_ObserveFileEvents_Call) Run(run func(baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string)) *WatcherInterfaceMock_ObserveFileEvents_Call {
+func (_c *WatcherInterfaceMock_ObserveFileEvents_Call) Run(run func(baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, config map[string]interface{})) *WatcherInterfaceMock_ObserveFileEvents_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string), args[1].(string), args[2].(string), args[3].(string), args[4].(string))
+		run(args[0].(string), args[1].(string), args[2].(string), args[3].(string), args[4].(string), args[5].(map[string]interface{}))
 	})
 	return _c
 }
@@ -49,7 +50,7 @@ func (_c *WatcherInterfaceMock_ObserveFileEvents_Call) Return() *WatcherInterfac
 	return _c
 }
 
-func (_c *WatcherInterfaceMock_ObserveFileEvents_Call) RunAndReturn(run func(string, string, string, string, string)) *WatcherInterfaceMock_ObserveFileEvents_Call {
+func (_c *WatcherInterfaceMock_ObserveFileEvents_Call) RunAndReturn(run func(string, string, string, string, string, map[string]interface{})) *WatcherInterfaceMock_ObserveFileEvents_Call {
 	_c.Run(run)
 	return _c
 }

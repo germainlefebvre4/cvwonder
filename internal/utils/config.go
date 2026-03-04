@@ -5,14 +5,15 @@ type Configuration struct {
 	OutputDirectory   string `mapstructure:"OUTPUT_DIRECTORY"`
 	ThemeName         string `mapstructure:"THEME_NAME"`
 	CreateThemeName   string
-	Format            string `mapstructure:"FORMAT"`
-	Watch             bool   `mapstructure:"WATCH"`
-	Browser           bool   `mapstructure:"BROWSER"`
-	Debug             bool   `mapstructure:"VERBOSE"`
-	Port              int    `mapstructure:"PORT"`
-	Validate          bool   `mapstructure:"VALIDATE"`
-	ForceThemeInstall bool   `mapstructure:"FORCE_THEME_INSTALL"`
-	Concurrency       int    `mapstructure:"CONCURRENCY"`
+	Format            string   `mapstructure:"FORMAT"`
+	Watch             bool     `mapstructure:"WATCH"`
+	Browser           bool     `mapstructure:"BROWSER"`
+	Debug             bool     `mapstructure:"VERBOSE"`
+	Port              int      `mapstructure:"PORT"`
+	Validate          bool     `mapstructure:"VALIDATE"`
+	ForceThemeInstall bool     `mapstructure:"FORCE_THEME_INSTALL"`
+	Concurrency       int      `mapstructure:"CONCURRENCY"`
+	ConfigOverrides   []string `mapstructure:"CONFIG_OVERRIDES"`
 }
 
 var CliArgs Configuration

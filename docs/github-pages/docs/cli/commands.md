@@ -24,6 +24,38 @@ The command can be run as follows:
 cvwonder generate [OPTIONS]
 ```
 
+**Options:**
+
+| Flag | Description |
+|------|-------------|
+| `--input` | Path to the CV YAML file (default: `cv.yml`) |
+| `--output` | Output directory (default: `generated/`) |
+| `--theme` | Theme name to use (default: `default`) |
+| `--config` | Override a theme configuration key (repeatable) |
+
+**`--config` flag:**
+
+The `--config` flag overrides individual keys from the `configuration:` block declared in `theme.yaml`. It can be repeated to set multiple keys.
+
+Syntax: `--config "key=value"` or `--config "parent.child=value"` (dot-notation for nested keys).
+
+Values are automatically coerced: `"true"` / `"false"` become booleans, plain integers become numbers, everything else stays a string.
+
+Examples:
+
+```bash
+# Override a top-level boolean key
+cvwonder generate --config "displayName=false"
+
+# Override a nested key using dot-notation
+cvwonder generate --config "person.anonymisation=true"
+
+# Multiple overrides
+cvwonder generate --config "displayName=true" --config "person.anonymisation=false"
+```
+
+CLI overrides are **deep-merged** on top of the defaults from `theme.yaml`: sibling keys are preserved, only the specified leaf is replaced.
+
 ### Serve
 
 The `serve` subcommand is used to start a local server for serving the generated CV.
@@ -33,6 +65,17 @@ The command can be run as follows:
 ```bash
 cvwonder serve [OPTIONS]
 ```
+
+**Options:**
+
+| Flag | Description |
+|------|-------------|
+| `--input` | Path to the CV YAML file (default: `cv.yml`) |
+| `--output` | Output directory (default: `generated/`) |
+| `--theme` | Theme name to use (default: `default`) |
+| `--config` | Override a theme configuration key (repeatable) |
+
+The `--config` flag works identically to the `generate` command — see the [Generate](#generate) section above for full details and examples.
 
 ### Validate
 
