@@ -98,19 +98,27 @@ func createThemeIndexHTML(themeName string, themeSlugName string) {
 func createThemeSampleYML(themeSlugName string) {
 	sampleContent := `person:
   name: Jane Doe
-  label: Software Engineer
+  profession: Software Engineer
+  location: Paris, France
   email: jane.doe@example.com
   phone: "+1 555 000 0000"
-  location:
-    city: Paris
-    country: France
+  experience:
+    since: 2018
 
 career:
   - companyName: Example Corp
     missions:
       - position: Senior Engineer
+        company: Example Corp
+        location: Paris, France
         dates: "2020 - Present"
-        description: "Led development of core platform services."
+        summary: Led development of core platform services.
+        description:
+          - Designed and implemented microservices architecture.
+          - Mentored junior engineers.
+        technologies:
+          - Go
+          - Docker
 `
 	err := os.WriteFile("themes/"+themeSlugName+"/sample.yml", []byte(sampleContent), 0600)
 	if err != nil {
