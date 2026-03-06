@@ -49,6 +49,27 @@ author: Germain
 minimumVersion: 0.3.1
 ```
 
+## Recommended files
+
+Before publishing, make sure your theme repository also includes:
+
+| File | Description |
+|------|-------------|
+| `sample.yml` | Demo CV data used for screenshot generation. Lets anyone reproduce your preview without their own CV. |
+| `preview.png` | Preview image displayed in the theme library. Generate it with `cvwonder themes screenshot <theme>`. |
+
+Generate the preview image:
+
+```bash
+cvwonder themes screenshot my-wonderful
+```
+
+This writes `themes/my-wonderful/preview.png` which you can then copy to the root of your theme repository.
+
+:::tip
+A `preview.png` is the first thing potential users see in the theme library. Include one!
+:::
+
 | Key | Description |
 |-----|-------------|
 | `name` | The name of the theme |

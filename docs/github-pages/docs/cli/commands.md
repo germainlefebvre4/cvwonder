@@ -159,11 +159,15 @@ The command can be run as follows:
 cvwonder theme [SUBCOMMAND] [OPTIONS]
 ```
 
+**Aliases**: `themes`, `t`
+
 **Subcommands:**
 
 - `list`: List all installed themes
 - `install <url>`: Install a theme from a GitHub repository
 - `create`: Create a new theme (interactive)
+- `check <theme>`: Verify the integrity of a theme
+- `screenshot <theme>`: Generate a PNG preview image for a theme
 
 **Examples:**
 
@@ -201,6 +205,18 @@ Create a new theme:
 ```bash
 cvwonder theme create
 ```
+
+Check a theme for integrity and missing files:
+```bash
+cvwonder theme check my-theme
+```
+
+Generate a preview screenshot for a theme:
+```bash
+cvwonder theme screenshot my-theme
+```
+
+**Aliases**: `themes screenshot`, `t screenshot`, `themes ss`
 
 **Authentication:**
 
