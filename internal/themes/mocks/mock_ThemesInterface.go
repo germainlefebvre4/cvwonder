@@ -149,6 +149,39 @@ func (_c *ThemesInterfaceMock_Verify_Call) RunAndReturn(run func(string)) *Theme
 	return _c
 }
 
+// Screenshot provides a mock function with given fields: theme
+func (_m *ThemesInterfaceMock) Screenshot(theme string) {
+	_m.Called(theme)
+}
+
+// ThemesInterfaceMock_Screenshot_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Screenshot'
+type ThemesInterfaceMock_Screenshot_Call struct {
+	*mock.Call
+}
+
+// Screenshot is a helper method to define mock.On call
+//   - theme string
+func (_e *ThemesInterfaceMock_Expecter) Screenshot(theme interface{}) *ThemesInterfaceMock_Screenshot_Call {
+	return &ThemesInterfaceMock_Screenshot_Call{Call: _e.mock.On("Screenshot", theme)}
+}
+
+func (_c *ThemesInterfaceMock_Screenshot_Call) Run(run func(theme string)) *ThemesInterfaceMock_Screenshot_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string))
+	})
+	return _c
+}
+
+func (_c *ThemesInterfaceMock_Screenshot_Call) Return() *ThemesInterfaceMock_Screenshot_Call {
+	_c.Call.Return()
+	return _c
+}
+
+func (_c *ThemesInterfaceMock_Screenshot_Call) RunAndReturn(run func(string)) *ThemesInterfaceMock_Screenshot_Call {
+	_c.Run(run)
+	return _c
+}
+
 // NewThemesInterfaceMock creates a new instance of ThemesInterfaceMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewThemesInterfaceMock(t interface {

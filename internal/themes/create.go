@@ -26,6 +26,9 @@ func (t *ThemesService) Create(themeName string) {
 		// Create theme index.html
 		createThemeIndexHTML(themeName, themeSlugName)
 
+		// Create sample.yml
+		createThemeSampleYML(themeSlugName)
+
 		// Create .cvwonderignore
 		createThemeCVWonderIgnore(themeSlugName)
 
@@ -89,6 +92,37 @@ func createThemeIndexHTML(themeName string, themeSlugName string) {
 	err = os.WriteFile("themes/"+themeSlugName+"/index.html", []byte(indexHTML), 0600)
 	if err != nil {
 		logrus.Error("Error writing index.html: ", err)
+	}
+}
+
+func createThemeSampleYML(themeSlugName string) {
+	sampleContent := `person:
+  name: Jane Doe
+  profession: Software Engineer
+  location: Paris, France
+  email: jane.doe@example.com
+  phone: "+1 555 000 0000"
+  experience:
+    since: 2018
+
+career:
+  - companyName: Example Corp
+    missions:
+      - position: Senior Engineer
+        company: Example Corp
+        location: Paris, France
+        dates: "2020 - Present"
+        summary: Led development of core platform services.
+        description:
+          - Designed and implemented microservices architecture.
+          - Mentored junior engineers.
+        technologies:
+          - Go
+          - Docker
+`
+	err := os.WriteFile("themes/"+themeSlugName+"/sample.yml", []byte(sampleContent), 0600)
+	if err != nil {
+		logrus.Error("Error writing sample.yml: ", err)
 	}
 }
 

@@ -91,8 +91,9 @@ func TestThemesService_Create(t *testing.T) {
 			assert.DirExists(t, tt.args.themeDirPath, "Theme directory should exist")
 			assert.FileExists(t, tt.args.themeDirPath+"/theme.yaml", "theme.yaml should exist")
 			assert.FileExists(t, tt.args.themeDirPath+"/index.html", "index.html should exist")
+			assert.FileExists(t, tt.args.themeDirPath+"/sample.yml", "sample.yml should exist")
 			assert.FileExists(t, tt.args.themeDirPath+"/.cvwonderignore", ".cvwonderignore should exist")
-			
+
 			// Verify .cvwonderignore contains .github
 			cvwonderignoreContent, err := os.ReadFile(tt.args.themeDirPath + "/.cvwonderignore")
 			if err == nil {

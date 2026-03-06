@@ -22,6 +22,7 @@ func ThemesCmd() *cobra.Command {
 	cobraCmd.AddCommand(CmdInstall())
 	cobraCmd.AddCommand(CmdCreate())
 	cobraCmd.AddCommand(CmdCheck())
+	cobraCmd.AddCommand(CmdScreenshot())
 
 	return cobraCmd
 }
@@ -104,6 +105,30 @@ func CmdCheck() *cobra.Command {
 				logrus.Fatal("Error creating themes service: ", err)
 			}
 			themesService.Verify(args[0])
+		},
+	}
+
+	return cobraCmd
+}
+
+func CmdScreenshot() *cobra.Command {
+	var cobraCmd = &cobra.Command{
+		PreRun:  utils.ToggleDebug,
+		Use:     "screenshot",
+		Aliases: []string{"ss"},
+		Args:    cobra.ExactArgs(1),
+		Short:   "Generate a preview screenshot for a theme",
+		Long: `Generate a PNG preview screenshot for the specified theme.
+
+The screenshot is taken at 1280x900 viewport (2x scale) and saved to
+themes/<name>/preview.png. CV data is sourced from themes/<name>/sample.yml
+if present, otherwise falls back to ./cv.yml in the current directory.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			themesService, err := themes.NewThemesService()
+			if err != nil {
+				logrus.Fatal("Error creating themes service: ", err)
+			}
+			themesService.Screenshot(args[0])
 		},
 	}
 

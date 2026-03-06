@@ -7,6 +7,7 @@ import (
 	"github.com/germainlefebvre4/cvwonder/internal/cvrender"
 	render_html "github.com/germainlefebvre4/cvwonder/internal/cvrender/html"
 	render_pdf "github.com/germainlefebvre4/cvwonder/internal/cvrender/pdf"
+	render_screenshot "github.com/germainlefebvre4/cvwonder/internal/cvrender/screenshot"
 	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	"github.com/germainlefebvre4/cvwonder/internal/themes"
@@ -72,7 +73,9 @@ func ServeCmd() *cobra.Command {
 			utils.CheckError(err)
 			renderPDFService, err := render_pdf.NewRenderPDFServices(serveService)
 			utils.CheckError(err)
-			renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService)
+			renderScreenshotService, err := render_screenshot.NewRenderScreenshotServices(serveService)
+			utils.CheckError(err)
+			renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService, renderScreenshotService)
 			utils.CheckError(err)
 
 			// Render the CV

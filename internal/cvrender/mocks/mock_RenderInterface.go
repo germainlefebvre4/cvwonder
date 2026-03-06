@@ -60,6 +60,45 @@ func (_c *RenderInterfaceMock_Render_Call) RunAndReturn(run func(model.CV, strin
 	return _c
 }
 
+// Screenshot provides a mock function with given fields: cv, baseDirectory, tmpDirectory, inputFilename, themeName, outputFilePath, config
+func (_m *RenderInterfaceMock) Screenshot(cv model.CV, baseDirectory string, tmpDirectory string, inputFilename string, themeName string, outputFilePath string, config map[string]interface{}) {
+	_m.Called(cv, baseDirectory, tmpDirectory, inputFilename, themeName, outputFilePath, config)
+}
+
+// RenderInterfaceMock_Screenshot_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Screenshot'
+type RenderInterfaceMock_Screenshot_Call struct {
+	*mock.Call
+}
+
+// Screenshot is a helper method to define mock.On call
+//   - cv model.CV
+//   - baseDirectory string
+//   - tmpDirectory string
+//   - inputFilename string
+//   - themeName string
+//   - outputFilePath string
+//   - config map[string]interface{}
+func (_e *RenderInterfaceMock_Expecter) Screenshot(cv interface{}, baseDirectory interface{}, tmpDirectory interface{}, inputFilename interface{}, themeName interface{}, outputFilePath interface{}, config interface{}) *RenderInterfaceMock_Screenshot_Call {
+	return &RenderInterfaceMock_Screenshot_Call{Call: _e.mock.On("Screenshot", cv, baseDirectory, tmpDirectory, inputFilename, themeName, outputFilePath, config)}
+}
+
+func (_c *RenderInterfaceMock_Screenshot_Call) Run(run func(cv model.CV, baseDirectory string, tmpDirectory string, inputFilename string, themeName string, outputFilePath string, config map[string]interface{})) *RenderInterfaceMock_Screenshot_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(model.CV), args[1].(string), args[2].(string), args[3].(string), args[4].(string), args[5].(string), args[6].(map[string]interface{}))
+	})
+	return _c
+}
+
+func (_c *RenderInterfaceMock_Screenshot_Call) Return() *RenderInterfaceMock_Screenshot_Call {
+	_c.Call.Return()
+	return _c
+}
+
+func (_c *RenderInterfaceMock_Screenshot_Call) RunAndReturn(run func(model.CV, string, string, string, string, string, map[string]interface{})) *RenderInterfaceMock_Screenshot_Call {
+	_c.Run(run)
+	return _c
+}
+
 // NewRenderInterfaceMock creates a new instance of RenderInterfaceMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewRenderInterfaceMock(t interface {

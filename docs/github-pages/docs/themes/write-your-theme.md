@@ -13,7 +13,9 @@ The theme must be located in the `themes` directory in the current working direc
 themes
 └── <my-theme-name>
     ├── theme.yaml    # Theme metadata (required)
-    └── index.html    # Theme template
+    ├── index.html    # Theme template (required)
+    ├── sample.yml    # Demo CV data for screenshots (recommended)
+    └── preview.png   # Preview image for the theme library (recommended)
 ```
 
 ## Initialize the theme
@@ -21,10 +23,69 @@ themes
 You can initialize a new theme with the following command:
 
 ```bash
-cvwonder theme create --name=my-theme-name
+cvwonder themes create my-theme-name
 ```
 
-This command creates a new directory in the `themes/` folder with the name `my-theme-name` and initializes the theme configuration file `theme.yaml`.
+This command creates a new directory in the `themes/` folder with the name `my-theme-name` and initializes the following files:
+- `theme.yaml` — theme metadata
+- `index.html` — starter template
+- `sample.yml` — minimal demo CV data for screenshot generation
+
+## Sample CV data (sample.yml)
+
+The `sample.yml` file provides demo CV data used for screenshot generation. It is automatically created when you run `themes create` and follows the same YAML structure as your main `cv.yml`.
+
+CVWonder uses this file as the CV source when generating a theme preview, so it should demonstrate the theme's layout and design well.
+
+```yaml
+person:
+  name: Jane Doe
+  profession: Software Engineer
+  location: Paris, France
+  email: jane.doe@example.com
+  phone: "+1 555 000 0000"
+  experience:
+    since: 2018
+career:
+  - companyName: Example Corp
+    missions:
+      - position: Senior Engineer
+        company: Example Corp
+        location: Paris, France
+        dates: "2020 - Present"
+        summary: Led development of core platform services.
+        description:
+          - Designed and implemented microservices architecture.
+          - Mentored junior engineers.
+        technologies:
+          - Go
+          - Docker
+```
+
+## Generate a preview screenshot
+
+Generate a `preview.png` image for your theme using the `themes screenshot` command:
+
+```bash
+cvwonder themes screenshot my-theme-name
+```
+
+**Aliases**: `themes ss`, `theme screenshot`, `t screenshot`
+
+The screenshot is captured at **1280×900 px** with **2× device scale** (retina quality), producing a 2560×1800 PNG at `themes/my-theme-name/preview.png`.
+
+**CV source resolution order:**
+1. `themes/<theme>/sample.yml` — theme-specific demo data (recommended)
+2. `./cv.yml` — the root CV file as fallback
+3. Fatal error if neither is found
+
+:::tip
+Always provide a `sample.yml` in your theme directory. It guarantees consistent previews regardless of the user's own `cv.yml`.
+:::
+
+:::note
+An existing `preview.png` is silently overwritten each time the command runs.
+:::
 
 ## Theme metadata
 
