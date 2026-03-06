@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.9.0...v0.10.0) (2026-03-06)
+
+
+### Features
+
+* **qrcode:** Generate qrcode based on urls ([#124](https://github.com/germainlefebvre4/cvwonder/issues/124)) ([fb5ac65](https://github.com/germainlefebvre4/cvwonder/commit/fb5ac65a6f86fc7b10a0de84be3a03ef824cd2c4))
+* **theme:** Generate preview image for theme ([#126](https://github.com/germainlefebvre4/cvwonder/issues/126)) ([d6fb688](https://github.com/germainlefebvre4/cvwonder/commit/d6fb688e4720a711017e1b7628fb732e1b0fc3bb))
+
 ## [0.9.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.8.0...v0.9.0) (2026-03-04)
 
 
