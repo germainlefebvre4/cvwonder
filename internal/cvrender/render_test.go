@@ -5,6 +5,7 @@ import (
 
 	htmlMocks "github.com/germainlefebvre4/cvwonder/internal/cvrender/html/mocks"
 	pdfMocks "github.com/germainlefebvre4/cvwonder/internal/cvrender/pdf/mocks"
+	screenshotMocks "github.com/germainlefebvre4/cvwonder/internal/cvrender/screenshot/mocks"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -15,9 +16,10 @@ func TestNewRenderServices(t *testing.T) {
 		// Setup
 		htmlMock := htmlMocks.NewRenderHTMLInterfaceMock(t)
 		pdfMock := pdfMocks.NewRenderPDFInterfaceMock(t)
+		screenshotMock := screenshotMocks.NewRenderScreenshotInterfaceMock(t)
 
 		// Test
-		service, err := NewRenderServices(htmlMock, pdfMock)
+		service, err := NewRenderServices(htmlMock, pdfMock, screenshotMock)
 
 		// Assert
 		assert.NoError(t, err)
@@ -48,8 +50,9 @@ func TestRender(t *testing.T) {
 		// PDF should NOT be called
 
 		service := &RenderServices{
-			RenderHTMLService: htmlMock,
-			RenderPDFService:  pdfMock,
+			RenderHTMLService:       htmlMock,
+			RenderPDFService:        pdfMock,
+			RenderScreenshotService: screenshotMocks.NewRenderScreenshotInterfaceMock(t),
 		}
 
 		// Test
@@ -82,8 +85,9 @@ func TestRender(t *testing.T) {
 		pdfMock.On("RenderFormatPDF", cv, outputDir, "cv", themeName).Return(nil)
 
 		service := &RenderServices{
-			RenderHTMLService: htmlMock,
-			RenderPDFService:  pdfMock,
+			RenderHTMLService:       htmlMock,
+			RenderPDFService:        pdfMock,
+			RenderScreenshotService: screenshotMocks.NewRenderScreenshotInterfaceMock(t),
 		}
 
 		// Test
@@ -115,8 +119,9 @@ func TestRender(t *testing.T) {
 		htmlMock.On("RenderFormatHTML", cv, baseDir, outputDir, "my-cv", themeName, false, map[string]interface{}(nil)).Return(nil)
 
 		service := &RenderServices{
-			RenderHTMLService: htmlMock,
-			RenderPDFService:  pdfMock,
+			RenderHTMLService:       htmlMock,
+			RenderPDFService:        pdfMock,
+			RenderScreenshotService: screenshotMocks.NewRenderScreenshotInterfaceMock(t),
 		}
 
 		// Test

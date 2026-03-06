@@ -5,6 +5,7 @@ type ThemesInterface interface {
 	Install(theme string, force bool)
 	Create(theme string)
 	Verify(theme string)
+	Screenshot(theme string)
 }
 
 type ThemesService struct{}

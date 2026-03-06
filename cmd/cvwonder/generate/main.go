@@ -9,6 +9,7 @@ import (
 	"github.com/germainlefebvre4/cvwonder/internal/cvrender"
 	render_html "github.com/germainlefebvre4/cvwonder/internal/cvrender/html"
 	render_pdf "github.com/germainlefebvre4/cvwonder/internal/cvrender/pdf"
+	render_screenshot "github.com/germainlefebvre4/cvwonder/internal/cvrender/screenshot"
 	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	"github.com/germainlefebvre4/cvwonder/internal/themes"
@@ -191,7 +192,11 @@ func generateSingle() {
 	if err != nil {
 		logrus.Fatal("Error creating render PDF services: ", err)
 	}
-	renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService)
+	renderScreenshotService, err := render_screenshot.NewRenderScreenshotServices(serveService)
+	if err != nil {
+		logrus.Fatal("Error creating render screenshot services: ", err)
+	}
+	renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService, renderScreenshotService)
 	if err != nil {
 		logrus.Fatal("Error creating render services: ", err)
 	}
