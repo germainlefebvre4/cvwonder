@@ -89,6 +89,7 @@ func getTemplateFunctions() template.FuncMap {
 		"even":    func(i int) bool { return i%2 == 0 },
 		"add":     func(a, b int) int { return a + b },
 		"sub":     func(a, b int) int { return a - b },
+		"qrCode":  qrCode,
 	}
 	return funcMap
 }
