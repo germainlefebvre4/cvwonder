@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/germainlefebvre4/cvwonder/compare/v0.10.0...v0.10.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* **pdf:** Generate pdf in docker runtime ([#128](https://github.com/germainlefebvre4/cvwonder/issues/128)) ([e2bffae](https://github.com/germainlefebvre4/cvwonder/commit/e2bffae6cdad22e0098e7a965de2e71e0d1ac86d))
+
 ## [0.10.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.9.0...v0.10.0) (2026-03-06)
 
 
