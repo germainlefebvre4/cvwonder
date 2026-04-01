@@ -124,9 +124,9 @@ func (_c *ServeInterfaceMock_StartServer_Call) RunAndReturn(run func(int, string
 	return _c
 }
 
-// StartServerOnListener provides a mock function with given fields: listener, outputDirectory
-func (_m *ServeInterfaceMock) StartServerOnListener(listener net.Listener, outputDirectory string) {
-	_m.Called(listener, outputDirectory)
+// StartServerOnListener provides a mock function with given fields: listener, outputDirectory, ready
+func (_m *ServeInterfaceMock) StartServerOnListener(listener net.Listener, outputDirectory string, ready chan<- struct{}) {
+	_m.Called(listener, outputDirectory, ready)
 }
 
 // ServeInterfaceMock_StartServerOnListener_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'StartServerOnListener'
@@ -137,13 +137,14 @@ type ServeInterfaceMock_StartServerOnListener_Call struct {
 // StartServerOnListener is a helper method to define mock.On call
 //   - listener net.Listener
 //   - outputDirectory string
-func (_e *ServeInterfaceMock_Expecter) StartServerOnListener(listener interface{}, outputDirectory interface{}) *ServeInterfaceMock_StartServerOnListener_Call {
-	return &ServeInterfaceMock_StartServerOnListener_Call{Call: _e.mock.On("StartServerOnListener", listener, outputDirectory)}
+//   - ready chan<- struct{}
+func (_e *ServeInterfaceMock_Expecter) StartServerOnListener(listener interface{}, outputDirectory interface{}, ready interface{}) *ServeInterfaceMock_StartServerOnListener_Call {
+	return &ServeInterfaceMock_StartServerOnListener_Call{Call: _e.mock.On("StartServerOnListener", listener, outputDirectory, ready)}
 }
 
-func (_c *ServeInterfaceMock_StartServerOnListener_Call) Run(run func(listener net.Listener, outputDirectory string)) *ServeInterfaceMock_StartServerOnListener_Call {
+func (_c *ServeInterfaceMock_StartServerOnListener_Call) Run(run func(listener net.Listener, outputDirectory string, ready chan<- struct{})) *ServeInterfaceMock_StartServerOnListener_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(net.Listener), args[1].(string))
+		run(args[0].(net.Listener), args[1].(string), args[2].(chan<- struct{}))
 	})
 	return _c
 }
@@ -153,7 +154,7 @@ func (_c *ServeInterfaceMock_StartServerOnListener_Call) Return() *ServeInterfac
 	return _c
 }
 
-func (_c *ServeInterfaceMock_StartServerOnListener_Call) RunAndReturn(run func(net.Listener, string)) *ServeInterfaceMock_StartServerOnListener_Call {
+func (_c *ServeInterfaceMock_StartServerOnListener_Call) RunAndReturn(run func(net.Listener, string, chan<- struct{})) *ServeInterfaceMock_StartServerOnListener_Call {
 	_c.Run(run)
 	return _c
 }

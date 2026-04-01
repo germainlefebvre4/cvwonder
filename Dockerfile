@@ -3,7 +3,7 @@ FROM alpine:3 AS build
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 ARG JQ_VERSION=1.7
-ARG CVWONDER_VERSION=0.3.0
+ARG CVWONDER_VERSION=0.10.0
 
 WORKDIR /app
 
@@ -26,9 +26,13 @@ RUN OS=$(echo $TARGETPLATFORM | cut -d'/' -f1) && \
 
 FROM alpine:3
 
+RUN apk add --no-cache chromium
+
 COPY --from=build /app/cvwonder /usr/local/bin/cvwonder
 
 WORKDIR /cv
+
+ENV CHROME_BIN=/usr/bin/chromium-browser
 
 ENTRYPOINT ["cvwonder"]
 CMD ["serve", "--input=cv.yml", "--output=generated/", "--theme=default", "--watch"]
