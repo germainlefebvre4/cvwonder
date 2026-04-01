@@ -33,12 +33,14 @@ func (r *RenderScreenshotServices) RenderFormatScreenshot(cv model.CV, outputDir
 
 func (r *RenderScreenshotServices) captureScreenshot(localServerUrl string, outputFilePath string) {
 	err := rod.Try(func() {
-		var u string
-		if utils.CliArgs.Debug {
-			u = launcher.New().NoSandbox(true).Logger(os.Stdout).MustLaunch()
-		} else {
-			u = launcher.New().NoSandbox(true).MustLaunch()
+		l := launcher.New().NoSandbox(true)
+		if bin := os.Getenv("CHROME_BIN"); bin != "" {
+			l = l.Bin(bin)
 		}
+		if utils.CliArgs.Debug {
+			l = l.Logger(os.Stdout)
+		}
+		u := l.MustLaunch()
 
 		page := rod.New().ControlURL(u).MustConnect().MustPage(localServerUrl).MustWaitLoad()
 
@@ -84,8 +86,10 @@ func (r *RenderScreenshotServices) runWebServer(inputFilename string, outputDire
 
 	localServerUrl := fmt.Sprintf("http://localhost:%d/%s.html", port, inputFilename)
 	logrus.Info("Serving temporary CV for screenshot at address ", localServerUrl)
+	ready := make(chan struct{})
 	go func() {
-		r.ServeService.StartServerOnListener(listener, outputDirectory)
+		r.ServeService.StartServerOnListener(listener, outputDirectory, ready)
 	}()
+	<-ready
 	return localServerUrl
 }

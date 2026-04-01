@@ -1,4 +1,4 @@
-FROM golang:1.23 as build
+FROM golang:1.25 as build
 
 WORKDIR /app
 
@@ -8,7 +8,13 @@ RUN go mod download
 COPY . .
 RUN go build -v -o /usr/local/bin/cvwonder ./cmd/cvwonder
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends chromium && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /cv
+
+ENV CHROME_BIN=/usr/bin/chromium
 
 ENTRYPOINT ["cvwonder"]
 CMD ["serve", "--input=cv.yml", "--output=generated/", "--theme=default", "--watch"]

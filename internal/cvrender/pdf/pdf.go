@@ -29,12 +29,14 @@ func (r *RenderPDFServices) RenderFormatPDF(cv model.CV, outputDirectory string,
 
 func (r *RenderPDFServices) convertPageToPDF(localServerUrl string, outputFilePath string) {
 	err := rod.Try(func() {
-		var u string
-		if utils.CliArgs.Debug {
-			u = launcher.New().NoSandbox(true).Logger(os.Stdout).MustLaunch()
-		} else {
-			u = launcher.New().NoSandbox(true).MustLaunch()
+		l := launcher.New().NoSandbox(true)
+		if bin := os.Getenv("CHROME_BIN"); bin != "" {
+			l = l.Bin(bin)
 		}
+		if utils.CliArgs.Debug {
+			l = l.Logger(os.Stdout)
+		}
+		u := l.MustLaunch()
 		rod.New().ControlURL(u).MustConnect().MustPage(localServerUrl).MustWaitLoad().MustPDF(outputFilePath)
 	})
 	if err != nil {
@@ -55,9 +57,11 @@ func (r *RenderPDFServices) runWebServer(inputFilename string, outputDirectory s
 
 	localServerUrl := fmt.Sprintf("http://localhost:%d/%s.html", port, inputFilename)
 	logrus.Info("Serve temporary the CV on server at address ", localServerUrl)
+	ready := make(chan struct{})
 	go func() {
-		r.ServeService.StartServerOnListener(listener, outputDirectory)
+		r.ServeService.StartServerOnListener(listener, outputDirectory, ready)
 	}()
+	<-ready
 	return localServerUrl
 }
 

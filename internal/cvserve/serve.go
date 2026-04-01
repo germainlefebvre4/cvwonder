@@ -82,12 +82,15 @@ func (s *ServeServices) StartServer(port int, outputDirectory string) {
 // StartServerOnListener serves files from outputDirectory using the already-bound
 // listener. Using a pre-bound listener prevents TOCTOU races where two callers
 // could obtain the same port before either starts listening.
-func (s *ServeServices) StartServerOnListener(listener net.Listener, outputDirectory string) {
+// ready is closed immediately before http.Serve is called, signalling to the
+// caller that the handler is configured and connections will be accepted.
+func (s *ServeServices) StartServerOnListener(listener net.Listener, outputDirectory string, ready chan<- struct{}) {
 	port := listener.Addr().(*net.TCPAddr).Port
 	logrus.Info(fmt.Sprintf("Listening on: http://localhost:%d", port))
 	logrus.Info("")
 
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(http.Dir(outputDirectory)))
+	close(ready)
 	http.Serve(listener, mux)
 }

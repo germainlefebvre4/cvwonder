@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	serveMocks "github.com/germainlefebvre4/cvwonder/internal/cvserve/mocks"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
@@ -85,7 +84,10 @@ func TestRunWebServer_New(t *testing.T) {
 		serveMock := serveMocks.NewServeInterfaceMock(t)
 
 		// Setup mock expectation: StartServerOnListener is called with any listener and the output dir
-		serveMock.On("StartServerOnListener", mock.Anything, tempDir).Return()
+		serveMock.On("StartServerOnListener", mock.Anything, tempDir, mock.Anything).
+			Run(func(args mock.Arguments) {
+				close(args.Get(2).(chan<- struct{}))
+			}).Return()
 
 		service := &RenderPDFServices{
 			ServeService: serveMock,
@@ -93,9 +95,6 @@ func TestRunWebServer_New(t *testing.T) {
 
 		// Test
 		url := service.runWebServer("test-cv", tempDir)
-
-		// Wait for goroutine to execute
-		time.Sleep(10 * time.Millisecond)
 
 		// Assert URL is well-formed; port is dynamic so we check prefix and suffix
 		assert.True(t, strings.HasPrefix(url, "http://localhost:"), "URL should start with http://localhost:")
@@ -105,7 +104,7 @@ func TestRunWebServer_New(t *testing.T) {
 
 	t.Run("Should handle different filenames in URL", func(t *testing.T) {
 		testCases := []struct {
-			filename string
+			filename       string
 			expectedSuffix string
 		}{
 			{"cv", "/cv.html"},
@@ -117,16 +116,16 @@ func TestRunWebServer_New(t *testing.T) {
 			t.Run(tc.filename, func(t *testing.T) {
 				tempDir := t.TempDir()
 				serveMock := serveMocks.NewServeInterfaceMock(t)
-				serveMock.On("StartServerOnListener", mock.Anything, tempDir).Return()
+				serveMock.On("StartServerOnListener", mock.Anything, tempDir, mock.Anything).
+					Run(func(args mock.Arguments) {
+						close(args.Get(2).(chan<- struct{}))
+					}).Return()
 
 				service := &RenderPDFServices{ServeService: serveMock}
 
 				url := service.runWebServer(tc.filename, tempDir)
 				assert.True(t, strings.HasSuffix(url, tc.expectedSuffix))
 				assert.True(t, strings.HasPrefix(url, "http://localhost:"))
-
-				// Wait for goroutine
-				time.Sleep(10 * time.Millisecond)
 				serveMock.AssertExpectations(t)
 			})
 		}
