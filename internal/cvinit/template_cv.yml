@@ -1,0 +1,145 @@
+# CV Wonder - CV Template
+# Edit this file with your information and run: cvwonder generate
+#
+# Required fields are marked with [required]
+# Image paths are relative to the directory where you run cvwonder
+
+# -------------------------------------------------------------------
+# Company (optional - fill if generating a CV for a specific company)
+# -------------------------------------------------------------------
+# company:
+#   name: My Company           # Company name
+#   logo: images/company.png   # Path to company logo image
+
+# -------------------------------------------------------------------
+# Person [required]
+# -------------------------------------------------------------------
+person:
+  name: ""                     # [required] Your full name
+  depiction: ""                # Path to your profile picture (e.g. images/photo.jpg)
+  profession: ""               # [required] Your job title / profession
+  location: ""                 # City, Country
+  citizenship: ""              # e.g. FR, US
+  email: ""                    # Contact email
+  site: ""                     # Personal website URL
+  phone: ""                    # Phone number (e.g. +33 6 00 00 00 00)
+  # experience:
+  #   years: 5                 # Total years of experience (optional if 'since' is set)
+  #   since: 2019              # Year you started your career (optional if 'years' is set)
+
+# -------------------------------------------------------------------
+# Social Networks (optional)
+# -------------------------------------------------------------------
+# socialNetworks:
+#   github: your-username
+#   linkedin: your-username
+#   stackoverflow: your-username
+#   twitter: your-username
+#   bluesky: your-handle
+
+# -------------------------------------------------------------------
+# Abstract (optional)
+# A list of paragraphs describing yourself professionally.
+# -------------------------------------------------------------------
+# abstract:
+#   - "First paragraph about your background and expertise."
+#   - "Second paragraph about your values or achievements."
+
+# -------------------------------------------------------------------
+# Career (optional)
+# Group missions by company. Each company can have multiple missions.
+# -------------------------------------------------------------------
+# career:
+#   - companyName: Company Name
+#     companyLogo: images/company-logo.png   # optional
+#     duration: "2 years"                    # optional
+#     missions:
+#       - position: Job Title
+#         company: Client or Department      # optional
+#         companyLogo: images/client.png     # optional
+#         location: City, Country
+#         dates: "2022 - 2024"
+#         summary: "Brief description of the role and context."
+#         technologies:
+#           - Go
+#           - Docker
+#           - Kubernetes
+#         description:
+#           - "Key achievement or responsibility."
+#           - "Another achievement or responsibility."
+#         project: "Project name"            # optional
+
+# -------------------------------------------------------------------
+# Technical Skills (optional)
+# Organize your skills into domains with a level 1 (beginner) to 5 (expert).
+# -------------------------------------------------------------------
+# technicalSkills:
+#   domains:
+#     - name: Backend Development
+#       competencies:
+#         - name: Go
+#           level: 4
+#         - name: Python
+#           level: 3
+#     - name: Infrastructure
+#       competencies:
+#         - name: Kubernetes
+#           level: 4
+#         - name: Terraform
+#           level: 3
+
+# -------------------------------------------------------------------
+# Education (optional)
+# -------------------------------------------------------------------
+# education:
+#   - schoolName: University Name
+#     schoolLogo: images/school.png   # optional
+#     degree: "Bachelor of Science in Computer Science"
+#     location: City, Country
+#     dates: "2015 - 2019"
+#     link: https://university.edu   # optional
+
+# -------------------------------------------------------------------
+# Certifications (optional)
+# -------------------------------------------------------------------
+# certifications:
+#   - certificationName: "Certified Kubernetes Administrator"
+#     companyName: CNCF
+#     issuer: Linux Foundation
+#     date: "2023"
+#     link: https://example.com/cert
+#     badge: images/cka-badge.png   # optional
+
+# -------------------------------------------------------------------
+# Languages (optional)
+# -------------------------------------------------------------------
+# languages:
+#   - name: English
+#     level: Fluent
+#   - name: French
+#     level: Native
+
+# -------------------------------------------------------------------
+# Side Projects (optional)
+# -------------------------------------------------------------------
+# sideProjects:
+#   - name: My Project
+#     position: Creator
+#     description: "A short description of the project."
+#     link: https://github.com/you/project
+#     type: open-source
+#     langs: Go, TypeScript
+#     color: "#3572A5"   # optional hex color
+
+# -------------------------------------------------------------------
+# References (optional)
+# -------------------------------------------------------------------
+# references:
+#   - name: Jane Doe
+#     position: Engineering Manager
+#     company: Some Company
+#     date: "2024"
+#     url: https://linkedin.com/in/janedoe
+#     description: "Optional description or quote."
+#     # socialNetworks:
+#     #   linkedin: janedoe
