@@ -5,6 +5,7 @@ import (
 	"os"
 
 	cmdGenerate "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/generate"
+	cmdInit "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/init"
 	cmdServe "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/serve"
 	cmdThemes "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/themes"
 	cmdValidate "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/validate"
@@ -37,6 +38,7 @@ func main() {
 	rootCmd.PersistentFlags().BoolVarP(&utils.CliArgs.Debug, "debug", "d", false, "Debug mode: more verbose.")
 
 	rootCmd.AddCommand(cmdGenerate.GenerateCmd())
+	rootCmd.AddCommand(cmdInit.InitCmd())
 	rootCmd.AddCommand(cmdServe.ServeCmd())
 	rootCmd.AddCommand(cmdThemes.ThemesCmd())
 	rootCmd.AddCommand(cmdValidate.ValidateCmd())
