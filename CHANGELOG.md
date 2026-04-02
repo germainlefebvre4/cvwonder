@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.10.1...v0.11.0) (2026-04-02)
+
+
+### Features
+
+* **init:** Add init interactive mode for better onboarding ([#130](https://github.com/germainlefebvre4/cvwonder/issues/130)) ([fff5fb3](https://github.com/germainlefebvre4/cvwonder/commit/fff5fb385364f60c0e99924e026329313f7565e1))
+
 ## [0.10.1](https://github.com/germainlefebvre4/cvwonder/compare/v0.10.0...v0.10.1) (2026-04-01)
 
 
