@@ -145,11 +145,6 @@
               "type": "object",
               "required": ["position", "company"],
               "properties": {
-                "position": {
-                  "type": "string",
-                  "minLength": 1,
-                  "description": "Job title/position (required)"
-                },
                 "company": {
                   "type": "string",
                   "minLength": 1,
@@ -167,16 +162,18 @@
                   "type": "string",
                   "description": "Employment dates"
                 },
+                "project": {
+                  "type": "string",
+                  "description": "Project name"
+                },
+                "position": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Job title/position (required)"
+                },
                 "summary": {
                   "type": "string",
                   "description": "Brief summary of the role"
-                },
-                "technologies": {
-                  "type": "array",
-                  "description": "Technologies used",
-                  "items": {
-                    "type": "string"
-                  }
                 },
                 "description": {
                   "type": "array",
@@ -185,9 +182,12 @@
                     "type": "string"
                   }
                 },
-                "project": {
-                  "type": "string",
-                  "description": "Project name"
+                "technologies": {
+                  "type": "array",
+                  "description": "Technologies used",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -259,7 +259,10 @@
             "description": "Project description"
           },
           "link": {
-            "type": "string",
+            "anyOf": [
+              {"type": "string", "maxLength": 0},
+              {"type": "string", "format": "uri"}
+            ],
             "description": "Project link or repository"
           },
           "type": {
@@ -300,8 +303,10 @@
             "description": "Date obtained"
           },
           "link": {
-            "type": "string",
-            "format": "uri",
+            "anyOf": [
+              {"type": "string", "maxLength": 0},
+              {"type": "string", "format": "uri"}
+            ],
             "description": "Link to certification"
           },
           "badge": {
@@ -358,8 +363,10 @@
             "description": "Study period"
           },
           "link": {
-            "type": "string",
-            "format": "uri",
+            "anyOf": [
+              {"type": "string", "maxLength": 0},
+              {"type": "string", "format": "uri"}
+            ],
             "description": "Link to school website"
           }
         }
