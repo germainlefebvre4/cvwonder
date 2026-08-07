@@ -220,6 +220,10 @@ Even though the yaml file uses `person`, the Go template variable name is `Perso
 
 ## Custom fields and custom sections
 
+:::note
+Added in v0.11.0.
+:::
+
 Every entity in the CV data model (`.Person`, `.Company`, `.SocialNetworks`, each `.Career[]` entry and its `.Missions[]`, `.TechnicalSkills`, each `.TechnicalSkills.Domains[]` and its `.Competencies[]`, each `.SideProjects[]`, `.Certifications[]`, `.Education[]`, `.References[]` and `.Languages[]` entry, and the CV root itself) exposes an optional `.Custom` field: an ordered list of `{Label, Value}` entries that authors add by hand in `cv.yml` for data the model has no dedicated field for.
 
 The CV root also exposes `.CustomSections`, an ordered list of whole sections the model has no name for at all. Each entry has a `Title` and its own `Fields` list, using the same `{Label, Value}` shape:
@@ -239,7 +243,7 @@ customSections:
 ```
 
 :::important Rendering is opt-in
-cvwonder guarantees `.Custom` and `.CustomSections` reach the template context — it never renders them on its own. A theme that doesn't reference them simply omits that data from its output, exactly like any other field a theme chooses not to use.
+CV Wonder guarantees `.Custom` and `.CustomSections` reach the template context — it never renders them on its own. A theme that doesn't reference them simply omits that data from its output, exactly like any other field a theme chooses not to use.
 :::
 
 A minimal example that iterates a `.Custom` list:
@@ -277,12 +281,12 @@ And a `.CustomSections` example:
 
 ## Enable the watch feature
 
+:::note
+Added in v0.1.0. Starting v0.3.0, the live reload script is automatically injected in the template.
+:::
+
 To enable the watch feature on CV Wonder, you have to inject an internal js script in the template. This script will automatically reload the page when the CV data or the Theme is updated.
 
 ```html
 <script src="http://localhost:35729/livereload.js"></script>
 ```
-
-:::tip
-Starting CV WOnder version 0.3.0, the live reload script is automatically injected in the template.
-:::
