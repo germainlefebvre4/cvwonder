@@ -65,6 +65,72 @@ var CvModelWithMissionCompanyLogo = model.CV{
 	},
 }
 
+var CvYamlWithCustomFields = []byte(`
+person:
+  name: John Doe
+  custom:
+    - label: Availability
+      value: Immediate
+    - label: Nickname
+      value: JD
+
+career:
+  - companyName: Tech Corp
+    missions:
+      - position: Senior Engineer
+        company: Tech Corp
+        custom:
+          - label: Team size
+            value: 5
+
+customSections:
+  - title: Publications
+    fields:
+      - label: Paper title
+        value: Distributed Systems at Scale
+      - label: Topics
+        value:
+          - Kubernetes
+          - Golang
+`)
+
+var CvModelWithCustomFields = model.CV{
+	Person: model.Person{
+		Name: "John Doe",
+		Extensible: model.Extensible{
+			Custom: []model.CustomField{
+				{Label: "Availability", Value: "Immediate"},
+				{Label: "Nickname", Value: "JD"},
+			},
+		},
+	},
+	Career: []model.Career{
+		{
+			CompanyName: "Tech Corp",
+			Missions: []model.Mission{
+				{
+					Position: "Senior Engineer",
+					Company:  "Tech Corp",
+					Extensible: model.Extensible{
+						Custom: []model.CustomField{
+							{Label: "Team size", Value: uint64(5)},
+						},
+					},
+				},
+			},
+		},
+	},
+	CustomSections: []model.CustomSection{
+		{
+			Title: "Publications",
+			Fields: []model.CustomField{
+				{Label: "Paper title", Value: "Distributed Systems at Scale"},
+				{Label: "Topics", Value: []interface{}{"Kubernetes", "Golang"}},
+			},
+		},
+	},
+}
+
 var CvYamlGood02 = []byte(`
 ---
 company:

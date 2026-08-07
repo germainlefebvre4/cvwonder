@@ -218,6 +218,63 @@ Every key in the yaml file is capitalized in the Go template.
 Even though the yaml file uses `person`, the Go template variable name is `Person`.
 :::
 
+## Custom fields and custom sections
+
+Every entity in the CV data model (`.Person`, `.Company`, `.SocialNetworks`, each `.Career[]` entry and its `.Missions[]`, `.TechnicalSkills`, each `.TechnicalSkills.Domains[]` and its `.Competencies[]`, each `.SideProjects[]`, `.Certifications[]`, `.Education[]`, `.References[]` and `.Languages[]` entry, and the CV root itself) exposes an optional `.Custom` field: an ordered list of `{Label, Value}` entries that authors add by hand in `cv.yml` for data the model has no dedicated field for.
+
+The CV root also exposes `.CustomSections`, an ordered list of whole sections the model has no name for at all. Each entry has a `Title` and its own `Fields` list, using the same `{Label, Value}` shape:
+
+```yaml
+person:
+  name: Germain
+  custom:
+    - label: Availability
+      value: Immediate
+
+customSections:
+  - title: Publications
+    fields:
+      - label: Distributed Systems at Scale
+        value: 2023
+```
+
+:::important Rendering is opt-in
+cvwonder guarantees `.Custom` and `.CustomSections` reach the template context — it never renders them on its own. A theme that doesn't reference them simply omits that data from its output, exactly like any other field a theme chooses not to use.
+:::
+
+A minimal example that iterates a `.Custom` list:
+
+```html
+{{ range .Person.Custom }}
+  <p>{{ .Label }}: {{ .Value }}</p>
+{{ end }}
+```
+
+And a `.CustomSections` example:
+
+```html
+{{ range .CustomSections }}
+  <h2>{{ .Title }}</h2>
+  {{ range .Fields }}
+    <p>{{ .Label }}: {{ .Value }}</p>
+  {{ end }}
+{{ end }}
+```
+
+`Value` may be a plain scalar (string, number, boolean), a list, or a nested object — whatever shape the author wrote in YAML, with no type constraint enforced by cvwonder. cvwonder does not provide a helper to detect a value's shape; themes that only render scalars can simply print `{{ .Value }}`, and a theme choosing to also support a known list-shaped value is responsible for ranging over it directly with the existing template constructs:
+
+```html
+{{ range .Person.Custom }}
+  {{ if eq .Label "Topics" }}
+    <ul>
+      {{ range .Value }}<li>{{ . }}</li>{{ end }}
+    </ul>
+  {{ else }}
+    <p>{{ .Label }}: {{ .Value }}</p>
+  {{ end }}
+{{ end }}
+```
+
 ## Enable the watch feature
 
 To enable the watch feature on CV Wonder, you have to inject an internal js script in the template. This script will automatically reload the page when the CV data or the Theme is updated.

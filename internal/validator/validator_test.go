@@ -474,6 +474,182 @@ func TestValidateStruct_ExperienceFull(t *testing.T) {
 	assert.True(t, result.Valid)
 }
 
+func TestValidateFile_CustomFieldsOnMultipleEntities(t *testing.T) {
+	// Create YAML with custom fields on several nested entities
+	validYAML := `---
+person:
+  name: John Doe
+  custom:
+    - label: Availability
+      value: Immediate
+
+career:
+  - companyName: Tech Corp
+    custom:
+      - label: Team size
+        value: 5
+    missions:
+      - position: Senior Engineer
+        company: Tech Corp
+        custom:
+          - label: Project
+            value: Migration
+`
+
+	tmpDir := t.TempDir()
+	tmpFile := filepath.Join(tmpDir, "custom_fields.yml")
+	err := os.WriteFile(tmpFile, []byte(validYAML), 0644)
+	assert.NoError(t, err)
+
+	validator, err := NewValidatorServices()
+	assert.NoError(t, err)
+
+	result, err := validator.ValidateFile(tmpFile)
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.True(t, result.Valid)
+	assert.Empty(t, result.Errors)
+}
+
+func TestValidateFile_CustomSections(t *testing.T) {
+	// Create YAML with root-level customSections
+	validYAML := `---
+person:
+  name: John Doe
+
+customSections:
+  - title: Publications
+    fields:
+      - label: Paper A
+        value: 2021
+`
+
+	tmpDir := t.TempDir()
+	tmpFile := filepath.Join(tmpDir, "custom_sections.yml")
+	err := os.WriteFile(tmpFile, []byte(validYAML), 0644)
+	assert.NoError(t, err)
+
+	validator, err := NewValidatorServices()
+	assert.NoError(t, err)
+
+	result, err := validator.ValidateFile(tmpFile)
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.True(t, result.Valid)
+	assert.Empty(t, result.Errors)
+}
+
+func TestValidateFile_CustomFieldValueShapes(t *testing.T) {
+	// Create YAML with scalar, list, and nested object values
+	validYAML := `---
+person:
+  name: John Doe
+  custom:
+    - label: Scalar value
+      value: Immediate
+    - label: List value
+      value:
+        - one
+        - two
+    - label: Nested object value
+      value:
+        street: 1 Main St
+        city: Paris
+`
+
+	tmpDir := t.TempDir()
+	tmpFile := filepath.Join(tmpDir, "custom_value_shapes.yml")
+	err := os.WriteFile(tmpFile, []byte(validYAML), 0644)
+	assert.NoError(t, err)
+
+	validator, err := NewValidatorServices()
+	assert.NoError(t, err)
+
+	result, err := validator.ValidateFile(tmpFile)
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.True(t, result.Valid)
+	assert.Empty(t, result.Errors)
+}
+
+func TestValidateFile_CustomFieldMissingLabel(t *testing.T) {
+	// Create YAML with a custom entry missing the required label
+	invalidYAML := `---
+person:
+  name: John Doe
+  custom:
+    - value: Immediate
+`
+
+	tmpDir := t.TempDir()
+	tmpFile := filepath.Join(tmpDir, "custom_missing_label.yml")
+	err := os.WriteFile(tmpFile, []byte(invalidYAML), 0644)
+	assert.NoError(t, err)
+
+	validator, err := NewValidatorServices()
+	assert.NoError(t, err)
+
+	result, err := validator.ValidateFile(tmpFile)
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.False(t, result.Valid)
+	assert.NotEmpty(t, result.Errors)
+}
+
+func TestValidateFile_CustomFieldEmptyLabel(t *testing.T) {
+	// Create YAML with a custom entry with an empty-string label
+	invalidYAML := `---
+person:
+  name: John Doe
+  custom:
+    - label: ""
+      value: Immediate
+`
+
+	tmpDir := t.TempDir()
+	tmpFile := filepath.Join(tmpDir, "custom_empty_label.yml")
+	err := os.WriteFile(tmpFile, []byte(invalidYAML), 0644)
+	assert.NoError(t, err)
+
+	validator, err := NewValidatorServices()
+	assert.NoError(t, err)
+
+	result, err := validator.ValidateFile(tmpFile)
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.False(t, result.Valid)
+	assert.NotEmpty(t, result.Errors)
+}
+
+func TestValidateFile_NoCustomDataBackwardCompatible(t *testing.T) {
+	// Create YAML with no custom/customSections anywhere
+	validYAML := `---
+person:
+  name: John Doe
+  email: john@example.com
+
+career:
+  - companyName: Tech Corp
+    missions:
+      - position: Senior Engineer
+        company: Tech Corp
+`
+
+	tmpDir := t.TempDir()
+	tmpFile := filepath.Join(tmpDir, "no_custom.yml")
+	err := os.WriteFile(tmpFile, []byte(validYAML), 0644)
+	assert.NoError(t, err)
+
+	validator, err := NewValidatorServices()
+	assert.NoError(t, err)
+
+	result, err := validator.ValidateFile(tmpFile)
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.True(t, result.Valid)
+	assert.Empty(t, result.Errors)
+}
+
 func TestValidateFile_MissionCompanyLogo(t *testing.T) {
 	// Create YAML with mission company logo field
 	validYAML := `---
