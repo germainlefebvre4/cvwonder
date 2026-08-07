@@ -5,7 +5,51 @@
   "description": "Schema for CV Wonder YAML files",
   "type": "object",
   "required": ["person"],
+  "definitions": {
+    "customField": {
+      "type": "object",
+      "description": "A single author-defined {label, value} extension entry",
+      "required": ["label"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Display label for the custom field (required)"
+        },
+        "value": {
+          "description": "Value of any shape: scalar, list, or nested object"
+        }
+      }
+    },
+    "customSection": {
+      "type": "object",
+      "description": "A whole custom section at the CV root, not otherwise named by the model",
+      "required": ["title", "fields"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Section title (required)"
+        },
+        "fields": {
+          "type": "array",
+          "description": "Fields in this section (required)",
+          "items": { "$ref": "#/definitions/customField" }
+        }
+      }
+    }
+  },
   "properties": {
+    "custom": {
+      "type": "array",
+      "description": "Custom fields attached to the CV root",
+      "items": { "$ref": "#/definitions/customField" }
+    },
+    "customSections": {
+      "type": "array",
+      "description": "Custom sections not otherwise named by the model",
+      "items": { "$ref": "#/definitions/customSection" }
+    },
     "company": {
       "type": "object",
       "description": "Company information",
@@ -17,6 +61,11 @@
         "logo": {
           "type": "string",
           "description": "Path to company logo"
+        },
+        "custom": {
+          "type": "array",
+          "description": "Custom fields attached to this company",
+          "items": { "$ref": "#/definitions/customField" }
         }
       }
     },
@@ -78,8 +127,18 @@
               "minimum": 1900,
               "maximum": 2100,
               "description": "Year when professional experience started"
+            },
+            "custom": {
+              "type": "array",
+              "description": "Custom fields attached to this experience",
+              "items": { "$ref": "#/definitions/customField" }
             }
           }
+        },
+        "custom": {
+          "type": "array",
+          "description": "Custom fields attached to this person",
+          "items": { "$ref": "#/definitions/customField" }
         }
       }
     },
@@ -106,6 +165,11 @@
         "bluesky": {
           "type": "string",
           "description": "Bluesky username"
+        },
+        "custom": {
+          "type": "array",
+          "description": "Custom fields attached to social networks",
+          "items": { "$ref": "#/definitions/customField" }
         }
       }
     },
@@ -136,6 +200,11 @@
           "duration": {
             "type": "string",
             "description": "Total duration at company"
+          },
+          "custom": {
+            "type": "array",
+            "description": "Custom fields attached to this career entry",
+            "items": { "$ref": "#/definitions/customField" }
           },
           "missions": {
             "type": "array",
@@ -188,6 +257,11 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "custom": {
+                  "type": "array",
+                  "description": "Custom fields attached to this mission",
+                  "items": { "$ref": "#/definitions/customField" }
                 }
               }
             }
@@ -199,6 +273,11 @@
       "type": "object",
       "description": "Technical skills organized by domains",
       "properties": {
+        "custom": {
+          "type": "array",
+          "description": "Custom fields attached to technical skills",
+          "items": { "$ref": "#/definitions/customField" }
+        },
         "domains": {
           "type": "array",
           "description": "Skill domains",
@@ -210,6 +289,11 @@
                 "type": "string",
                 "minLength": 1,
                 "description": "Domain name (required)"
+              },
+              "custom": {
+                "type": "array",
+                "description": "Custom fields attached to this domain",
+                "items": { "$ref": "#/definitions/customField" }
               },
               "competencies": {
                 "type": "array",
@@ -229,6 +313,11 @@
                       "minimum": 0,
                       "maximum": 100,
                       "description": "Skill level 0-100 (required)"
+                    },
+                    "custom": {
+                      "type": "array",
+                      "description": "Custom fields attached to this competency",
+                      "items": { "$ref": "#/definitions/customField" }
                     }
                   }
                 }
@@ -276,6 +365,11 @@
           "color": {
             "type": "string",
             "description": "Color code for display"
+          },
+          "custom": {
+            "type": "array",
+            "description": "Custom fields attached to this side project",
+            "items": { "$ref": "#/definitions/customField" }
           }
         }
       }
@@ -312,6 +406,11 @@
           "badge": {
             "type": "string",
             "description": "Path to certification badge image"
+          },
+          "custom": {
+            "type": "array",
+            "description": "Custom fields attached to this certification",
+            "items": { "$ref": "#/definitions/customField" }
           }
         }
       }
@@ -332,6 +431,11 @@
             "type": "string",
             "minLength": 1,
             "description": "Proficiency level (required)"
+          },
+          "custom": {
+            "type": "array",
+            "description": "Custom fields attached to this language",
+            "items": { "$ref": "#/definitions/customField" }
           }
         }
       }
@@ -368,6 +472,49 @@
               {"type": "string", "format": "uri"}
             ],
             "description": "Link to school website"
+          },
+          "custom": {
+            "type": "array",
+            "description": "Custom fields attached to this education entry",
+            "items": { "$ref": "#/definitions/customField" }
+          }
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "description": "References",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Reference's name"
+          },
+          "position": {
+            "type": "string",
+            "description": "Reference's position"
+          },
+          "company": {
+            "type": "string",
+            "description": "Reference's company"
+          },
+          "date": {
+            "type": "string",
+            "description": "Reference date"
+          },
+          "url": {
+            "type": "string",
+            "description": "Reference URL"
+          },
+          "description": {
+            "type": "string",
+            "description": "Reference description"
+          },
+          "custom": {
+            "type": "array",
+            "description": "Custom fields attached to this reference",
+            "items": { "$ref": "#/definitions/customField" }
           }
         }
       }

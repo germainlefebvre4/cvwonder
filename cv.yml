@@ -7,6 +7,11 @@ person:
   name: Germain
   depiction: profile.png
   profession: Bâtisseur de Plateformes et de Nuages
+  custom:
+    - label: Roles
+      value:
+        - Platform Engineer
+        - Lead Tech Ops
   location: Lille
   citizenship: FR
   email: germain.lefebvre@mycompany.fr

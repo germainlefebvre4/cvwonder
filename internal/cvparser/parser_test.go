@@ -86,6 +86,15 @@ func TestConvertFileContentToStruct(t *testing.T) {
 			want:    fixtures.CvModelWithMissionCompanyLogo,
 			wantErr: false,
 		},
+		{
+			name: "Should return a model.CV with custom fields and custom sections",
+			p:    &ParserServices{},
+			args: args{
+				content: fixtures.CvYamlWithCustomFields,
+			},
+			want:    fixtures.CvModelWithCustomFields,
+			wantErr: false,
+		},
 		// {
 		// 	name: "Should return an error",
 		// 	p:    &ParserServices{},
@@ -288,6 +297,39 @@ references:
 		assert.Equal(t, "", got.References[0].Url)
 		assert.Equal(t, "Talented developer", got.References[0].Description)
 	})
+}
+
+func TestCustomFieldsDeclarationOrderPreserved(t *testing.T) {
+	tests := []struct {
+		name          string
+		content       []byte
+		wantLabels    []string
+		wantSectionAt int
+	}{
+		{
+			name:       "Person custom fields keep declaration order",
+			content:    fixtures.CvYamlWithCustomFields,
+			wantLabels: []string{"Availability", "Nickname"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := &ParserServices{}
+			got := p.convertFileContentToStruct(tt.content)
+
+			gotLabels := make([]string, len(got.Person.Custom))
+			for i, f := range got.Person.Custom {
+				gotLabels[i] = f.Label
+			}
+			assert.Equal(t, tt.wantLabels, gotLabels)
+
+			require := assert.New(t)
+			require.Len(got.CustomSections, 1)
+			require.Len(got.CustomSections[0].Fields, 2)
+			require.Equal("Paper title", got.CustomSections[0].Fields[0].Label)
+			require.Equal("Topics", got.CustomSections[0].Fields[1].Label)
+		})
+	}
 }
 
 func TestReadFile(t *testing.T) {
