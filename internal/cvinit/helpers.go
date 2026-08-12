@@ -30,6 +30,34 @@ func splitComma(s string) []string {
 	return result
 }
 
+// joinLines joins a string slice into a newline-separated string, the inverse of splitLines.
+func joinLines(ss []string) string {
+	return strings.Join(ss, "\n")
+}
+
+// joinComma joins a string slice into a ", "-separated string, the inverse of splitComma.
+func joinComma(ss []string) string {
+	return strings.Join(ss, ", ")
+}
+
+// confirmGateTitle computes an optional section's confirm-gate title and
+// default value based on whether the section already has data (loaded via
+// --resume). When it does, the gate defaults to true and reads "Review/edit
+// ...?" so Enter proceeds into the section instead of skipping it.
+func confirmGateTitle(hasExisting bool, addTitle, resumeTitle string) (string, bool) {
+	if hasExisting {
+		return resumeTitle, true
+	}
+	return addTitle, false
+}
+
+// forcesFirstEntry reports whether a loop section must collect a mandatory
+// first entry before offering "add another?" — true only when the backing
+// slice starts empty (i.e. not resumed with existing entries).
+func forcesFirstEntry(existingCount int) bool {
+	return existingCount == 0
+}
+
 // validateCompetencyLevel validates that s is an integer between 1 and 5 inclusive.
 func validateCompetencyLevel(s string) error {
 	n, err := strconv.Atoi(strings.TrimSpace(s))

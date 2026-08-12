@@ -1,25 +1,4 @@
-# cv-init Specification
-
-## Purpose
-
-Provides `cvwonder init` for creating a new CV Wonder YAML file, either as a fully-commented scaffold to edit by hand or via a guided interactive wizard that can be resumed after an interruption.
-
-## Requirements
-
-### Requirement: cvwonder init scaffold mode
-When invoked without `--interactive`, `cvwonder init` SHALL write a fully-commented `cv.yml` scaffold file to the path specified by `--output-file` (default: `cv.yml`). The scaffold SHALL contain all top-level CV sections as commented-out YAML so users can edit it directly.
-
-#### Scenario: Scaffold written to default path
-- **WHEN** the user runs `cvwonder init` with no flags
-- **THEN** a file named `cv.yml` SHALL be created in the current directory containing all CV sections as commented YAML
-
-#### Scenario: Scaffold written to custom path
-- **WHEN** the user runs `cvwonder init --output-file my-cv.yml`
-- **THEN** a file named `my-cv.yml` SHALL be created in the current directory
-
-#### Scenario: Scaffold aborts if target file exists
-- **WHEN** the user runs `cvwonder init` and `cv.yml` already exists
-- **THEN** cvwonder SHALL exit with a non-zero status and print an error message without overwriting the file
+## MODIFIED Requirements
 
 ### Requirement: cvwonder init interactive mode
 When invoked with `--interactive`, `cvwonder init` SHALL run a terminal-based form wizard that collects CV data from the user and writes the result as a valid `cv.yml` YAML file. When invoked with `--interactive --resume`, an existing target file SHALL NOT be treated as an error — see the wizard resume mode requirement instead.
@@ -85,6 +64,8 @@ The wizard SHALL support open-ended loops for Career, Technical Skills, Educatio
 - **WHEN** the wizard is resumed and the loaded CV already contains one or more entries for a loop section (e.g., Career)
 - **THEN** the wizard SHALL list the existing entries and prompt "Add another <entry>?" without forcing collection of a new entry first
 
+## ADDED Requirements
+
 ### Requirement: Interactive wizard resume mode
 When invoked with `cvwonder init --interactive --resume`, the wizard SHALL load the file at `--output-file` as an existing CV and run the full wizard sequence with every field pre-filled from the loaded data instead of starting blank. Sections and loop entries collected before an earlier interruption SHALL NOT need to be re-entered from scratch. Any entry that was in progress but not yet saved at the moment of interruption is not recovered.
 
@@ -103,47 +84,3 @@ When invoked with `cvwonder init --interactive --resume`, the wizard SHALL load 
 #### Scenario: In-progress entry at interruption is not recovered
 - **WHEN** the wizard is interrupted while collecting a new entry that has not yet been added to its section's list
 - **THEN** resuming SHALL start from the last successfully written checkpoint, without that in-progress entry
-
-### Requirement: Comma-separated technology input
-In the Mission section, technologies SHALL be collected as a single comma-separated `huh.NewInput` field. The wizard SHALL split on commas and trim whitespace to produce the `[]string` slice.
-
-#### Scenario: Technologies parsed from comma-separated input
-- **WHEN** the user enters `"Go, Docker, Kubernetes"` in the technologies field
-- **THEN** the resulting `technologies` slice SHALL be `["Go", "Docker", "Kubernetes"]`
-
-#### Scenario: Empty technologies input produces empty slice
-- **WHEN** the user leaves the technologies field blank
-- **THEN** the `technologies` slice SHALL be empty
-
-### Requirement: Newline-split multi-value text fields
-The `abstract` and `mission.description` fields SHALL be collected via `huh.NewText` fields where each line becomes one slice entry. The wizard SHALL split on newlines and discard empty lines.
-
-#### Scenario: Abstract parsed from multi-line text
-- **WHEN** the user enters two lines in the abstract field
-- **THEN** the `abstract` slice SHALL contain two entries, one per line
-
-### Requirement: Competency level as validated integer input
-The wizard SHALL collect `competency.level` as a free-text `huh.NewInput` with inline validation. The value SHALL be an integer between 1 and 5 (inclusive). Invalid input SHALL display an error and re-prompt.
-
-#### Scenario: Valid competency level accepted
-- **WHEN** the user enters `3` for competency level
-- **THEN** the level SHALL be stored as integer `3`
-
-#### Scenario: Non-numeric competency level rejected
-- **WHEN** the user enters `abc` for competency level
-- **THEN** the wizard SHALL display a validation error and not advance
-
-#### Scenario: Out-of-range competency level rejected
-- **WHEN** the user enters `0` or `6` for competency level
-- **THEN** the wizard SHALL display a validation error and not advance
-
-### Requirement: Image path fields as plain text input with placeholder description
-Fields referencing image file paths (`person.depiction`, `career[].companyLogo`, `company.logo`, `education[].schoolLogo`) SHALL be collected as `huh.NewInput` fields. Each SHALL display a description informing the user the value is a relative file path that can be updated later.
-
-#### Scenario: Image field accepts any string
-- **WHEN** the user enters `images/photo.png` in a depiction field
-- **THEN** the value SHALL be stored as-is in the YAML
-
-#### Scenario: Image field left blank is stored as empty string
-- **WHEN** the user leaves an image field blank
-- **THEN** the field SHALL be stored as an empty string in the YAML

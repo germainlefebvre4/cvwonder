@@ -3,6 +3,7 @@ module github.com/germainlefebvre4/cvwonder
 go 1.25.8
 
 require (
+	charm.land/huh/v2 v2.0.3
 	github.com/cli/go-gh/v2 v2.13.0
 	github.com/codeglyph/go-dotignore/v2 v2.1.0
 	github.com/fsnotify/fsnotify v1.8.0
@@ -25,7 +26,6 @@ require (
 require (
 	charm.land/bubbles/v2 v2.0.0 // indirect
 	charm.land/bubbletea/v2 v2.0.2 // indirect
-	charm.land/huh/v2 v2.0.3 // indirect
 	charm.land/lipgloss/v2 v2.0.1 // indirect
 	dario.cat/mergo v1.0.1 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
