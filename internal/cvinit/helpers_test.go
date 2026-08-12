@@ -49,6 +49,52 @@ assert.Equal(t, tt.expected, result)
 }
 }
 
+func TestJoinLines_RoundTripsWithSplitLines(t *testing.T) {
+tests := [][]string{
+{"line one", "line two"},
+{"only one"},
+{},
+}
+
+for _, ss := range tests {
+joined := joinLines(ss)
+assert.Equal(t, ss, splitLines(joined))
+}
+}
+
+func TestJoinComma_RoundTripsWithSplitComma(t *testing.T) {
+tests := [][]string{
+{"Go", "Docker", "Kubernetes"},
+{"Go"},
+{},
+}
+
+for _, ss := range tests {
+joined := joinComma(ss)
+assert.Equal(t, ss, splitComma(joined))
+}
+}
+
+func TestConfirmGateTitle(t *testing.T) {
+t.Run("no existing data uses add title and defaults false", func(t *testing.T) {
+title, def := confirmGateTitle(false, "Add X?", "Review/edit X?")
+assert.Equal(t, "Add X?", title)
+assert.False(t, def)
+})
+
+t.Run("existing data uses resume title and defaults true", func(t *testing.T) {
+title, def := confirmGateTitle(true, "Add X?", "Review/edit X?")
+assert.Equal(t, "Review/edit X?", title)
+assert.True(t, def)
+})
+}
+
+func TestForcesFirstEntry(t *testing.T) {
+assert.True(t, forcesFirstEntry(0))
+assert.False(t, forcesFirstEntry(1))
+assert.False(t, forcesFirstEntry(5))
+}
+
 func TestValidateCompetencyLevel(t *testing.T) {
 t.Run("valid levels 1 to 5", func(t *testing.T) {
 for _, v := range []string{"1", "2", "3", "4", "5"} {

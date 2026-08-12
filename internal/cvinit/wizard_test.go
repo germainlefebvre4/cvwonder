@@ -1,11 +1,13 @@
 package cvinit
 
 import (
+"bytes"
 "os"
 "path/filepath"
 "testing"
 
 "github.com/germainlefebvre4/cvwonder/internal/model"
+"github.com/sirupsen/logrus"
 "github.com/stretchr/testify/assert"
 "github.com/stretchr/testify/require"
 )
@@ -58,4 +60,37 @@ require.NoError(t, err)
 
 content, _ := os.ReadFile(path)
 assert.NotEmpty(t, content)
+}
+
+func TestRunWizard_ResumeMissingFileReturnsError(t *testing.T) {
+dir := t.TempDir()
+path := filepath.Join(dir, "cv.yml")
+
+err := RunWizard(path, true)
+require.Error(t, err)
+assert.Contains(t, err.Error(), "nothing to resume")
+}
+
+func TestRunWizard_ResumeInvalidYAMLReturnsError(t *testing.T) {
+dir := t.TempDir()
+path := filepath.Join(dir, "cv.yml")
+require.NoError(t, os.WriteFile(path, []byte("not: [valid, yaml"), 0644))
+
+err := RunWizard(path, true)
+require.Error(t, err)
+assert.Contains(t, err.Error(), "not a valid CV file")
+}
+
+func TestCheckpoint_LogsWarningOnWriteFailure(t *testing.T) {
+dir := t.TempDir()
+badPath := filepath.Join(dir, "missing-subdir", "cv.yml")
+
+var buf bytes.Buffer
+logrus.SetOutput(&buf)
+defer logrus.SetOutput(os.Stderr)
+
+checkpoint(model.CV{Person: model.Person{Name: "Jane"}}, badPath)
+
+assert.Contains(t, buf.String(), "failed to save progress")
+assert.NoFileExists(t, badPath)
 }

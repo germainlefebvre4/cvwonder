@@ -9,7 +9,16 @@ import (
 	"charm.land/huh/v2"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	"github.com/goccy/go-yaml"
+	"github.com/sirupsen/logrus"
 )
+
+// checkpoint writes the current wizard state to outputFile, logging a
+// non-blocking warning instead of aborting the wizard if the write fails.
+func checkpoint(cv model.CV, outputFile string) {
+	if err := writePartial(cv, outputFile); err != nil {
+		logrus.Warnf("failed to save progress to %s: %v", outputFile, err)
+	}
+}
 
 // writePartial marshals cv and writes it to path, creating or overwriting the file.
 func writePartial(cv model.CV, path string) error {
@@ -24,13 +33,23 @@ func writePartial(cv model.CV, path string) error {
 }
 
 // RunWizard runs the interactive CV wizard and writes the result to outputFile.
-// Returns an error if outputFile already exists.
-func RunWizard(outputFile string) error {
-	if _, err := os.Stat(outputFile); err == nil {
+// Returns an error if outputFile already exists, unless resume is true, in
+// which case outputFile is loaded as the starting CV and every field is
+// pre-filled from it instead of starting blank.
+func RunWizard(outputFile string, resume bool) error {
+	var cv model.CV
+
+	if resume {
+		data, err := os.ReadFile(outputFile)
+		if err != nil {
+			return fmt.Errorf("nothing to resume: %s not found", outputFile)
+		}
+		if err := yaml.Unmarshal(data, &cv); err != nil {
+			return fmt.Errorf("not a valid CV file: %w", err)
+		}
+	} else if _, err := os.Stat(outputFile); err == nil {
 		return fmt.Errorf("file already exists: %s (remove it or use --output-file to choose a different name)", outputFile)
 	}
-
-	var cv model.CV
 
 	// ── Step 1-2: Welcome + output-file confirmation ─────────────────────────
 	if err := runWelcome(&outputFile); err != nil {
@@ -41,25 +60,25 @@ func RunWizard(outputFile string) error {
 	if err := runCompany(&cv); err != nil {
 		return err
 	}
-	_ = writePartial(cv, outputFile)
+	checkpoint(cv, outputFile)
 
 	// ── Step 4: Person (mandatory) ────────────────────────────────────────────
 	if err := runPerson(&cv); err != nil {
 		return err
 	}
-	_ = writePartial(cv, outputFile)
+	checkpoint(cv, outputFile)
 
 	// ── Step 5: Social Networks ───────────────────────────────────────────────
 	if err := runSocialNetworks(&cv); err != nil {
 		return err
 	}
-	_ = writePartial(cv, outputFile)
+	checkpoint(cv, outputFile)
 
 	// ── Step 6: Abstract ──────────────────────────────────────────────────────
 	if err := runAbstract(&cv); err != nil {
 		return err
 	}
-	_ = writePartial(cv, outputFile)
+	checkpoint(cv, outputFile)
 
 	// ── Step 7: Career ────────────────────────────────────────────────────────
 	if err := runCareer(&cv, outputFile); err != nil {
@@ -224,11 +243,15 @@ func runPerson(cv *model.CV) error {
 }
 
 func runSocialNetworks(cv *model.CV) error {
-	var add bool
+	hasExisting := cv.SocialNetworks.Github != "" || cv.SocialNetworks.Linkedin != "" ||
+		cv.SocialNetworks.Stackoverflow != "" || cv.SocialNetworks.Twitter != "" || cv.SocialNetworks.Bluesky != ""
+
+	title, add := confirmGateTitle(hasExisting, "Add social networks?", "Review/edit social networks?")
+
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewConfirm().
-				Title("Add social networks?").
+				Title(title).
 				Value(&add),
 		),
 	).Run(); err != nil || !add {
@@ -247,18 +270,19 @@ func runSocialNetworks(cv *model.CV) error {
 }
 
 func runAbstract(cv *model.CV) error {
-	var add bool
+	title, add := confirmGateTitle(len(cv.Abstract) > 0, "Add a professional summary?", "Review/edit professional summary?")
+
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewConfirm().
-				Title("Add a professional summary?").
+				Title(title).
 				Value(&add),
 		),
 	).Run(); err != nil || !add {
 		return err
 	}
 
-	var raw string
+	raw := joinLines(cv.Abstract)
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewText().
@@ -273,37 +297,80 @@ func runAbstract(cv *model.CV) error {
 	return nil
 }
 
-func runCareer(cv *model.CV, outputFile string) error {
-	var add bool
+// runLoopSection drives the shared "confirm gate → collect-or-list-existing →
+// add another?" control flow used by every open-ended wizard section (Career,
+// Technical Skills, Education, Certifications, Languages, Side Projects,
+// References). When slice already has entries (loaded via --resume), the
+// mandatory first collect() call is skipped in favor of listing the existing
+// entries and going straight to the "add another?" prompt.
+func runLoopSection[T any](
+	cv *model.CV,
+	outputFile string,
+	slice *[]T,
+	addTitle string,
+	resumeTitle string,
+	anotherTitle string,
+	summarize func(T) string,
+	collect func() (T, error),
+) error {
+	title, add := confirmGateTitle(!forcesFirstEntry(len(*slice)), addTitle, resumeTitle)
+
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewConfirm().
-				Title("Add career experience?").
+				Title(title).
 				Value(&add),
 		),
 	).Run(); err != nil || !add {
 		return err
 	}
 
-	for {
-		career, err := collectCareerEntry()
+	if !forcesFirstEntry(len(*slice)) {
+		for _, item := range *slice {
+			fmt.Println(" -", summarize(item))
+		}
+	} else {
+		item, err := collect()
 		if err != nil {
 			return err
 		}
-		cv.Career = append(cv.Career, career)
-		_ = writePartial(*cv, outputFile)
+		*slice = append(*slice, item)
+		checkpoint(*cv, outputFile)
+	}
 
+	for {
 		var another bool
 		if err := huh.NewForm(
 			huh.NewGroup(
 				huh.NewConfirm().
-					Title("Add another company?").
+					Title(anotherTitle).
 					Value(&another),
 			),
 		).Run(); err != nil || !another {
 			return err
 		}
+
+		item, err := collect()
+		if err != nil {
+			return err
+		}
+		*slice = append(*slice, item)
+		checkpoint(*cv, outputFile)
 	}
+}
+
+func runCareer(cv *model.CV, outputFile string) error {
+	return runLoopSection(
+		cv, outputFile, &cv.Career,
+		"Add career experience?", "Review/edit career experience?", "Add another company?",
+		func(c model.Career) string {
+			if c.Duration != "" {
+				return fmt.Sprintf("%s (%s)", c.CompanyName, c.Duration)
+			}
+			return c.CompanyName
+		},
+		collectCareerEntry,
+	)
 }
 
 func collectCareerEntry() (model.Career, error) {
@@ -335,7 +402,7 @@ func collectCareerEntry() (model.Career, error) {
 	}
 
 	for {
-		mission, err := collectMission()
+		mission, err := collectMission(model.Mission{})
 		if err != nil {
 			return career, err
 		}
@@ -354,9 +421,10 @@ func collectCareerEntry() (model.Career, error) {
 	}
 }
 
-func collectMission() (model.Mission, error) {
-	var mission model.Mission
-	var techRaw, descRaw string
+func collectMission(existing model.Mission) (model.Mission, error) {
+	mission := existing
+	techRaw := joinComma(mission.Technologies)
+	descRaw := joinLines(mission.Description)
 
 	err := huh.NewForm(
 		huh.NewGroup(
@@ -415,36 +483,14 @@ func collectMission() (model.Mission, error) {
 }
 
 func runTechnicalSkills(cv *model.CV, outputFile string) error {
-	var add bool
-	if err := huh.NewForm(
-		huh.NewGroup(
-			huh.NewConfirm().
-				Title("Add technical skills?").
-				Value(&add),
-		),
-	).Run(); err != nil || !add {
-		return err
-	}
-
-	for {
-		domain, err := collectDomain()
-		if err != nil {
-			return err
-		}
-		cv.TechnicalSkills.Domains = append(cv.TechnicalSkills.Domains, domain)
-		_ = writePartial(*cv, outputFile)
-
-		var another bool
-		if err := huh.NewForm(
-			huh.NewGroup(
-				huh.NewConfirm().
-					Title("Add another skill domain?").
-					Value(&another),
-			),
-		).Run(); err != nil || !another {
-			return err
-		}
-	}
+	return runLoopSection(
+		cv, outputFile, &cv.TechnicalSkills.Domains,
+		"Add technical skills?", "Review/edit technical skills?", "Add another skill domain?",
+		func(d model.Domain) string {
+			return fmt.Sprintf("%s (%d skills)", d.Name, len(d.Competencies))
+		},
+		collectDomain,
+	)
 }
 
 func collectDomain() (model.Domain, error) {
@@ -518,36 +564,17 @@ func collectCompetency() (model.Competency, error) {
 }
 
 func runEducation(cv *model.CV, outputFile string) error {
-	var add bool
-	if err := huh.NewForm(
-		huh.NewGroup(
-			huh.NewConfirm().
-				Title("Add education?").
-				Value(&add),
-		),
-	).Run(); err != nil || !add {
-		return err
-	}
-
-	for {
-		edu, err := collectEducation()
-		if err != nil {
-			return err
-		}
-		cv.Education = append(cv.Education, edu)
-		_ = writePartial(*cv, outputFile)
-
-		var another bool
-		if err := huh.NewForm(
-			huh.NewGroup(
-				huh.NewConfirm().
-					Title("Add another education entry?").
-					Value(&another),
-			),
-		).Run(); err != nil || !another {
-			return err
-		}
-	}
+	return runLoopSection(
+		cv, outputFile, &cv.Education,
+		"Add education?", "Review/edit education?", "Add another education entry?",
+		func(e model.Education) string {
+			if e.Degree != "" {
+				return fmt.Sprintf("%s — %s", e.SchoolName, e.Degree)
+			}
+			return e.SchoolName
+		},
+		collectEducation,
+	)
 }
 
 func collectEducation() (model.Education, error) {
@@ -590,36 +617,17 @@ func collectEducation() (model.Education, error) {
 }
 
 func runCertifications(cv *model.CV, outputFile string) error {
-	var add bool
-	if err := huh.NewForm(
-		huh.NewGroup(
-			huh.NewConfirm().
-				Title("Add certifications?").
-				Value(&add),
-		),
-	).Run(); err != nil || !add {
-		return err
-	}
-
-	for {
-		cert, err := collectCertification()
-		if err != nil {
-			return err
-		}
-		cv.Certifications = append(cv.Certifications, cert)
-		_ = writePartial(*cv, outputFile)
-
-		var another bool
-		if err := huh.NewForm(
-			huh.NewGroup(
-				huh.NewConfirm().
-					Title("Add another certification?").
-					Value(&another),
-			),
-		).Run(); err != nil || !another {
-			return err
-		}
-	}
+	return runLoopSection(
+		cv, outputFile, &cv.Certifications,
+		"Add certifications?", "Review/edit certifications?", "Add another certification?",
+		func(c model.Certification) string {
+			if c.Date != "" {
+				return fmt.Sprintf("%s (%s)", c.CertificationName, c.Date)
+			}
+			return c.CertificationName
+		},
+		collectCertification,
+	)
 }
 
 func collectCertification() (model.Certification, error) {
@@ -661,36 +669,17 @@ func collectCertification() (model.Certification, error) {
 }
 
 func runLanguages(cv *model.CV, outputFile string) error {
-	var add bool
-	if err := huh.NewForm(
-		huh.NewGroup(
-			huh.NewConfirm().
-				Title("Add languages?").
-				Value(&add),
-		),
-	).Run(); err != nil || !add {
-		return err
-	}
-
-	for {
-		lang, err := collectLanguage()
-		if err != nil {
-			return err
-		}
-		cv.Languages = append(cv.Languages, lang)
-		_ = writePartial(*cv, outputFile)
-
-		var another bool
-		if err := huh.NewForm(
-			huh.NewGroup(
-				huh.NewConfirm().
-					Title("Add another language?").
-					Value(&another),
-			),
-		).Run(); err != nil || !another {
-			return err
-		}
-	}
+	return runLoopSection(
+		cv, outputFile, &cv.Languages,
+		"Add languages?", "Review/edit languages?", "Add another language?",
+		func(l model.Language) string {
+			if l.Level != "" {
+				return fmt.Sprintf("%s (%s)", l.Name, l.Level)
+			}
+			return l.Name
+		},
+		collectLanguage,
+	)
 }
 
 func collectLanguage() (model.Language, error) {
@@ -718,36 +707,14 @@ func collectLanguage() (model.Language, error) {
 }
 
 func runSideProjects(cv *model.CV, outputFile string) error {
-	var add bool
-	if err := huh.NewForm(
-		huh.NewGroup(
-			huh.NewConfirm().
-				Title("Add side projects?").
-				Value(&add),
-		),
-	).Run(); err != nil || !add {
-		return err
-	}
-
-	for {
-		proj, err := collectSideProject()
-		if err != nil {
-			return err
-		}
-		cv.SideProjects = append(cv.SideProjects, proj)
-		_ = writePartial(*cv, outputFile)
-
-		var another bool
-		if err := huh.NewForm(
-			huh.NewGroup(
-				huh.NewConfirm().
-					Title("Add another side project?").
-					Value(&another),
-			),
-		).Run(); err != nil || !another {
-			return err
-		}
-	}
+	return runLoopSection(
+		cv, outputFile, &cv.SideProjects,
+		"Add side projects?", "Review/edit side projects?", "Add another side project?",
+		func(p model.SideProject) string {
+			return p.Name
+		},
+		collectSideProject,
+	)
 }
 
 func collectSideProject() (model.SideProject, error) {
@@ -793,36 +760,17 @@ func collectSideProject() (model.SideProject, error) {
 }
 
 func runReferences(cv *model.CV, outputFile string) error {
-	var add bool
-	if err := huh.NewForm(
-		huh.NewGroup(
-			huh.NewConfirm().
-				Title("Add references?").
-				Value(&add),
-		),
-	).Run(); err != nil || !add {
-		return err
-	}
-
-	for {
-		ref, err := collectReference()
-		if err != nil {
-			return err
-		}
-		cv.References = append(cv.References, ref)
-		_ = writePartial(*cv, outputFile)
-
-		var another bool
-		if err := huh.NewForm(
-			huh.NewGroup(
-				huh.NewConfirm().
-					Title("Add another reference?").
-					Value(&another),
-			),
-		).Run(); err != nil || !another {
-			return err
-		}
-	}
+	return runLoopSection(
+		cv, outputFile, &cv.References,
+		"Add references?", "Review/edit references?", "Add another reference?",
+		func(r model.Reference) string {
+			if r.Company != "" {
+				return fmt.Sprintf("%s (%s)", r.Name, r.Company)
+			}
+			return r.Name
+		},
+		collectReference,
+	)
 }
 
 func collectReference() (model.Reference, error) {

@@ -12,6 +12,7 @@ var outputFile string
 // InitCmd returns the cobra command for `cvwonder init`.
 func InitCmd() *cobra.Command {
 	var interactive bool
+	var resume bool
 
 	var cobraCmd = &cobra.Command{
 		PreRun: utils.ToggleDebug,
@@ -23,10 +24,13 @@ Without --interactive, writes a fully-commented cv.yml scaffold that you can
 edit directly.
 
 With --interactive, runs a guided wizard that collects your CV data and
-generates the YAML file for you.`,
+generates the YAML file for you.
+
+With --interactive --resume, reloads a previously interrupted wizard session
+from --output-file and re-runs the wizard with existing data pre-filled.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			if interactive {
-				if err := cvinit.RunWizard(outputFile); err != nil {
+				if err := cvinit.RunWizard(outputFile, resume); err != nil {
 					logrus.Fatal(err)
 				}
 				return
@@ -40,6 +44,7 @@ generates the YAML file for you.`,
 	}
 
 	cobraCmd.Flags().BoolVar(&interactive, "interactive", false, "Run the guided interactive wizard.")
+	cobraCmd.Flags().BoolVar(&resume, "resume", false, "Resume a previously interrupted interactive wizard session.")
 	cobraCmd.Flags().StringVar(&outputFile, "output-file", "cv.yml", "Output filename for the generated CV YAML.")
 
 	return cobraCmd
