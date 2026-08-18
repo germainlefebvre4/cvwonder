@@ -59,8 +59,8 @@ github.com/clipperhouse/uax29/v2 v2.7.0 h1:+gs4oBZ2gPfVrKPthwbMzWZDaAFPGYK72F0NJ
 github.com/clipperhouse/uax29/v2 v2.7.0/go.mod h1:EFJ2TJMRUaplDxHKj1qAEhCtQPW2tJSwu5BF98AuoVM=
 github.com/cloudflare/circl v1.6.3 h1:9GPOhQGF9MCYUeXyMYlqTR6a5gTrgR/fBLXvUgtVcg8=
 github.com/cloudflare/circl v1.6.3/go.mod h1:2eXP6Qfat4O/Yhh8BznvKnJ+uzEoTQ6jVKJRn81BiS4=
-github.com/codeglyph/go-dotignore/v2 v2.1.0 h1:BMphEpu0skaCBEATwJ9aotfohoiUWPsalsuQ51CvZso=
-github.com/codeglyph/go-dotignore/v2 v2.1.0/go.mod h1:cAH4uxaZ0Rsl33QT2c++wAnk7C8J2c8pik9U4H0+F9w=
+github.com/codeglyph/go-dotignore/v2 v2.2.0 h1:9pza2HcxkSzOsihknLZCEAjOeeIPt9uqigbgdLq9qy8=
+github.com/codeglyph/go-dotignore/v2 v2.2.0/go.mod h1:cAH4uxaZ0Rsl33QT2c++wAnk7C8J2c8pik9U4H0+F9w=
 github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/creack/pty v1.1.24 h1:bJrF4RRfyJnbTJqzRLHzcGaZK1NeM5kTC9jGgovnR1s=
 github.com/creack/pty v1.1.24/go.mod h1:08sCNb52WyoAwi2QDyzUCTgcvVFhUzewun7wtTfvcwE=
