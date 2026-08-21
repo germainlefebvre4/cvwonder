@@ -9,7 +9,7 @@ require (
 	github.com/fsnotify/fsnotify v1.10.1
 	github.com/go-git/go-git/v5 v5.19.2
 	github.com/go-rod/rod v0.116.2
-	github.com/goccy/go-yaml v1.15.13
+	github.com/goccy/go-yaml v1.19.2
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/jaschaephraim/lrserver v0.0.0-20240306232639-afed386b3640
 	github.com/mozillazg/go-slugify v0.2.0
