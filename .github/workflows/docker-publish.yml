@@ -168,7 +168,7 @@ jobs:
 
       - name: Docker Hub Description
         if: ${{ inputs.publish }}
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@v5
         with:
           repository: ${{ env.DOCKERHUB_REPO }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
