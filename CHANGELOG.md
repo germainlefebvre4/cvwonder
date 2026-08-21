@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.11.0...v0.12.0) (2026-08-21)
+
+
+### Features
+
+* **wizard:** Add wizard resume ([#134](https://github.com/germainlefebvre4/cvwonder/issues/134)) ([3474f9d](https://github.com/germainlefebvre4/cvwonder/commit/3474f9d52bdf9f6057deec4a3eecd9f1112a0f85))
+
 ## [0.11.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.10.1...v0.11.0) (2026-08-07)
 
 
