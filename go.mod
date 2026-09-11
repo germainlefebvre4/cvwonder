@@ -1,6 +1,6 @@
 module github.com/germainlefebvre4/cvwonder
 
-go 1.25.8
+go 1.26.0
 
 require (
 	charm.land/huh/v2 v2.0.3
@@ -20,7 +20,7 @@ require (
 	github.com/yeqown/go-qrcode/v2 v2.3.0
 	github.com/yeqown/go-qrcode/writer/standard v1.4.0
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f
-	golang.org/x/oauth2 v0.36.0
+	golang.org/x/oauth2 v0.37.0
 )
 
 require (
