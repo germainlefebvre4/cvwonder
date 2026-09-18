@@ -4,7 +4,7 @@ go 1.25.8
 
 require (
 	charm.land/huh/v2 v2.0.3
-	github.com/cli/go-gh/v2 v2.16.0
+	github.com/cli/go-gh/v2 v2.16.1
 	github.com/codeglyph/go-dotignore/v2 v2.3.0
 	github.com/fsnotify/fsnotify v1.10.1
 	github.com/go-git/go-git/v5 v5.19.2
