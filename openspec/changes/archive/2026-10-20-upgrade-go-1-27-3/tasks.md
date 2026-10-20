@@ -21,7 +21,7 @@
 ## 4. Integration check
 
 - [x] 4.1 Run `grep -rnE "1\.(25|26)\.[0-9]+" go.mod Dockerfile-build .github --include=* ` and verify no stale Go version remains (conditional rules in `go.instructions.md` are expected exceptions)
-- [s] 4.2 Open the PR and verify the pull-request workflow passes with the Go version taken from `go.mod`
+- [x] 4.2 Open the PR and verify the pull-request workflow passes with the Go version taken from `go.mod`
 
 ## Workflow follow-up
 
