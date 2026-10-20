@@ -2,7 +2,7 @@
 
 ## Technology Stack
 
-- Go 1.25.0+
+- Go 1.27.3+
 - Cobra for CLI handling
 - Logrus for logging
 - Mockery v2.53.5+ for generating test mocks
