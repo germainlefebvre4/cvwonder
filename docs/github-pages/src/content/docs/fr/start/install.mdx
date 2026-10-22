@@ -1,0 +1,67 @@
+---
+title: Installation
+description: Installez CV Wonder avec un binaire sous Linux, macOS ou Windows, ou lancez-le avec Docker.
+sidebar:
+  order: 1
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+CV Wonder est un outil en ligne de commande unique. Choisissez la méthode qui vous convient.
+
+<Tabs>
+  <TabItem label="Binary">
+    Téléchargez le binaire correspondant à votre système depuis la [page des releases](https://github.com/germainlefebvre4/cvwonder/releases). Les fichiers s'appellent `cvwonder_<os>_<arch>`, avec `<os>` parmi `linux`, `darwin` (macOS) ou `windows`, et `<arch>` parmi `amd64`, `arm64`, `arm` ou `i386`.
+
+    <Tabs syncKey="os">
+      <TabItem label="Linux">
+        ```bash
+        VERSION=$(curl -s "https://api.github.com/repos/germainlefebvre4/cvwonder/releases/latest" | jq -r '.tag_name')
+        curl -L -o cvwonder "https://github.com/germainlefebvre4/cvwonder/releases/download/${VERSION}/cvwonder_linux_amd64"
+        chmod +x cvwonder
+        sudo mv cvwonder /usr/local/bin/
+        ```
+        Utilisez `cvwonder_linux_arm64` sur les machines ARM. La commande nécessite `curl` et `jq`.
+      </TabItem>
+      <TabItem label="macOS">
+        ```bash
+        VERSION=$(curl -s "https://api.github.com/repos/germainlefebvre4/cvwonder/releases/latest" | jq -r '.tag_name')
+        curl -L -o cvwonder "https://github.com/germainlefebvre4/cvwonder/releases/download/${VERSION}/cvwonder_darwin_arm64"
+        chmod +x cvwonder
+        sudo mv cvwonder /usr/local/bin/
+        ```
+        Utilisez `cvwonder_darwin_amd64` sur les Mac Intel.
+      </TabItem>
+      <TabItem label="Windows">
+        Téléchargez `cvwonder_windows_amd64` depuis la [page des releases](https://github.com/germainlefebvre4/cvwonder/releases), renommez-le `cvwonder.exe` et placez-le dans un dossier présent dans votre `PATH`.
+      </TabItem>
+    </Tabs>
+  </TabItem>
+  <TabItem label="Docker">
+    L'image est publiée sur [Docker Hub](https://hub.docker.com/r/germainlefebvre4/cvwonder). Elle s'exécute dans `/cv` : montez-y votre répertoire de travail :
+
+    ```bash
+    docker run --rm -v "$(pwd)":/cv germainlefebvre4/cvwonder:latest generate
+    ```
+
+    Cette commande lit `cv.yml` dans le répertoire courant et écrit le CV dans `generated/` à côté. Toute autre commande fonctionne de la même façon, par exemple `validate`.
+  </TabItem>
+</Tabs>
+
+## Vérifier l'installation
+
+```bash
+cvwonder version
+```
+
+Vous devez voir une ligne de ce type :
+
+```text
+Version: v0.11.0
+```
+
+Avec Docker, lancez plutôt `docker run --rm germainlefebvre4/cvwonder:latest version`. Si une commande du [pas-à-pas du premier CV](/fr/start/first-cv/) est signalée comme inconnue, votre image locale est obsolète : lancez `docker pull germainlefebvre4/cvwonder:latest`.
+
+## Étape suivante
+
+[Créer votre premier CV](/fr/start/first-cv/).

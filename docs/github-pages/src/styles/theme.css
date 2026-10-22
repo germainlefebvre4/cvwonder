@@ -1,0 +1,76 @@
+/*
+ * CV Wonder design tokens.
+ * Sober and editorial: warm neutrals and a single vermilion accent.
+ * `scripts/check-contrast.mjs` reads the color pairs below; keep the
+ * `--cvw-*` names in sync with it.
+ */
+
+:root {
+  --sl-font: 'Inter Variable', system-ui, sans-serif;
+  --cvw-font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+
+  /* Dark mode (Starlight's default scope) */
+  --cvw-accent: #fb923c;
+  --cvw-accent-low: #3a1708;
+  --cvw-on-accent: #14110f;
+  --cvw-bg: #14110f;
+  --cvw-bg-raised: #1c1916;
+  --cvw-text: #ece8e3;
+
+  --sl-color-accent-low: var(--cvw-accent-low);
+  --sl-color-accent: var(--cvw-accent);
+  --sl-color-accent-high: var(--cvw-accent);
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #ece8e3;
+  --sl-color-gray-2: #c9c3bb;
+  --sl-color-gray-3: #9a9288;
+  --sl-color-gray-4: #5f5850;
+  --sl-color-gray-5: #3d3833;
+  --sl-color-gray-6: #2a2622;
+  --sl-color-gray-7: #1c1916;
+  --sl-color-black: var(--cvw-bg);
+  --sl-color-bg-nav: var(--cvw-bg-raised);
+  --sl-color-bg-sidebar: var(--cvw-bg-raised);
+
+  /* Caution is gold, danger red: both stay apart from the vermilion accent and the blue note. */
+  --sl-color-orange-low: #3a2d05;
+  --sl-color-orange: #eab308;
+  --sl-color-orange-high: #fde68a;
+  --sl-color-red-low: #451a1a;
+  --sl-color-red: #ef4444;
+  --sl-color-red-high: #fecaca;
+}
+
+:root[data-theme='light'] {
+  --cvw-accent: #c2410c;
+  --cvw-accent-low: #fde8dc;
+  --cvw-on-accent: #ffffff;
+  --cvw-bg: #fcfaf7;
+  --cvw-bg-raised: #f6f3ee;
+  --cvw-text: #26221e;
+
+  --sl-color-white: #14110f;
+  --sl-color-gray-1: #26221e;
+  --sl-color-gray-2: #3d3833;
+  --sl-color-gray-3: #6b645b;
+  --sl-color-gray-4: #8f877c;
+  --sl-color-gray-5: #c9c3bb;
+  --sl-color-gray-6: #ece8e3;
+  --sl-color-gray-7: #f6f3ee;
+  --sl-color-black: var(--cvw-bg);
+
+  --sl-color-orange-low: #fef3c7;
+  --sl-color-orange: #a16207;
+  --sl-color-orange-high: #713f12;
+  --sl-color-red-low: #fee2e2;
+  --sl-color-red: #dc2626;
+  --sl-color-red-high: #7f1d1d;
+}
+
+h1,
+h2,
+.hero h1 {
+  font-family: var(--cvw-font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}

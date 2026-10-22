@@ -1,0 +1,17 @@
+---
+title: "CLI"
+sidebar:
+  order: 1
+---
+
+import { Code } from '@astrojs/starlight/components';
+import cliHelp from '~/generated/helper.out?raw';
+
+The `cvwonder` binary has one main command and a set of subcommands: `init`, `generate`, `serve`, `validate`, `themes` and `version`.
+
+- [Commands](/reference/cli/commands/): what each command does, with examples.
+- [Options](/reference/cli/options/): global options and the options of each command.
+
+This is the output of `cvwonder --help`, generated from the source on every commit:
+
+<Code code={cliHelp} lang="text" title="cvwonder --help" />

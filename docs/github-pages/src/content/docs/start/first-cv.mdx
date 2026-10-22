@@ -1,0 +1,72 @@
+---
+title: Your first CV
+description: From an empty directory to a generated CV with init, serve and generate.
+sidebar:
+  order: 2
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+This walkthrough takes you from an empty directory to a generated CV. You need CV Wonder [installed](/start/install/).
+
+<Steps>
+
+1. **Create your CV file**
+
+   ```bash
+   mkdir my-cv && cd my-cv
+   cvwonder init
+   ```
+
+   Expected result:
+
+   ```text
+   Created cv.yml — edit it and run: cvwonder generate
+   ```
+
+   `cv.yml` is a fully commented scaffold. Open it and fill at least `person.name` and `person.profession`, the two required fields. Prefer being asked questions? Run `cvwonder init --interactive` instead, and see [Create your CV file](/guides/write-your-cv/#create-the-file) for both modes.
+
+2. **Install a theme**
+
+   ```bash
+   cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-default
+   ```
+
+   Expected result:
+
+   ```text
+   Theme 'Default' (ref=main) successfully installed in themes/default/
+   ```
+
+   Branches, tags and private repositories are covered in [Install a remote theme](/themes/install-remote/).
+
+3. **See it live**
+
+   ```bash
+   cvwonder serve --watch --browser
+   ```
+
+   Expected result: the command prints `Listening on: http://localhost:3000` and opens your browser on the rendered CV. Edit `cv.yml`, save, and the page reloads. Press `Ctrl+C` to stop.
+
+4. **Generate the files**
+
+   ```bash
+   cvwonder generate
+   ```
+
+   Expected result:
+
+   ```text
+   CV generated successfully
+   ```
+
+</Steps>
+
+Your CV is in `generated/cv.html`, next to its `css/` and `images/` folders. The HTML file takes the name of the YAML file: `germain.yml` produces `germain.html`. To get a PDF, add `--format=pdf` (see [Export to PDF and HTML](/guides/export-pdf-and-html/)).
+
+## Where next
+
+- [Write your CV](/guides/write-your-cv/): every section of the YAML file, with a full example.
+- [Validate your CV](/guides/validate-your-cv/): catch mistakes before generating.
+- [Pick or write a theme](/themes/).
+- [Generate many CVs at once](/guides/bulk-mode/).

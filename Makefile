@@ -27,7 +27,7 @@ doc-build:
 
 doc-serve:
 	cd docs/github-pages/; \
-	pnpm start;
+	pnpm dev;
 
 goreleser-check:
 	goreleaser check

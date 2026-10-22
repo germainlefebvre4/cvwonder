@@ -1,0 +1,52 @@
+name: Docs
+on:
+  pull_request:
+    paths:
+      - 'docs/github-pages/**'
+      - 'cmd/**'
+      - '.github/workflows/docs.yml'
+
+jobs:
+  docs:
+    name: Build and check documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        name: Install pnpm
+        with:
+          run_install: false
+          version: 10
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: 'pnpm'
+          cache-dependency-path: 'docs/github-pages/pnpm-lock.yaml'
+
+      - name: Install Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Install dependencies
+        working-directory: docs/github-pages
+        run: pnpm install --frozen-lockfile
+
+      - name: Build site (validates internal links)
+        working-directory: docs/github-pages
+        run: pnpm build
+
+      - name: Check legacy redirects
+        working-directory: docs/github-pages
+        run: pnpm check:redirects
+
+      - name: Check accent contrast
+        working-directory: docs/github-pages
+        run: pnpm check:contrast
+
+      - name: Validate the example CV
+        run: go run ./cmd/cvwonder validate --input docs/github-pages/src/examples/cv.yml

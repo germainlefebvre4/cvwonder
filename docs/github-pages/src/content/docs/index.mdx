@@ -1,0 +1,70 @@
+---
+title: Documentation
+description: Generate beautiful, professional CVs from YAML in seconds with CV Wonder.
+template: splash
+hero:
+  title: Your CV, from YAML to wonder.
+  tagline: Write your CV once in a YAML file, pick a theme, and generate a polished HTML or PDF CV in seconds.
+  actions:
+    - text: Build your first CV
+      link: /start/first-cv/
+      icon: right-arrow
+    - text: Install
+      link: /start/install/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import TerminalDemo from '~/components/TerminalDemo.astro';
+import ThemeCards from '~/components/ThemeCards.astro';
+
+<TerminalDemo
+  label="Terminal"
+  lines={[
+    { cmd: 'cvwonder init', out: ['Created cv.yml — edit it and run: cvwonder generate'] },
+    { cmd: 'cvwonder serve', out: ['Listening on: http://localhost:3000'] },
+    { cmd: 'cvwonder generate', out: ['CV generated successfully'] },
+  ]}
+/>
+
+## Where to start
+
+<CardGrid>
+  <Card title="I want my own CV" icon="document">
+    Install CV Wonder and generate your first CV in minutes. [Build your first CV](/start/first-cv/).
+  </Card>
+  <Card title="I generate CVs in bulk" icon="seti:folder">
+    Render dozens or thousands of CVs in one command, in CI or on a schedule. [Read the bulk mode guide](/guides/bulk-mode/).
+  </Card>
+  <Card title="I write themes" icon="pencil">
+    Design the look of a CV with plain HTML templates and share it. [Write a theme](/themes/write/).
+  </Card>
+</CardGrid>
+
+## Themes
+
+<ThemeCards
+  items={[
+    {
+      title: 'Default',
+      description: 'A clean, single-column CV. The theme used in the walkthrough.',
+      image: '/img/theme-default-w800px.png',
+      href: '/themes/gallery/',
+      alt: 'CV rendered with the default theme',
+    },
+    {
+      title: 'Horizon timeline',
+      description: 'A timeline layout that puts your career path first.',
+      image: '/img/theme-horizon-timeline-w800px.png',
+      href: '/themes/gallery/',
+      alt: 'CV rendered with the horizon timeline theme',
+    },
+    {
+      title: 'Create your own',
+      description: 'Start from scratch and publish it for others.',
+      image: '/img/theme-create-your-own-w800px.png',
+      href: '/themes/write/',
+      alt: 'Placeholder preview for a custom theme',
+    },
+  ]}
+/>

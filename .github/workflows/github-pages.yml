@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build Docusaurus
+    name: Build Astro site
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -41,7 +41,7 @@ jobs:
         id: deployment
         uses: actions/upload-pages-artifact@v5
         with:
-          path: docs/github-pages/build/
+          path: docs/github-pages/dist/
 
   deploy:
     name: Deploy to GitHub Pages

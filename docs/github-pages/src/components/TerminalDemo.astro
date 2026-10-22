@@ -1,0 +1,115 @@
+---
+// CSS-only terminal demo. Commands "type" in sequence, outputs appear after each
+// command. The animation is disabled under prefers-reduced-motion (all text shown).
+// All text comes in through props so every locale can reuse the component.
+interface Line {
+  cmd: string;
+  out?: string[];
+}
+interface Props {
+  lines: Line[];
+  label?: string;
+}
+
+const { lines, label = 'Terminal' } = Astro.props;
+
+const TYPE = 0.045; // seconds per character
+let t = 0.6;
+const rows = lines.map((line) => {
+  const text = `$ ${line.cmd}`;
+  const row = { text, n: text.length, typeAt: t, outAt: t + text.length * TYPE + 0.3, out: line.out ?? [] };
+  t = row.outAt + 0.9;
+  return row;
+});
+---
+
+<figure class="term" role="img" aria-label={label}>
+  <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>{label}</span></div>
+  <div class="body">
+    {
+      rows.map((r) => (
+        <div class="row">
+          <div class="cmd" style={`--n:${r.n};--d:${r.typeAt}s;--t:${r.n * TYPE}s`}>
+            <span>{r.text}</span>
+          </div>
+          {r.out.map((o) => (
+            <div class="out" style={`--d:${r.outAt}s`}>{o}</div>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+</figure>
+
+<style>
+  .term {
+    margin: 0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: #14110f;
+    color: #ece8e3;
+    border: 1px solid var(--sl-color-hairline);
+    font-family: var(--sl-font-system-mono);
+    font-size: clamp(0.8rem, 2.4vw, 0.95rem);
+    text-align: left;
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.9rem;
+    background: #2a2622;
+    color: #c9c3bb;
+    font-size: 0.75rem;
+  }
+  .bar i {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: #5f5850;
+  }
+  .bar span {
+    margin-inline-start: 0.5rem;
+  }
+  .body {
+    padding: 1rem 1.1rem 1.2rem;
+    min-height: 13.5rem;
+    overflow-x: auto;
+  }
+  .row + .row {
+    margin-top: 0.7rem;
+  }
+  .cmd {
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    color: #fb923c;
+    animation: type var(--t) steps(var(--n)) var(--d) forwards;
+  }
+  .out {
+    white-space: pre;
+    color: #c9c3bb;
+    opacity: 0;
+    animation: show 0.01s linear var(--d) forwards;
+  }
+  @keyframes type {
+    to {
+      width: calc(var(--n) * 1ch);
+    }
+  }
+  @keyframes show {
+    to {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cmd {
+      width: auto;
+      animation: none;
+    }
+    .out {
+      opacity: 1;
+      animation: none;
+    }
+  }
+</style>

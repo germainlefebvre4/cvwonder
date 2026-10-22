@@ -1,0 +1,72 @@
+---
+title: Votre premier CV
+description: D'un répertoire vide à un CV généré avec init, serve et generate.
+sidebar:
+  order: 2
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+Ce pas-à-pas vous mène d'un répertoire vide à un CV généré. Il faut que CV Wonder soit [installé](/fr/start/install/).
+
+<Steps>
+
+1. **Créer votre fichier CV**
+
+   ```bash
+   mkdir my-cv && cd my-cv
+   cvwonder init
+   ```
+
+   Résultat attendu :
+
+   ```text
+   Created cv.yml — edit it and run: cvwonder generate
+   ```
+
+   `cv.yml` est un squelette entièrement commenté. Ouvrez-le et renseignez au moins `person.name` et `person.profession`. Vous préférez qu'on vous pose des questions ? Lancez `cvwonder init --interactive` et consultez [Créer le fichier](/fr/guides/write-your-cv/#créer-le-fichier) pour les deux modes.
+
+2. **Installer un thème**
+
+   ```bash
+   cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-default
+   ```
+
+   Résultat attendu :
+
+   ```text
+   Theme 'Default' (ref=main) successfully installed in themes/default/
+   ```
+
+   Les branches, les tags et les dépôts privés sont traités dans [Installer un thème distant](/fr/themes/install-remote/).
+
+3. **Le voir en direct**
+
+   ```bash
+   cvwonder serve --watch --browser
+   ```
+
+   Résultat attendu : la commande affiche `Listening on: http://localhost:3000` et ouvre votre navigateur sur le CV généré. Modifiez `cv.yml`, enregistrez, et la page se recharge. `Ctrl+C` pour arrêter.
+
+4. **Générer les fichiers**
+
+   ```bash
+   cvwonder generate
+   ```
+
+   Résultat attendu :
+
+   ```text
+   CV generated successfully
+   ```
+
+</Steps>
+
+Votre CV est dans `generated/cv.html`, à côté de ses dossiers `css/` et `images/`. Le fichier HTML prend le nom du fichier YAML : `germain.yml` produit `germain.html`. Pour obtenir un PDF, ajoutez `--format=pdf` (voir [Exporter en PDF et HTML](/fr/guides/export-pdf-and-html/)).
+
+## Et ensuite
+
+- [Écrire votre CV](/fr/guides/write-your-cv/) : chaque section du fichier YAML, avec un exemple complet.
+- [Valider votre CV](/fr/guides/validate-your-cv/) : repérer les erreurs avant de générer.
+- [Choisir ou écrire un thème](/fr/themes/).
+- [Générer beaucoup de CV d'un coup](/fr/guides/bulk-mode/).
