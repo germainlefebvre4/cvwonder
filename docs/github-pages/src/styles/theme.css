@@ -1,62 +1,70 @@
 /*
  * CV Wonder design tokens.
- * Sober and editorial: warm neutrals and a single vermilion accent.
+ * Modern and crisp: cool neutrals, one vermilion accent, soft depth.
  * `scripts/check-contrast.mjs` reads the color pairs below; keep the
  * `--cvw-*` names in sync with it.
  */
 
 :root {
   --sl-font: 'Inter Variable', system-ui, sans-serif;
-  --cvw-font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+  --cvw-font-display: 'Inter Variable', system-ui, sans-serif;
+  --sl-content-width: 46rem;
 
   /* Dark mode (Starlight's default scope) */
   --cvw-accent: #fb923c;
-  --cvw-accent-low: #3a1708;
-  --cvw-on-accent: #14110f;
-  --cvw-bg: #14110f;
-  --cvw-bg-raised: #1c1916;
-  --cvw-text: #ece8e3;
+  --cvw-accent-low: #2a1306;
+  --cvw-on-accent: #0b0b0f;
+  --cvw-bg: #0b0b0f;
+  --cvw-bg-raised: #131318;
+  --cvw-text: #ececf0;
+  --cvw-border: #26262e;
+  --cvw-glow: rgba(251, 146, 60, 0.18);
 
   --sl-color-accent-low: var(--cvw-accent-low);
   --sl-color-accent: var(--cvw-accent);
   --sl-color-accent-high: var(--cvw-accent);
   --sl-color-white: #ffffff;
-  --sl-color-gray-1: #ece8e3;
-  --sl-color-gray-2: #c9c3bb;
-  --sl-color-gray-3: #9a9288;
-  --sl-color-gray-4: #5f5850;
-  --sl-color-gray-5: #3d3833;
-  --sl-color-gray-6: #2a2622;
-  --sl-color-gray-7: #1c1916;
+  --sl-color-gray-1: #ececf0;
+  --sl-color-gray-2: #c4c4cc;
+  --sl-color-gray-3: #9494a0;
+  --sl-color-gray-4: #5a5a66;
+  --sl-color-gray-5: #34343d;
+  --sl-color-gray-6: #1c1c22;
+  --sl-color-gray-7: #131318;
   --sl-color-black: var(--cvw-bg);
-  --sl-color-bg-nav: var(--cvw-bg-raised);
-  --sl-color-bg-sidebar: var(--cvw-bg-raised);
+  --sl-color-bg-nav: color-mix(in srgb, var(--cvw-bg) 82%, transparent);
+  --sl-color-bg-sidebar: var(--cvw-bg);
+  --sl-color-hairline: var(--cvw-border);
+  --sl-color-hairline-light: var(--cvw-border);
+  --sl-color-hairline-shade: var(--cvw-border);
 
   /* Caution is gold, danger red: both stay apart from the vermilion accent and the blue note. */
-  --sl-color-orange-low: #3a2d05;
+  --sl-color-orange-low: #2e2306;
   --sl-color-orange: #eab308;
   --sl-color-orange-high: #fde68a;
-  --sl-color-red-low: #451a1a;
+  --sl-color-red-low: #3a1515;
   --sl-color-red: #ef4444;
   --sl-color-red-high: #fecaca;
 }
 
 :root[data-theme='light'] {
   --cvw-accent: #c2410c;
-  --cvw-accent-low: #fde8dc;
+  --cvw-accent-low: #ffedd5;
   --cvw-on-accent: #ffffff;
-  --cvw-bg: #fcfaf7;
-  --cvw-bg-raised: #f6f3ee;
-  --cvw-text: #26221e;
+  --cvw-bg: #ffffff;
+  --cvw-bg-raised: #f7f7f9;
+  --cvw-text: #18181b;
+  --cvw-border: #e6e6ec;
+  --cvw-glow: rgba(194, 65, 12, 0.12);
 
-  --sl-color-white: #14110f;
-  --sl-color-gray-1: #26221e;
-  --sl-color-gray-2: #3d3833;
-  --sl-color-gray-3: #6b645b;
-  --sl-color-gray-4: #8f877c;
-  --sl-color-gray-5: #c9c3bb;
-  --sl-color-gray-6: #ece8e3;
-  --sl-color-gray-7: #f6f3ee;
+  --sl-color-white: #09090b;
+  --sl-color-gray-1: #18181b;
+  --sl-color-gray-2: #3f3f46;
+  --sl-color-gray-3: #62626d;
+  --sl-color-gray-4: #8b8b96;
+  --sl-color-gray-5: #d4d4dc;
+  --sl-color-gray-6: #eeeef2;
+  --sl-color-gray-7: #f7f7f9;
   --sl-color-black: var(--cvw-bg);
 
   --sl-color-orange-low: #fef3c7;
@@ -67,10 +75,110 @@
   --sl-color-red-high: #7f1d1d;
 }
 
+/* Typography */
 h1,
 h2,
-.hero h1 {
+h3 {
   font-family: var(--cvw-font-display);
+  letter-spacing: -0.025em;
+}
+h1 {
+  font-weight: 750;
+}
+h2 {
+  font-weight: 700;
+}
+
+/* Header: translucent with blur */
+header.header {
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+}
+
+/* Rounded, softer surfaces */
+.sl-markdown-content pre,
+.expressive-code .frame {
+  border-radius: 0.75rem;
+}
+.expressive-code .frame {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.starlight-aside {
+  border-radius: 0.75rem;
+}
+.sl-markdown-content table {
+  border-radius: 0.6rem;
+}
+
+/* Pill buttons */
+.sl-link-button {
+  border-radius: 999px;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  padding: 0.7em 1.5em;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.sl-link-button.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px var(--cvw-glow);
+}
+
+/* Landing: accent glow behind the hero */
+:root[data-has-hero] .page,
+:root[data-has-hero] .main-frame {
+  position: relative;
+}
+:root[data-has-hero] .main-pane::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 36rem;
+  z-index: -1;
+  background:
+    radial-gradient(60% 70% at 50% 0%, var(--cvw-glow), transparent 70%),
+    radial-gradient(40% 50% at 85% 10%, rgba(99, 102, 241, 0.10), transparent 70%);
+  pointer-events: none;
+}
+.hero h1 {
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.05;
+  font-weight: 800;
+}
+
+/* Landing hero: centered, tight to the terminal demo */
+.hero {
+  grid-template-columns: 1fr !important;
+  justify-items: center;
+  text-align: center;
+  padding-block: clamp(2rem, 6vw, 4.5rem) 1rem !important;
+}
+.hero .sl-flex {
+  align-items: center;
+  justify-content: center;
+}
+.hero .tagline {
+  max-width: 38rem;
+  color: var(--sl-color-gray-2);
+}
+:root[data-has-hero] .sl-markdown-content > :first-child {
+  margin-top: 0;
+}
+
+/* Audience cards: three across, softer */
+@media (min-width: 60rem) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+.card {
+  border-radius: 1rem;
+  border-color: var(--cvw-border);
+  background: var(--sl-color-gray-7);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--sl-color-accent);
+}
+.card .title {
+  font-size: var(--sl-text-lg);
 }

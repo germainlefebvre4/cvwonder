@@ -89,9 +89,9 @@ Page ordering uses Starlight's `sidebar.order` frontmatter (converted from `side
 | Docusaurus footer/navbar items | Starlight `sidebar`, `social`, `components` overrides for header links |
 
 ### D9. Visual identity
-- Tokens: accent `#c2410c` (light) / `#fb923c` (dark), neutral surfaces in warm grays, Starlight's accent variables overridden in one CSS file. Semantic colors for caution/danger stay separate from the accent.
+- Tokens: accent `#c2410c` (light) / `#fb923c` (dark), cool neutral surfaces, Starlight's accent variables overridden in one CSS file. Semantic colors for caution/danger stay separate from the accent.
 - Contrast is enforced by a small Node script run in CI that computes WCAG ratios from the CSS tokens and fails below 4.5:1.
-- Typography: self-hosted variable fonts via `@fontsource` (no third-party font requests), one sans for body and one serif for display headings. The exact pair is chosen in the identity phase.
+- Typography: self-hosted variable fonts via `@fontsource` (no third-party font requests), a single sans (Inter) for body and headings.
 - Logo: two files, `logo-light.svg` and `logo-dark.svg`, passed to Starlight's `logo.light`/`logo.dark`, derived from the existing single-path vector.
 - Hero: an Astro component rendering the `init`, `serve`, `generate` demo as styled terminal lines with a CSS animation (`steps()` typing), disabled under `prefers-reduced-motion`; text passed as props so the French homepage reuses it.
 - Theme previews: tall screenshots (800x1643, 800x2831) are shown in fixed-aspect cards using `object-fit: cover` and `object-position: top`.

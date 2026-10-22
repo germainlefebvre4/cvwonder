@@ -39,7 +39,7 @@ const { items } = Astro.props;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
   }
   li {
-    margin: 0;
+    margin: 0 !important;
   }
   a {
     display: flex;
@@ -48,13 +48,16 @@ const { items } = Astro.props;
     height: 100%;
     padding: 0.75rem;
     border: 1px solid var(--sl-color-hairline);
-    border-radius: 0.75rem;
-    background: var(--sl-color-bg-nav);
+    border-radius: 1rem;
+    background: var(--sl-color-gray-7);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     color: var(--sl-color-text);
     text-decoration: none;
   }
   a:hover {
     border-color: var(--sl-color-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px -12px var(--cvw-glow);
   }
   .shot {
     aspect-ratio: 4 / 3;

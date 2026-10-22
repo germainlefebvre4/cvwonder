@@ -31,7 +31,7 @@
 - [x] 4.3 Update the `cli-helper` pre-commit hook to write `docs/github-pages/src/generated/helper.out`; verify `pre-commit run cli-helper --all-files` produces the file at the new path
 - [x] 4.4 Update `Makefile` doc targets, `.gitignore` (`dist/`, `.astro/`, drop Docusaurus entries) and `docs/github-pages/README.md` (Astro commands); verify `make doc-install doc-build` succeeds from a clean checkout
 - [x] 4.5 Update `.github/workflows/github-pages.yml` to upload `docs/github-pages/dist/` and keep `CVWONDER_VERSION`; verify with `actionlint` (or a dry run on a branch) that the workflow parses
-- [ ] 4.6 Add `.github/workflows/docs.yml` for pull requests touching `docs/github-pages/**`, `cmd/**` or the example CV, running build, redirect check, contrast check and `cvwonder validate` on the example; verify it runs green on the migration branch
+- [x] 4.6 Add `.github/workflows/docs.yml` for pull requests touching `docs/github-pages/**`, `cmd/**` or the example CV, running build, redirect check, contrast check and `cvwonder validate` on the example; verify it runs green on the migration branch
 - [x] 4.7 Delete Docusaurus leftovers (`docusaurus.config.ts`, `sidebars.ts`, `src/pages`, `src/components/Homepage*`, `src/theme/MDXComponents.js`, `static/img/undraw_docusaurus_*.svg`, `docusaurus.png`, `markdown-page.md`); verify the build still passes and `grep -ri docusaurus docs/github-pages --exclude-dir=node_modules --exclude=pnpm-lock.yaml` returns nothing
 
 ## 5. Visual identity
@@ -40,7 +40,7 @@
 - [x] 5.2 Add `scripts/check-contrast.mjs` computing WCAG ratios for each accent/background pair from the CSS tokens and failing below 4.5:1; verify it passes with the chosen tokens and fails with a deliberately weak color
 - [x] 5.3 Verify that caution and note admonitions are distinguishable in both modes by viewing a test page in light and dark, and adjust the caution color if they are not
 - [x] 5.4 Self-host the body and display fonts via `@fontsource` variable packages and apply them; verify in the network panel that no third-party font request is made
-- [ ] 5.5 Create `logo-light.svg` and `logo-dark.svg` from the single-path logo and wire them to Starlight's `logo`; update the `README.md` logo to a `<picture>` using both; verify the logo is visible in both modes on the site and in GitHub's light and dark README rendering
+- [x] 5.5 Create `logo-light.svg` and `logo-dark.svg` from the single-path logo and wire them to Starlight's `logo`; update the `README.md` logo to a `<picture>` using both; verify the logo is visible in both modes on the site and in GitHub's light and dark README rendering
 - [x] 5.6 Create the 1200x630 share card, add `og:image`, `twitter:card` and description to the shared `head` config with absolute URLs; verify `dist/index.html` contains the tags and the referenced file exists in `dist/`
 - [x] 5.7 Add favicon variants from the logo and remove the unused `static/` folder; verify the favicon displays in a browser tab
 
@@ -72,7 +72,7 @@
 - [x] 9.1 Translate the homepage, navigation labels and hero demo text; verify `/fr/` renders in French with no untranslated notice
 - [x] 9.2 Translate the installation page and the first-CV walkthrough; verify the path from the French homepage to a generated CV shows no untranslated-page notice
 - [x] 9.3 Translate the bulk mode and theme customization guides, keeping commands and config keys identical to English; verify a diff of the code blocks between languages shows no differences
-- [ ] 9.4 Have the maintainer review the French pages and apply corrections; verify the review is recorded in the pull request
+- [x] 9.4 Have the maintainer review the French pages and apply corrections; verify the review is recorded in the pull request
 - [x] 9.5 Verify the fallback: open French URLs of untranslated pages (such as `/fr/reference/theme-functions/`) and confirm the English content shows with the notice, and that the French navigation lists the same entries as English
 
 ## 10. Final verification
@@ -80,8 +80,8 @@
 - [x] 10.1 Run the full build and all checks (links, redirects, contrast, example validation) from a clean checkout; verify they pass in CI on the pull request
 - [x] 10.2 Verify redirects on the preview build for ten sampled old URLs, including a README deep link, a merged page and `/docs/`
 - [x] 10.3 Run Lighthouse on the homepage and one content page in both languages; verify accessibility and SEO scores of at least 95 and no contrast failure
-- [ ] 10.4 Verify against the three specs: walk every scenario in `documentation-site`, `documentation-getting-started` and `documentation-guides` and record the result in the pull request
-- [ ] 10.5 After the release tag deploys, verify `https://cvwonder.fr/`, `/fr/` and an old `/docs/...` URL in production, and submit the new `sitemap.xml` to search consoles
+- [x] 10.4 Verify against the three specs: walk every scenario in `documentation-site`, `documentation-getting-started` and `documentation-guides` and record the result in the pull request
+- [x] 10.5 After the release tag deploys, verify `https://cvwonder.fr/`, `/fr/` and an old `/docs/...` URL in production, and submit the new `sitemap.xml` to search consoles
 
 ## Workflow follow-up
 

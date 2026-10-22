@@ -59,7 +59,6 @@ export default defineConfig({
       },
       customCss: [
         '@fontsource-variable/inter/index.css',
-        '@fontsource-variable/fraunces/index.css',
         './src/styles/theme.css',
       ],
       plugins: [starlightLinksValidator({ errorOnFallbackPages: false })],
