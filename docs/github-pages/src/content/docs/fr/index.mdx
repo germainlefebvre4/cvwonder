@@ -17,15 +17,40 @@ hero:
 import { Card, CardGrid } from '@astrojs/starlight/components';
 import TerminalDemo from '~/components/TerminalDemo.astro';
 import ThemeCards from '~/components/ThemeCards.astro';
+import Showcase from '~/components/Showcase.astro';
+import Cta from '~/components/Cta.astro';
 
-<TerminalDemo
-  label="Terminal"
-  lines={[
-    { cmd: 'cvwonder init', out: ['Created cv.yml — edit it and run: cvwonder generate'] },
-    { cmd: 'cvwonder serve', out: ['Listening on: http://localhost:3000'] },
-    { cmd: 'cvwonder generate', out: ['CV generated successfully'] },
-  ]}
-/>
+<Showcase image="/img/theme-default-w800px.png" alt="Un CV généré avec le thème default" caption="Généré avec le thème default">
+  <TerminalDemo
+    label="Terminal"
+    lines={[
+      { cmd: 'cvwonder init', out: ['Created cv.yml — edit it and run: cvwonder generate'] },
+      { cmd: 'cvwonder serve', out: ['Listening on: http://localhost:3000'] },
+      { cmd: 'cvwonder generate', out: ['CV generated successfully'] },
+    ]}
+  />
+</Showcase>
+
+## Pourquoi CV Wonder
+
+<div class="why">
+
+<CardGrid>
+  <Card title="Rapide" icon="rocket">
+    Générez un CV soigné en quelques secondes. Concentrez-vous sur le contenu, CV Wonder s'occupe de la présentation.
+  </Card>
+  <Card title="Personnalisable" icon="puzzle">
+    Choisissez un thème de la communauté ou créez le vôtre avec de simples gabarits HTML.
+  </Card>
+  <Card title="Validé" icon="approve-check">
+    Un schéma YAML repère les erreurs tôt, avec numéros de ligne et suggestions.
+  </Card>
+  <Card title="Pensé pour l'échelle" icon="bars">
+    Générez des milliers de CV en une commande, en CI ou de façon planifiée.
+  </Card>
+</CardGrid>
+
+</div>
 
 ## Par où commencer
 
@@ -33,8 +58,8 @@ import ThemeCards from '~/components/ThemeCards.astro';
   <Card title="Je veux mon propre CV" icon="document">
     Installez CV Wonder et générez votre premier CV en quelques minutes. [Créer votre premier CV](/fr/start/first-cv/).
   </Card>
-  <Card title="Je génère des CV en masse" icon="seti:folder">
-    Produisez des dizaines ou des milliers de CV en une commande, en CI ou de façon planifiée. [Lire le guide du mode en masse](/fr/guides/bulk-mode/).
+  <Card title="Je génère des CV en masse" icon="list-format">
+    Produisez des dizaines ou des milliers de CV en une commande. [Lire le guide du mode en masse](/fr/guides/bulk-mode/).
   </Card>
   <Card title="J'écris des thèmes" icon="pencil">
     Concevez l'apparence d'un CV avec de simples gabarits HTML et partagez-la. [Écrire un thème](/fr/themes/write/).
@@ -67,4 +92,11 @@ import ThemeCards from '~/components/ThemeCards.astro';
       alt: 'Aperçu générique d’un thème personnalisé',
     },
   ]}
+/>
+
+<Cta
+  title="Prêt à créer votre CV ?"
+  text="Installez CV Wonder et obtenez votre premier CV en quelques minutes."
+  label="Commencer"
+  href="/fr/start/install/"
 />

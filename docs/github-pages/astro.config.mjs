@@ -33,6 +33,7 @@ export default defineConfig({
         fr: { label: 'Français', lang: 'fr' },
       },
       head: [
+        { tag: 'link', attrs: { rel: 'preload', href: '/fonts/inter-latin.woff2', as: 'font', type: 'font/woff2', crossorigin: '' } },
         { tag: 'link', attrs: { rel: 'icon', href: '/favicon.ico', sizes: '48x48' } },
         { tag: 'meta', attrs: { property: 'og:image', content: 'https://cvwonder.fr/share-card.png' } },
         { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
@@ -57,8 +58,8 @@ export default defineConfig({
         SocialIcons: './src/components/SocialIcons.astro',
         Footer: './src/components/Footer.astro',
       },
+      expressiveCode: { defaultProps: { frame: 'code' } },
       customCss: [
-        '@fontsource-variable/inter/index.css',
         './src/styles/theme.css',
       ],
       plugins: [starlightLinksValidator({ errorOnFallbackPages: false })],

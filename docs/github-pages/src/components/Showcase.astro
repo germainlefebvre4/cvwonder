@@ -1,0 +1,60 @@
+---
+// Terminal demo (slot) next to a cropped CV preview. Stacks on narrow screens.
+interface Props {
+  image: string;
+  alt: string;
+  caption?: string;
+}
+const { image, alt, caption } = Astro.props;
+---
+
+<div class="showcase">
+  <div class="term-col"><slot /></div>
+  <figure class="cv">
+    <div class="sheet"><img src={image} alt={alt} width="800" height="1000" /></div>
+    {caption && <figcaption>{caption}</figcaption>}
+  </figure>
+</div>
+
+<style>
+  .showcase {
+    display: grid;
+    gap: 1.75rem;
+    align-items: center;
+    grid-template-columns: 1fr;
+    margin-block: 1rem 2rem;
+  }
+  @media (min-width: 58rem) {
+    .showcase {
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 2.5rem;
+    }
+  }
+  .cv {
+    margin: 0;
+    justify-self: center;
+    width: min(100%, 22rem);
+  }
+  .sheet {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 0.9rem;
+    background: #fff;
+    border: 1px solid var(--sl-color-hairline);
+    box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.35);
+    transform: rotate(1.5deg);
+  }
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+  figcaption {
+    margin-top: 0.9rem;
+    text-align: center;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
+  }
+</style>

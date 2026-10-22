@@ -17,15 +17,40 @@ hero:
 import { Card, CardGrid } from '@astrojs/starlight/components';
 import TerminalDemo from '~/components/TerminalDemo.astro';
 import ThemeCards from '~/components/ThemeCards.astro';
+import Showcase from '~/components/Showcase.astro';
+import Cta from '~/components/Cta.astro';
 
-<TerminalDemo
-  label="Terminal"
-  lines={[
-    { cmd: 'cvwonder init', out: ['Created cv.yml — edit it and run: cvwonder generate'] },
-    { cmd: 'cvwonder serve', out: ['Listening on: http://localhost:3000'] },
-    { cmd: 'cvwonder generate', out: ['CV generated successfully'] },
-  ]}
-/>
+<Showcase image="/img/theme-default-w800px.png" alt="A CV generated with the default theme" caption="Generated with the default theme">
+  <TerminalDemo
+    label="Terminal"
+    lines={[
+      { cmd: 'cvwonder init', out: ['Created cv.yml — edit it and run: cvwonder generate'] },
+      { cmd: 'cvwonder serve', out: ['Listening on: http://localhost:3000'] },
+      { cmd: 'cvwonder generate', out: ['CV generated successfully'] },
+    ]}
+  />
+</Showcase>
+
+## Why CV Wonder
+
+<div class="why">
+
+<CardGrid>
+  <Card title="Fast" icon="rocket">
+    Generate a polished CV in seconds. Focus on your content, CV Wonder handles the presentation.
+  </Card>
+  <Card title="Themeable" icon="puzzle">
+    Pick a community theme or build your own with plain HTML templates.
+  </Card>
+  <Card title="Validated" icon="approve-check">
+    A YAML schema catches mistakes early, with line numbers and suggestions.
+  </Card>
+  <Card title="Built for scale" icon="bars">
+    Render thousands of CVs in one command, in CI or on a schedule.
+  </Card>
+</CardGrid>
+
+</div>
 
 ## Where to start
 
@@ -33,7 +58,7 @@ import ThemeCards from '~/components/ThemeCards.astro';
   <Card title="I want my own CV" icon="document">
     Install CV Wonder and generate your first CV in minutes. [Build your first CV](/start/first-cv/).
   </Card>
-  <Card title="I generate CVs in bulk" icon="seti:folder">
+  <Card title="I generate CVs in bulk" icon="list-format">
     Render dozens or thousands of CVs in one command, in CI or on a schedule. [Read the bulk mode guide](/guides/bulk-mode/).
   </Card>
   <Card title="I write themes" icon="pencil">
@@ -67,4 +92,11 @@ import ThemeCards from '~/components/ThemeCards.astro';
       alt: 'Placeholder preview for a custom theme',
     },
   ]}
+/>
+
+<Cta
+  title="Ready to build your CV?"
+  text="Install CV Wonder and have your first CV in a few minutes."
+  label="Get started"
+  href="/start/install/"
 />

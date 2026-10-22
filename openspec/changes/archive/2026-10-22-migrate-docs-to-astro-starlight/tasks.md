@@ -36,10 +36,10 @@
 
 ## 5. Visual identity
 
-- [x] 5.1 Define the color tokens (accent `#c2410c` light / `#fb923c` dark, warm neutral surfaces, separate caution and danger colors) in `src/styles/theme.css`; verify the site renders both modes with the new accent
+- [x] 5.1 Define the color tokens (accent `#c2410c` light / `#fb923c` dark, cool neutral surfaces, separate caution and danger colors) in `src/styles/theme.css`; verify the site renders both modes with the new accent
 - [x] 5.2 Add `scripts/check-contrast.mjs` computing WCAG ratios for each accent/background pair from the CSS tokens and failing below 4.5:1; verify it passes with the chosen tokens and fails with a deliberately weak color
 - [x] 5.3 Verify that caution and note admonitions are distinguishable in both modes by viewing a test page in light and dark, and adjust the caution color if they are not
-- [x] 5.4 Self-host the body and display fonts via `@fontsource` variable packages and apply them; verify in the network panel that no third-party font request is made
+- [x] 5.4 Self-host Inter as woff2 in `public/fonts/` with a preload and `font-display: block`, and apply it; verify in the network panel that no third-party font request is made and that no fallback font flashes on page load
 - [x] 5.5 Create `logo-light.svg` and `logo-dark.svg` from the single-path logo and wire them to Starlight's `logo`; update the `README.md` logo to a `<picture>` using both; verify the logo is visible in both modes on the site and in GitHub's light and dark README rendering
 - [x] 5.6 Create the 1200x630 share card, add `og:image`, `twitter:card` and description to the shared `head` config with absolute URLs; verify `dist/index.html` contains the tags and the referenced file exists in `dist/`
 - [x] 5.7 Add favicon variants from the logo and remove the unused `static/` folder; verify the favicon displays in a browser tab
@@ -47,7 +47,7 @@
 ## 6. Homepage
 
 - [x] 6.1 Build the terminal-demo hero component (CSS-only animation of `init`, `serve`, `generate`, disabled under `prefers-reduced-motion`, text passed as props); verify it animates in a browser and shows static text with reduced motion enabled
-- [x] 6.2 Build the English homepage (`splash`) with the primary call to action to the first-CV walkthrough and the three audience entry points (first CV, bulk mode, write a theme); verify the three links resolve with the links validator
+- [x] 6.2 Build the English homepage (`splash`) with the primary call to action to the first-CV walkthrough the three audience entry points (first CV, bulk mode, write a theme), feature cards, theme cards and a closing call to action; verify the three links resolve with the links validator
 - [x] 6.3 Build the theme preview cards with fixed-aspect cropped screenshots from the existing images; verify the tall screenshots display cropped from the top without layout overflow at 360 px width
 - [x] 6.4 Check the homepage at 360, 768 and 1280 px in light and dark modes; verify there is no horizontal scroll and the hero stays legible
 

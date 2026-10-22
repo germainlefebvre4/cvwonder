@@ -1,0 +1,48 @@
+---
+interface Props {
+  title: string;
+  text: string;
+  label: string;
+  href: string;
+}
+const { title, text, label, href } = Astro.props;
+---
+
+<section class="cta">
+  <h2>{title}</h2>
+  <p>{text}</p>
+  <a {href}>{label}</a>
+</section>
+
+<style>
+  .cta {
+    margin-top: 3.5rem;
+    padding: clamp(2rem, 5vw, 3.5rem) 1.5rem;
+    text-align: center;
+    border-radius: 1.25rem;
+    border: 1px solid var(--sl-color-hairline);
+    background:
+      radial-gradient(70% 120% at 50% 0%, var(--cvw-glow), transparent 70%),
+      var(--sl-color-gray-7);
+  }
+  h2 {
+    margin: 0 !important;
+    border: 0;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+  }
+  p {
+    margin: 0.75rem auto 1.5rem !important;
+    max-width: 32rem;
+    color: var(--sl-color-gray-2);
+  }
+  a {
+    display: inline-block;
+    margin: 0;
+    background: var(--cvw-accent);
+    color: var(--cvw-on-accent) !important;
+    text-decoration: none !important;
+    border-radius: 999px;
+    font-weight: 600;
+    padding: 0.75em 1.8em;
+  }
+</style>

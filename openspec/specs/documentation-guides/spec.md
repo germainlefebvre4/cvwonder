@@ -2,16 +2,20 @@
 
 ## Purpose
 
-Defines the requirements for the `guides/` section in the CVWonder Docusaurus documentation site. The guides section provides concrete, scenario-based pages for advanced features, distinct from the CLI reference and theme authoring documentation.
+Defines the requirements for the `guides/` section in the CVWonder documentation site. The guides section provides concrete, scenario-based pages for advanced features, distinct from the CLI reference and theme authoring documentation.
 
 ## Requirements
 
 ### Requirement: Documentation guides section exists
-The documentation SHALL include a `guides/` section in the Docusaurus site with at least two guide pages: one covering bulk mode and one covering theme configuration customization. The section SHALL be auto-discovered by the Docusaurus sidebar (no manual sidebar entry required).
+The documentation SHALL include a `guides/` section in the documentation site, served at `/guides/`, with at least two guide pages: one covering bulk mode and one covering theme configuration customization. The section SHALL be auto-discovered by the site sidebar (no manual sidebar entry required).
 
 #### Scenario: Guides section is visible in docs
 - **WHEN** the user browses the documentation site
-- **THEN** a "Guides" category SHALL appear in the sidebar containing at least `bulk-mode` and `theme-customization` pages
+- **THEN** a "Guides" section SHALL appear in the primary navigation and the sidebar, containing at least `bulk-mode` and `theme-customization` pages
+
+#### Scenario: Guides are served at a stable URL
+- **WHEN** the user opens the bulk mode guide
+- **THEN** its URL SHALL be under `/guides/` with no `/docs/` prefix
 
 ---
 
@@ -42,3 +46,16 @@ The `guides/theme-customization.md` page SHALL document theme configuration with
 #### Scenario: User can follow a config override example grounded in real keys
 - **WHEN** the user reads `guides/theme-customization.md`
 - **THEN** at least one example using `person.anonymisation`, `socialNetworks.display`, or `displayContactInfo` SHALL be shown
+
+---
+
+### Requirement: Guides are available in French
+The `bulk-mode` and `theme-customization` guides SHALL be available in French, with the same examples as the English versions.
+
+#### Scenario: French guide has the same examples
+- **WHEN** a reader opens a guide under `/fr/guides/`
+- **THEN** it SHALL contain the same commands and examples as the English guide, with prose in French
+
+#### Scenario: Guide examples stay grounded in real keys
+- **WHEN** the French theme customization guide shows a config override
+- **THEN** it SHALL use the same real default-theme keys as the English guide, such as `person.anonymisation`, `socialNetworks.display` or `displayContactInfo`
