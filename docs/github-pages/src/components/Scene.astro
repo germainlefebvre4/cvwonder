@@ -176,16 +176,63 @@ const lines = yaml.map((raw, i) => {
   .yl {
     display: block;
     white-space: normal; /* the markup is indented: only the inner spans keep their spaces */
-    line-height: 1.7;
+    line-height: 1.55;
   }
   .yl > span {
     white-space: pre;
   }
+  /* --tint (0..1) is the resting tint of a line once the CV is rendered; --focus (0..1) emphasizes the
+     `theme:` line. GSAP animates both in the pinned scene; CSS sets them elsewhere. */
+  .yl {
+    --tint: 0;
+    --focus: 0;
+  }
+  /* The line's own opacity belongs to the act-one animation, so the tint dims its parts instead. */
+  .yl .k,
+  .yl .v {
+    opacity: calc(1 - var(--tint) * 0.35);
+  }
   .k {
-    color: #fb923c;
+    color: color-mix(in srgb, #fb923c, #a5b4fc calc(var(--tint) * 60%));
   }
   .v {
-    color: #c4c4cc;
+    color: color-mix(in srgb, #c4c4cc, #8b93c4 calc(var(--tint) * 70%));
+  }
+  .yl.theme {
+    position: relative;
+    margin-inline: -1.1rem;
+    padding-inline: 1.1rem;
+    background: color-mix(in srgb, #fb923c calc(var(--focus) * 14%), transparent);
+    box-shadow:
+      inset calc(var(--focus) * 3px) 0 0 #fb923c,
+      0 0 calc(var(--focus) * 22px) calc(var(--focus) * -6px) #fb923c;
+  }
+  .yl.theme::before {
+    content: '\25B8';
+    position: absolute;
+    left: 0.45rem;
+    color: #fb923c;
+    opacity: var(--focus);
+  }
+  .yl.theme .v {
+    color: color-mix(in srgb, #c4c4cc, #fdba74 calc(var(--focus) * 100%));
+    font-weight: calc(400 + var(--focus) * 300);
+  }
+  .yl.theme .v.flash {
+    animation: theme-flash 0.9s ease-out;
+  }
+  @keyframes theme-flash {
+    0% {
+      background: color-mix(in srgb, #fb923c 65%, transparent);
+      color: #fff;
+    }
+    100% {
+      background: transparent;
+    }
+  }
+  /* Static and tabs modes: no timeline, so the `theme:` line is emphasized and the other lines stay untinted. */
+  .yl.theme {
+    --focus: 1;
   }
   .viewport {
     display: grid;
@@ -287,9 +334,9 @@ const lines = yaml.map((raw, i) => {
     padding-inline: 2rem;
   }
   .scene[data-mode='pin'] .scene-pin {
-    --yaml-w: clamp(28rem, calc(100vw - 57rem), 36rem);
-    --cv-w: min(46rem, calc(100vw - var(--yaml-w) - 10rem));
-    --cv-h: clamp(20rem, calc(100vh - 27rem), 46rem);
+    --yaml-w: clamp(27rem, calc(100vw - 54rem), 40rem);
+    --cv-w: min(46rem, calc(100vw - var(--yaml-w) - 7.5rem));
+    --cv-h: clamp(20rem, calc(100vh - 19rem), 46rem);
     height: calc(100vh - var(--sl-nav-height));
     display: flex;
     flex-direction: column;
@@ -352,8 +399,15 @@ const lines = yaml.map((raw, i) => {
     position: relative;
     flex: none;
     width: var(--yaml-w);
-    font-size: 1.05rem;
+    font-size: clamp(0.72rem, calc((100vh - 21rem) / 28), 1rem);
     will-change: transform;
+  }
+  .scene[data-mode='pin'] pre {
+    padding-left: 1.7rem; /* room for the marker of the theme line */
+  }
+  .scene[data-mode='pin'] .yl.theme {
+    margin-left: -1.7rem;
+    padding-left: 1.7rem;
   }
   .scene[data-mode='pin'] .yl {
     will-change: transform, opacity;

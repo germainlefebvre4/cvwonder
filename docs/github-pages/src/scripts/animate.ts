@@ -19,6 +19,8 @@ export const MOMENTS = {
   // Theme changes: the wipe is centered on these values.
   wipe1: 72,
   wipe2: 90,
+  // Horizon timeline is fully shown (first wipe done at 77.5) and its capture has not started to scroll (78).
+  horizonShown: 77.7,
 } as const;
 const actAt = (p: number) => (p < MOMENTS.generate.start ? 0 : p < MOMENTS.theme.start ? 1 : 2);
 const themeAt = (p: number) => (p < MOMENTS.wipe1 ? 0 : p < MOMENTS.wipe2 ? 1 : 2);
@@ -208,7 +210,9 @@ function pinnedScene(scene: HTMLElement) {
   const cv = $('[data-cv]', scene)!;
   const viewport = $('[data-viewport]', scene)!;
   const lines = $$('[data-line]', scene);
-  const flying = lines.filter((l) => !l.hasAttribute('data-theme-line'));
+  const tinted = lines.filter((l) => !l.hasAttribute('data-theme-line'));
+  const themeLine = $('[data-theme-line]', scene);
+  const themeValue = $('[data-theme-name]', scene);
   const themeName = $('[data-theme-name]', scene);
   const previews = $$('[data-preview]', scene);
   const imgs = previews.map((p) => $('img', p)!);
@@ -244,9 +248,11 @@ function pinnedScene(scene: HTMLElement) {
   previews.forEach((p, i) => gsap.set(p, { zIndex: i + 1, clipPath: i === 0 ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)' }));
   gsap.set(edge, { xPercent: -100, opacity: 0 });
   gsap.set(titles.slice(1), { opacity: 0, y: 14 });
+  gsap.set(tinted, { '--tint': 0 });
+  if (themeLine) gsap.set(themeLine, { '--focus': 0 });
 
   // Act 1: write. Lines light up one after another.
-  tl.fromTo(lines, { opacity: 0.22, x: -8 }, { opacity: 1, x: 0, duration: 4, stagger: 1.3, ease: 'power2.out' }, at(3));
+  tl.fromTo(lines, { opacity: 0.22, x: -8 }, { opacity: 1, x: 0, duration: 4, stagger: 0.75, ease: 'power2.out' }, at(3));
 
   // Act titles cross-fade.
   const swap = (from: number, to: number, p: number) => {
@@ -255,21 +261,10 @@ function pinnedScene(scene: HTMLElement) {
   swap(0, 1, MOMENTS.generate.start);
   swap(1, 2, MOMENTS.theme.start);
 
-  // Act 2: lines fly toward the CV (all but the theme line), the YAML recedes, the CV enters in 3D.
-  tl.to(
-    flying,
-    {
-      x: (_i, el: HTMLElement) => cv.offsetLeft + cv.offsetWidth / 2 - (yaml.offsetLeft + el.offsetLeft + el.offsetWidth / 2) + 40,
-      y: (_i, el: HTMLElement) => cv.offsetTop + cv.offsetHeight / 2 - (yaml.offsetTop + el.offsetTop + el.offsetHeight / 2),
-      scale: 0.3,
-      opacity: 0,
-      duration: 6,
-      stagger: 0.35,
-      ease: 'power2.in',
-    },
-    at(27),
-  );
-  tl.to(yaml, { x: 0, scale: 0.92, opacity: 0.7, duration: 8, ease: 'power2.inOut' }, at(29));
+  // Act 2: the YAML stays in place (lines take a resting tint, `theme:` is the focus) and the CV enters in 3D.
+  tl.to(tinted, { '--tint': 1, duration: 3, stagger: 0.2, ease: 'power1.out' }, at(27));
+  if (themeLine) tl.to(themeLine, { '--focus': 1, duration: 3, ease: 'power1.out' }, at(28));
+  tl.to(yaml, { x: 0, duration: 8, ease: 'power2.inOut' }, at(29));
   tl.to(cv, { opacity: 1, rotationY: 0, x: 0, scale: 1, duration: 8, ease: 'power3.out' }, at(33));
   tl.to(veil, { yPercent: 100, duration: 10, ease: 'none' }, at(42));
   tl.to(scan, { opacity: 0, duration: 0.5 }, at(51.5));
@@ -293,6 +288,7 @@ function pinnedScene(scene: HTMLElement) {
   // Derived UI: act tab, theme chip, `theme:` YAML line and progress follow the scroll position.
   let act = -1;
   let theme = -1;
+  let flash = false; // no flash for the first sync (page load)
   const sync = (progress: number) => {
     const p = progress * 100;
     gsap.set(bar, { scaleX: progress });
@@ -306,6 +302,11 @@ function pinnedScene(scene: HTMLElement) {
       theme = th;
       chips.forEach((c, i) => c.setAttribute('aria-selected', String(i === th)));
       if (themeName) themeName.textContent = names[th] ?? '';
+      if (flash && themeValue) {
+        themeValue.classList.remove('flash');
+        void themeValue.offsetWidth; // restart the CSS animation
+        themeValue.classList.add('flash');
+      }
     }
   };
 
@@ -327,6 +328,7 @@ function pinnedScene(scene: HTMLElement) {
   });
   landing.pin = { start: st.start, end: st.end };
   sync(st.progress);
+  flash = true;
 
   const sceneAt = (moment: number) => {
     window.scrollTo({ top: st.start + (st.end - st.start) * (moment / 100), behavior: 'instant' });
@@ -335,10 +337,10 @@ function pinnedScene(scene: HTMLElement) {
   landing.sceneAt = sceneAt;
 
   // Act tabs and theme chips jump to the matching moment of the timeline.
-  const acts = [MOMENTS.write.end, MOMENTS.generate.end, MOMENTS.theme.end];
+  const acts = [MOMENTS.write.end, MOMENTS.generate.end, MOMENTS.horizonShown];
   const themeMoments = [MOMENTS.write.end, MOMENTS.wipe1 + 5, MOMENTS.wipe2 + 5];
   const onTab = (i: number) => () => sceneAt(acts[i]);
-  const onChip = (i: number) => () => sceneAt(i === 0 ? MOMENTS.theme.start + 4 : themeMoments[i]);
+  const onChip = (i: number) => () => sceneAt(i === 0 ? MOMENTS.theme.start + 4 : i === 1 ? MOMENTS.horizonShown : themeMoments[i]);
   const tabHandlers = tabs.map((t, i) => [t, onTab(i)] as const);
   const chipHandlers = chips.map((c, i) => [c, onChip(i)] as const);
   [...tabHandlers, ...chipHandlers].forEach(([el, fn]) => el.addEventListener('click', fn));
@@ -350,7 +352,9 @@ function pinnedScene(scene: HTMLElement) {
     [...tabHandlers, ...chipHandlers].forEach(([el, fn]) => el.removeEventListener('click', fn));
     st.kill();
     tl.kill();
-    gsap.set([cv, yaml, ...lines, ...badges, veil, scan, edge, chipsEl, ...titles, ...previews, ...imgs, bar], { clearProps: 'all' });
+    gsap.set([cv, yaml, ...lines, ...(themeLine ? [themeLine] : []), ...badges, veil, scan, edge, chipsEl, ...titles, ...previews, ...imgs, bar], { clearProps: 'all' });
+    gsap.set([...tinted, ...(themeLine ? [themeLine] : [])], { clearProps: '--tint,--focus' });
+    themeValue?.classList.remove('flash');
     previews.forEach((p) => (p.hidden = false));
     skip?.setAttribute('data-active', 'false');
     delete scene.dataset.mode;
