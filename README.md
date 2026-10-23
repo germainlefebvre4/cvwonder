@@ -7,7 +7,10 @@ CV Wonder is a tool that allows you to create a CV in a few minutes. It allows y
 Don't waste any more time formatting your CV, let CV Wonder do it for you and just focus on the content.
 
 <p align="center">
-    <img src="./docs/github-pages/static/img/logo.svg" alt="cvwonder" width="400px" style="display: block; margin: 0 auto;" />
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="./docs/github-pages/public/img/logo-dark.svg">
+      <img src="./docs/github-pages/public/img/logo-light.svg" alt="cvwonder" width="400px" style="display: block; margin: 0 auto;" />
+    </picture>
 </p>
 
 ## Table of Contents
@@ -64,46 +67,7 @@ cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-defau
 cvwonder generate --input=cv.yml --output=generated/ --theme=default
 ```
 
-### Branch Management
-
-Install themes from specific branches or switch between them:
-
-```bash
-# Install from default branch
-cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-default
-
-# Install from specific branch
-cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-default@develop
-
-# Switch to another branch (use --force to discard local changes)
-cvwonder themes install https://github.com/germainlefebvre4/cvwonder-theme-default@main --force
-```
-
-### Installing Private Themes
-
-CVWonder supports installing themes from private GitHub repositories with automatic authentication detection:
-
-```bash
-# Option 1: GitHub CLI (recommended - automatic credential detection)
-gh auth login
-cvwonder themes install https://github.com/your-org/your-private-theme
-
-# Option 2: Environment variable
-export GITHUB_TOKEN="ghp_your_personal_access_token"
-cvwonder themes install https://github.com/your-org/your-private-theme
-
-# Option 3: Alternative environment variable
-export GH_TOKEN="ghp_your_personal_access_token"
-cvwonder themes install https://github.com/your-org/your-private-theme
-```
-
-**Authentication Priority:**
-1. GitHub CLI (`gh`) credentials
-2. `GITHUB_TOKEN` environment variable
-3. `GH_TOKEN` environment variable
-4. Unauthenticated (public repositories only)
-
-See the [Theme Installation Documentation](https://cvwonder.fr/docs/themes/install-remote-theme) for more details.
+Branches, tags and private repositories are covered in [Install a remote theme](https://cvwonder.fr/themes/install-remote/).
 
 ## Validate your CV
 
@@ -117,7 +81,7 @@ cvwonder validate --input=cv.yml
 cvwonder generate --validate --input=cv.yml
 ```
 
-See the [Validation Documentation](https://cvwonder.fr/docs/validation/) for more details.
+See the [Validation Documentation](https://cvwonder.fr/guides/validate-your-cv/) for more details.
 
 ## Generate your CV
 
@@ -214,7 +178,7 @@ To allow basic string manipulation, here are the functions available in the temp
 | `replace` | Replace a substring by another | `{{ replace "Hello World" "World" "Universe" }}` | `Hello Universe` |
 | `join` | Join a list of strings with a separator | `{{ join ["one", "two", "three"] ", " }}` | `one, two, three` |
 
-See the [Theme Functions Documentation](https://cvwonder.fr/docs/themes/theme-functions) for more details.
+See the [Theme Functions Documentation](https://cvwonder.fr/reference/theme-functions/) for more details.
 
 ## Docker
 
@@ -267,7 +231,7 @@ A `.vscode/launch.json` file is provided to help you debug the application.
 
 ## Contributing
 
-Contributions are welcome! Please read the [contributing guidelines](https://cvwonder.fr/docs/contributing/) before submitting a pull request.
+Contributions are welcome! Please read the [contributing guidelines](https://cvwonder.fr/contribute/) before submitting a pull request.
 
 ## Contributors
 

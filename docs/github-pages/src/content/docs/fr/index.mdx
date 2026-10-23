@@ -1,0 +1,97 @@
+---
+title: Documentation
+description: Générez de beaux CV professionnels à partir de YAML en quelques secondes avec CV Wonder.
+template: splash
+hero:
+  title: Votre CV, du YAML au wow.
+  tagline: Écrivez votre CV une fois dans un fichier YAML, choisissez un thème et générez un CV HTML ou PDF soigné en quelques secondes.
+  actions:
+    - text: Créer votre premier CV
+      link: /fr/start/first-cv/
+      icon: right-arrow
+    - text: Installer
+      link: /fr/start/install/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Scene from '~/components/Scene.astro';
+import Cta from '~/components/Cta.astro';
+
+<Scene
+  yaml={[
+    "person:",
+    "  name: Ada Lovelace",
+    "  profession: Ingénieure plateforme",
+    "  location: Lille",
+    "abstract:",
+    "  - Je construis des plateformes agréables à utiliser.",
+    "technicalSkills:",
+    "  - Kubernetes, Terraform, Go",
+    "career:",
+    "  - companyName: Acme",
+    "    position: Ingénieure plateforme",
+    "  - companyName: Initech",
+    "    position: Ingénieure DevOps",
+    "education:",
+    "  - schoolName: Université de Lille",
+    "languages:",
+    "  - name: français, anglais",
+    "theme: default",
+  ]}
+  themes={[
+    { name: 'default', title: 'Default', image: '/img/theme-default-w800px.png', width: 800, height: 1643, alt: 'CV généré avec le thème default' },
+    { name: 'horizon-timeline', title: 'Horizon timeline', image: '/img/theme-horizon-timeline-w800px.png', width: 800, height: 2831, alt: 'CV généré avec le thème horizon timeline' },
+    { name: 'my-theme', title: 'Créer le vôtre', image: '/img/theme-create-your-own-w800px.png', width: 800, height: 533, alt: 'Aperçu générique d’un thème personnalisé' },
+  ]}
+/>
+
+<section id="why">
+
+## Pourquoi CV Wonder
+
+<div class="why">
+
+<CardGrid>
+  <Card title="Rapide" icon="rocket">
+    Générez un CV soigné en quelques secondes. Concentrez-vous sur le contenu, CV Wonder s'occupe de la présentation.
+  </Card>
+  <Card title="Personnalisable" icon="puzzle">
+    Choisissez un thème de la communauté ou créez le vôtre avec de simples gabarits HTML.
+  </Card>
+  <Card title="Validé" icon="approve-check">
+    Un schéma YAML repère les erreurs tôt, avec numéros de ligne et suggestions.
+  </Card>
+  <Card title="Pensé pour l'échelle" icon="bars">
+    Générez des milliers de CV en une commande, en CI ou de façon planifiée.
+  </Card>
+</CardGrid>
+
+</div>
+
+</section>
+
+<section id="start">
+
+## Par où commencer
+
+<CardGrid>
+  <Card title="Je veux mon propre CV" icon="document">
+    Installez CV Wonder et générez votre premier CV en quelques minutes. [Créer votre premier CV](/fr/start/first-cv/).
+  </Card>
+  <Card title="Je génère des CV en masse" icon="list-format">
+    Produisez des dizaines ou des milliers de CV en une commande. [Lire le guide du mode en masse](/fr/guides/bulk-mode/).
+  </Card>
+  <Card title="J'écris des thèmes" icon="pencil">
+    Concevez l'apparence d'un CV avec de simples gabarits HTML et partagez-la. [Écrire un thème](/fr/themes/write/).
+  </Card>
+</CardGrid>
+
+</section>
+
+<Cta
+  title="Prêt à créer votre CV ?"
+  text="Installez CV Wonder et obtenez votre premier CV en quelques minutes."
+  label="Commencer"
+  href="/fr/start/install/"
+/>

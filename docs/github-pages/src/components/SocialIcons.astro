@@ -1,0 +1,24 @@
+---
+import Default from '@astrojs/starlight/components/SocialIcons.astro';
+
+const version = import.meta.env.CVWONDER_VERSION || 'dev';
+const releaseUrl = `https://github.com/germainlefebvre4/cvwonder/releases/tag/${version}`;
+---
+
+<a class="cvw-version" href={releaseUrl} rel="noopener">{version}</a>
+<Default {...Astro.props}><slot /></Default>
+
+<style>
+  .cvw-version {
+    font-family: var(--sl-font-system-mono);
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 999px;
+    padding: 0.1rem 0.6rem;
+  }
+  .cvw-version:hover {
+    color: var(--sl-color-text-accent);
+  }
+</style>

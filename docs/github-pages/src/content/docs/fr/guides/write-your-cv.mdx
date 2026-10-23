@@ -1,0 +1,425 @@
+---
+title: "Écrire votre CV"
+description: Créer le fichier YAML de votre CV et remplir chaque section.
+sidebar:
+  order: 3
+---
+
+import { Code } from '@astrojs/starlight/components';
+import cvExample from '~/examples/cv.yml?raw';
+
+Votre CV tient dans un seul fichier YAML. Les thèmes le lisent pour produire votre CV : le fichier ne contient donc que votre contenu, ni mise en page ni style.
+
+## Créer le fichier
+
+Il y a deux façons de commencer, toutes deux avec `cvwonder init`.
+
+**Squelette (par défaut).** Écrit un `cv.yml` entièrement commenté que vous modifiez à la main :
+
+```bash
+cvwonder init
+```
+
+Utilisez `--output-file` pour choisir un autre nom, par exemple `cvwonder init --output-file resume.yml`. Si le fichier existe déjà, `init` s'arrête avec une erreur et ne le touche pas.
+
+**Assistant interactif.** Vous pose des questions section par section et écrit le YAML pour vous :
+
+```bash
+cvwonder init --interactive
+```
+
+Toutes les sections sauf `person` peuvent être ignorées. Le fichier est enregistré après chaque section terminée : une interruption (`Ctrl+C`) ne fait rien perdre. Pour reprendre où vous vous êtes arrêté, passez `--resume` avec le même `--output-file` :
+
+```bash
+cvwonder init --interactive --resume
+```
+
+## Ce qui est obligatoire
+
+Seule la section `person` est exigée par le [schéma YAML](/fr/reference/yaml-schema/). Tout le reste est facultatif : renseignez les sections que votre thème affiche. Vérifiez votre fichier à tout moment avec `cvwonder validate`, comme décrit dans [Valider votre CV](/fr/guides/validate-your-cv/).
+
+## Sections
+
+Le CV est découpé en sections. Chaque section a un titre et une liste d'éléments. Chaque élément a un titre et une description.
+
+Voici la liste des sections.
+
+### Entreprise (`company`)
+
+La section entreprise décrit l'entreprise pour laquelle vous travaillez.
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| Name | string | Le nom de l'entreprise. |
+| Logo | string | Le logo de l'entreprise. |
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+company:
+  name: zatsit
+  logo: images/zatsit-logo.webp
+```
+</details>
+
+### Personne (`person`)
+
+La section personne vous décrit, « vous ».
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| Name | string | Votre nom. |
+| Depiction | string | Une courte description de vous. |
+| Profession | string | Votre profession. |
+| Location | string | Votre localisation. |
+| Citizenship | string | Votre nationalité. |
+| Email | string | Votre adresse e-mail. |
+| Site | string | Votre site. |
+| Phone | string | Votre numéro de téléphone. |
+| Experience | object | Votre expérience professionnelle (facultatif). |
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+person:
+  name: Germain Lefebvre
+  depiction: Software Engineer
+  profession: Software Engineer
+  location: Lille, France
+  citizenship: French
+  email: germain@lefebvre.fr
+  site: https://germainlefebvre.fr
+  phone: +33 6 12 34 56 78
+  experience:
+    years: 10
+    since: 2014
+```
+</details>
+
+#### Expérience (`experience`)
+
+La sous-section expérience est facultative et permet d'indiquer votre nombre total d'années d'expérience professionnelle.
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| Years | integer | Nombre total d'années d'expérience professionnelle (facultatif). |
+| Since | integer | Année de début de votre expérience professionnelle (facultatif, entre 1900 et 2100). |
+
+:::note
+Vous pouvez fournir `years`, `since`, ou les deux. Tous les champs sont facultatifs et les thèmes peuvent s'en servir pour afficher l'expérience sur votre CV.
+:::
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+person:
+  name: John Doe
+  experience:
+    years: 10
+    since: 2014
+```
+</details>
+
+### Réseaux sociaux (`socialNetworks`)
+
+La section réseaux sociaux décrit vos réseaux sociaux.
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| Github | string | Votre profil Github. |
+| Stackoverflow | string | Votre profil Stackoverflow. |
+| Linkedin | string | Votre profil Linkedin. |
+| Twitter | string | Votre profil Twitter. |
+| Bluesky | string | Votre profil Bluesky. |
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+socialNetworks:
+  github: germainlefebvre4
+  stackoverflow: germainlefebvre4
+  linkedin: germainlefebvre4
+  twitter: germainlefebvr4
+  bluesky: germainlefebvre4
+```
+</details>
+
+### Résumé (`abstract`)
+
+La section résumé présente un court résumé de votre profil.
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| - | array of strings | Le texte du résumé. |
+
+Vous pouvez ajouter plusieurs paragraphes de résumé.
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+abstract:
+  - "I am a software engineer with 5 years of experience in the field."
+  - "I am passionate about technology and I love to learn new things."
+```
+</details>
+
+### Carrière (`career`)
+
+La section carrière décrit vos différents parcours et expériences.
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| CompanyName | string | Le nom de l'entreprise. |
+| CompanyLogo | string | Le logo de l'entreprise. |
+| Duration | string | La durée de votre expérience. |
+| Missions | array of objects | Les missions que vous avez réalisées. |
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+career:
+  - companyName: zatsit
+    companyLogo: images/zatsit-logo.webp
+    duration: 2 years
+    missions:
+      - position: Software Engineer
+        company: zatsit
+        location: Lille, France
+        dates: 2020-2022
+        summary: Developed a web application using React and Node.js.
+        description:
+          - Developed the front-end using React.
+          - Developed the back-end using Node.js.
+        technologies:
+          - React
+          - Node.js
+        project: MyProject
+```
+</details>
+
+#### Missions (`missions`)
+
+La sous-section missions décrit vos missions en détail.
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| Position | string | Votre poste ou titre sur cette mission. |
+| Company | string | L'entreprise pour laquelle vous avez travaillé. |
+| CompanyLogo | string | Le logo de l'entreprise (facultatif). |
+| Location | string | Le lieu de la mission ou de l'entreprise. |
+| Dates | string | Les dates de votre expérience. |
+| Summary | string | Un résumé, courte description, de votre expérience. |
+| Description | array of strings | Une description complète de votre expérience. |
+| Technologies | array of strings | Les technologies utilisées sur cette mission. |
+| Project | string | Le nom du projet sur lequel vous avez travaillé. |
+
+:::note[Format des dates]
+Le champ `Dates` est un champ texte. Vous pouvez utiliser le format de votre choix : le thème ne l'interprète pas.
+:::
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+career:
+  - companyName: ...
+    missions:
+      - position: Software Engineer
+        company: zatsit
+        companyLogo: images/zatsit-logo.webp
+        location: Lille, France
+        dates: 2020-2022
+        summary: Developed a web application using React and Node.js.
+        description:
+          - Developed the front-end using React.
+          - Developed the back-end using Node.js.
+        technologies:
+          - React
+          - Node.js
+        project: MyProject
+```
+</details>
+
+### Compétences techniques (`technicalSkills`)
+
+La section compétences techniques décrit vos compétences techniques.
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| Domains | array of objects | Les domaines dans lesquels vous êtes compétent. |
+
+#### Domaines (`domains`)
+
+La sous-section domaines décrit vos domaines et vos compétences.
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| Name | string | Le nom du domaine. |
+| Competencies | array of objects | Les compétences que vous avez dans ce domaine. |
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+technicalSkills:
+  domains:
+    - name: Front-end
+      competencies:
+        - name: React
+          level: 5
+        - name: Angular
+          level: 3
+    - name: Back-end
+      competencies:
+        - name: Node.js
+          level: 4
+```
+</details>
+
+:::note[Niveau]
+Le champ `Level` est un nombre de 0 à 100. Il représente votre niveau d'expertise dans cette compétence.
+:::
+
+### Projets personnels (`sideProjects`)
+
+La section projets personnels décrit les projets personnels ou open source sur lesquels vous avez travaillé.
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| Name | string | Le nom du projet. |
+| Position | string | Votre rôle dans ce projet. |
+| Description | string | Une courte description du projet. |
+| Link | string | Le lien vers le projet. |
+| Type | string | Le type du projet. |
+| Langs | string | Les langages utilisés dans le projet. |
+| Color | string | La couleur du projet. |
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+sideProjects:
+  - name: MyProject
+    position: Software Engineer
+    description: A web application using React and Node.js.
+    link: https://germainlefebvre.fr/myproject
+    type: github
+    langs: React, Node.js
+    color: 61dafb
+```
+</details>
+
+Le champ `Type` permet d'identifier la plateforme d'hébergement du projet. Le thème peut s'en servir pour afficher la bonne icône.
+
+### Certifications (`certifications`)
+
+La section certifications décrit les certifications que vous détenez.
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| CompanyName | string | Le nom de l'entreprise qui a délivré la certification. |
+| CertificationName | string | Le nom de la certification. |
+| Issuer | string | L'émetteur de la certification. |
+| Date | string | La date de la certification. |
+| Link | string | Le lien vers la certification. |
+| Badge | string | Le badge de la certification. |
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+certifications:
+  - companyName: AWS
+    certificationName: Solutions Architect Associate
+    issuer: Coursera
+    date: Mars 2018
+    link: https://www.credly.com/badges/dd09dc40-9ef8-43a4-addb-d861d4dadf26/public_url
+    badge: images/aws-certified-solutions-architect-associate.png
+```
+</details>
+
+### Langues (`languages`)
+
+La section langues décrit les langues que vous parlez.
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| Name | string | Le nom de la langue. |
+| Level | string | Le niveau dans la langue. |
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+languages:
+  - name: French
+    level: Native
+  - name: English
+    level: Fluent
+```
+</details>
+
+:::note[Niveau]
+Le champ `Level` est un champ texte. Il représente votre niveau dans la langue, formulé comme vous souhaitez l'afficher.
+:::
+
+### Formation (`education`)
+
+La section formation décrit votre scolarité et vos études.
+
+| Champ | Type | Description |
+| --- | --- | --- |
+| SchoolName | string | Le nom de l'école. |
+| SchoolLogo | string | Le logo de l'école. |
+| Degree | string | Le diplôme obtenu. |
+| Location | string | Le lieu de l'école. |
+| Dates | string | Les dates de votre formation. |
+| Link | string | Le lien vers l'école. |
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+education:
+  - schoolName: University of Lille
+    schoolLogo: images/university-of-lille-logo.webp
+    degree: Master's degree in Computer Science
+    location: Lille, France
+    dates: 2015-2018
+    link: https://www.univ-lille.fr/
+```
+</details>
+
+:::note[Format des dates]
+Le champ `Dates` est un champ texte. Vous pouvez utiliser le format de votre choix : le thème ne l'interprète pas.
+:::
+
+### Recommandations (`references`)
+
+La section recommandations décrit les recommandations professionnelles que vous avez reçues.
+
+| Champ | Description |
+| --- | --- |
+| Name | Le nom de la personne qui vous recommande. |
+| Position | Le poste de la personne. |
+| Company | L'entreprise de la personne. |
+| Date | La date de la recommandation. |
+| Url | L'URL du profil de la personne (par exemple LinkedIn). |
+| SocialNetworks | Les réseaux sociaux de la personne (voir [Réseaux sociaux](#réseaux-sociaux-socialnetworks) pour les champs disponibles). |
+| Description | Le texte de la recommandation. |
+
+<details>
+<summary>**Exemple**</summary>
+```yaml
+references:
+  - name: Jane Doe
+    position: CTO
+    company: TechCorp
+    date: Jan 2024
+    url: https://linkedin.com/in/janedoe
+    socialNetworks:
+      linkedin: janedoe
+      github: janedoe-gh
+    description: "Excellent engineer, highly skilled!"
+```
+</details>
+
+## Exemple complet
+
+Voici l'exemple complet utilisé dans toute cette documentation. Il est validé avec `cvwonder validate` à chaque modification de la documentation. Chaque champ est décrit dans la [référence du schéma YAML](/fr/reference/yaml-schema/).
+
+<Code code={cvExample} lang="yaml" title="cv.yml" />

@@ -19,15 +19,15 @@ test:
 
 doc-install:
 	cd docs/github-pages/; \
-	pnpm install;
+	npm ci;
 
 doc-build:
 	cd docs/github-pages/; \
-	pnpm build;
+	npm run build;
 
 doc-serve:
 	cd docs/github-pages/; \
-	pnpm start;
+	npm run dev;
 
 goreleser-check:
 	goreleaser check

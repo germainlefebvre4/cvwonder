@@ -1,0 +1,275 @@
+/*
+ * CV Wonder design tokens.
+ * Modern and crisp: cool neutrals, one vermilion accent, soft depth.
+ * `scripts/check-contrast.mjs` reads the color pairs below; keep the
+ * `--cvw-*` names in sync with it.
+ */
+
+/* Self-hosted Inter. The latin file is preloaded (see astro.config.mjs) and
+   font-display is `block`, so text never flashes in a fallback font. */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: block;
+  font-weight: 100 900;
+  src: url('/fonts/inter-latin.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/inter-latin-ext.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  --sl-font: 'Inter Variable', system-ui, sans-serif;
+  --cvw-font-display: 'Inter Variable', system-ui, sans-serif;
+  --sl-content-width: 62rem;
+  --sl-sidebar-width: 15.5rem;
+  --sl-content-pad-x: 1.5rem;
+
+  /* Dark mode (Starlight's default scope) */
+  --cvw-accent: #fb923c;
+  --cvw-accent-low: #2a1306;
+  --cvw-on-accent: #0b0b0f;
+  --cvw-bg: #0b0b0f;
+  --cvw-bg-raised: #131318;
+  --cvw-text: #ececf0;
+  --cvw-border: #26262e;
+  --cvw-glow: rgba(251, 146, 60, 0.18);
+
+  /* Landing aurora: decorative hues, never used for text, links or buttons. */
+  --cvw-aurora-1: rgba(251, 146, 60, 0.30);
+  --cvw-aurora-2: rgba(99, 102, 241, 0.30);
+  --cvw-aurora-3: rgba(217, 70, 239, 0.20);
+  /* Gradient-text stops of the hero title; each is checked at 4.5:1 by check-contrast.mjs. */
+  --cvw-grad-1: #fb923c;
+  --cvw-grad-2: #fb7185;
+  --cvw-grad-3: #a78bfa;
+
+  --sl-color-accent-low: var(--cvw-accent-low);
+  --sl-color-accent: var(--cvw-accent);
+  --sl-color-accent-high: var(--cvw-accent);
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #ececf0;
+  --sl-color-gray-2: #c4c4cc;
+  --sl-color-gray-3: #9494a0;
+  --sl-color-gray-4: #5a5a66;
+  --sl-color-gray-5: #34343d;
+  --sl-color-gray-6: #1c1c22;
+  --sl-color-gray-7: #131318;
+  --sl-color-black: var(--cvw-bg);
+  --sl-color-bg-nav: color-mix(in srgb, var(--cvw-bg) 82%, transparent);
+  --sl-color-bg-sidebar: var(--cvw-bg);
+  --sl-color-hairline: var(--cvw-border);
+  --sl-color-hairline-light: var(--cvw-border);
+  --sl-color-hairline-shade: var(--cvw-border);
+
+  /* Caution is gold, danger red: both stay apart from the vermilion accent and the blue note. */
+  --sl-color-orange-low: #2e2306;
+  --sl-color-orange: #eab308;
+  --sl-color-orange-high: #fde68a;
+  --sl-color-red-low: #3a1515;
+  --sl-color-red: #ef4444;
+  --sl-color-red-high: #fecaca;
+}
+
+:root[data-theme='light'] {
+  --cvw-accent: #c2410c;
+  --cvw-accent-low: #ffedd5;
+  --cvw-on-accent: #ffffff;
+  --cvw-bg: #ffffff;
+  --cvw-bg-raised: #f7f7f9;
+  --cvw-text: #18181b;
+  --cvw-border: #e6e6ec;
+  --cvw-glow: rgba(194, 65, 12, 0.12);
+
+  --cvw-aurora-1: rgba(251, 146, 60, 0.20);
+  --cvw-aurora-2: rgba(99, 102, 241, 0.16);
+  --cvw-aurora-3: rgba(217, 70, 239, 0.12);
+  --cvw-grad-1: #c2410c;
+  --cvw-grad-2: #be123c;
+  --cvw-grad-3: #6d28d9;
+
+  --sl-color-white: #09090b;
+  --sl-color-gray-1: #18181b;
+  --sl-color-gray-2: #3f3f46;
+  --sl-color-gray-3: #62626d;
+  --sl-color-gray-4: #8b8b96;
+  --sl-color-gray-5: #d4d4dc;
+  --sl-color-gray-6: #eeeef2;
+  --sl-color-gray-7: #f7f7f9;
+  --sl-color-black: var(--cvw-bg);
+
+  --sl-color-orange-low: #fef3c7;
+  --sl-color-orange: #a16207;
+  --sl-color-orange-high: #713f12;
+  --sl-color-red-low: #fee2e2;
+  --sl-color-red: #dc2626;
+  --sl-color-red-high: #7f1d1d;
+}
+
+/* Typography */
+h1,
+h2,
+h3 {
+  font-family: var(--cvw-font-display);
+  letter-spacing: -0.025em;
+}
+h1 {
+  font-weight: 750;
+}
+h2 {
+  font-weight: 700;
+}
+
+/* Header: translucent with blur */
+header.header {
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+}
+
+/* Rounded, softer surfaces */
+.sl-markdown-content pre,
+.expressive-code .frame {
+  border-radius: 0.75rem;
+}
+.expressive-code .frame {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.starlight-aside {
+  border-radius: 0.75rem;
+}
+.sl-markdown-content table {
+  border-radius: 0.6rem;
+}
+
+/* Pill buttons */
+.sl-link-button {
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 0.7em 1.5em;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.sl-link-button.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px var(--cvw-glow);
+}
+
+/* Landing: the page frame must not scroll sideways (the scene is full-bleed). */
+:root[data-has-hero] body {
+  overflow-x: clip;
+}
+:root[data-has-hero] {
+  scroll-padding-top: var(--sl-nav-height);
+}
+:root[data-has-hero] .sl-markdown-content > :first-child {
+  margin-top: 0;
+}
+
+/* Audience cards: three across, softer */
+@media (min-width: 60rem) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+.card {
+  position: relative;
+  overflow: hidden;
+  padding: 1.5rem 1.4rem 1.4rem !important;
+  border-radius: 1.1rem;
+  border: 1px solid var(--cvw-border);
+  background:
+    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--cvw-accent) 9%, transparent), transparent 60%),
+    var(--sl-color-gray-7);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cvw-accent), transparent 80%);
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--cvw-accent) 55%, var(--cvw-border));
+  box-shadow: 0 18px 40px -18px var(--cvw-glow), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.card:hover::before {
+  opacity: 1;
+}
+.card .title {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  font-size: var(--sl-text-lg);
+  font-weight: 650;
+  color: var(--sl-color-white);
+}
+.card .icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0 !important;
+  font-size: 1.4rem;
+  border-radius: 0.8rem;
+  color: var(--cvw-accent) !important;
+  background: color-mix(in srgb, var(--cvw-accent) 14%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--cvw-accent) 32%, transparent) !important;
+}
+.card .body {
+  color: var(--sl-color-gray-2);
+  line-height: 1.6;
+}
+
+/* "Why" grid: as many columns as fit, never an orphan row of one */
+.why .card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr)) !important;
+}
+
+/* Card pointer spotlight (pointer position set by the landing script) */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(14rem circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--cvw-accent) 16%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.card:hover::after {
+  opacity: 1;
+}
+
+/* Landing sections: stable anchors below the fixed header */
+#why,
+#start,
+#get-started {
+  scroll-margin-top: var(--sl-nav-height);
+}
+
+/* Closing call to action: pulsing halo, only while animation is enabled */
+@media (prefers-reduced-motion: no-preference) {
+  .cvw-anim .cta::before {
+    animation: cvw-halo 4s ease-in-out infinite;
+  }
+}
+@keyframes cvw-halo {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.04);
+  }
+}

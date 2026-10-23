@@ -41,11 +41,8 @@ dist/
 
 # Docs
 docs/github-pages/node_modules/
-docs/github-pages/build
-
-# Generated files
-docs/github-pages/.docusaurus
-docs/github-pages/.cache-loader
+docs/github-pages/dist/
+docs/github-pages/.astro/
 
 # Misc
 docs/github-pages/.DS_Store

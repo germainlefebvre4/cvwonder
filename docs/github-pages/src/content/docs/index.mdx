@@ -1,0 +1,97 @@
+---
+title: Documentation
+description: Generate beautiful, professional CVs from YAML in seconds with CV Wonder.
+template: splash
+hero:
+  title: Your CV, from YAML to wonder.
+  tagline: Write your CV once in a YAML file, pick a theme, and generate a polished HTML or PDF CV in seconds.
+  actions:
+    - text: Build your first CV
+      link: /start/first-cv/
+      icon: right-arrow
+    - text: Install
+      link: /start/install/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Scene from '~/components/Scene.astro';
+import Cta from '~/components/Cta.astro';
+
+<Scene
+  yaml={[
+    "person:",
+    "  name: Ada Lovelace",
+    "  profession: Platform engineer",
+    "  location: Lille",
+    "abstract:",
+    "  - I build platforms people enjoy using.",
+    "technicalSkills:",
+    "  - Kubernetes, Terraform, Go",
+    "career:",
+    "  - companyName: Acme",
+    "    position: Platform engineer",
+    "  - companyName: Initech",
+    "    position: DevOps engineer",
+    "education:",
+    "  - schoolName: Lille University",
+    "languages:",
+    "  - name: French, English",
+    "theme: default",
+  ]}
+  themes={[
+    { name: 'default', title: 'Default', image: '/img/theme-default-w800px.png', width: 800, height: 1643, alt: 'CV rendered with the default theme' },
+    { name: 'horizon-timeline', title: 'Horizon timeline', image: '/img/theme-horizon-timeline-w800px.png', width: 800, height: 2831, alt: 'CV rendered with the horizon timeline theme' },
+    { name: 'my-theme', title: 'Create your own', image: '/img/theme-create-your-own-w800px.png', width: 800, height: 533, alt: 'Placeholder preview for a custom theme' },
+  ]}
+/>
+
+<section id="why">
+
+## Why CV Wonder
+
+<div class="why">
+
+<CardGrid>
+  <Card title="Fast" icon="rocket">
+    Generate a polished CV in seconds. Focus on your content, CV Wonder handles the presentation.
+  </Card>
+  <Card title="Themeable" icon="puzzle">
+    Pick a community theme or build your own with plain HTML templates.
+  </Card>
+  <Card title="Validated" icon="approve-check">
+    A YAML schema catches mistakes early, with line numbers and suggestions.
+  </Card>
+  <Card title="Built for scale" icon="bars">
+    Render thousands of CVs in one command, in CI or on a schedule.
+  </Card>
+</CardGrid>
+
+</div>
+
+</section>
+
+<section id="start">
+
+## Where to start
+
+<CardGrid>
+  <Card title="I want my own CV" icon="document">
+    Install CV Wonder and generate your first CV in minutes. [Build your first CV](/start/first-cv/).
+  </Card>
+  <Card title="I generate CVs in bulk" icon="list-format">
+    Render dozens or thousands of CVs in one command, in CI or on a schedule. [Read the bulk mode guide](/guides/bulk-mode/).
+  </Card>
+  <Card title="I write themes" icon="pencil">
+    Design the look of a CV with plain HTML templates and share it. [Write a theme](/themes/write/).
+  </Card>
+</CardGrid>
+
+</section>
+
+<Cta
+  title="Ready to build your CV?"
+  text="Install CV Wonder and have your first CV in a few minutes."
+  label="Get started"
+  href="/start/install/"
+/>

@@ -1,0 +1,553 @@
+---
+// "From YAML to CV" scene. The default markup is the static page: the YAML example and
+// every theme preview as a captioned figure. src/scripts/landing.ts turns it into a pinned,
+// scroll-driven scene (wide screens) or a tab set (narrow screens, reduced motion).
+import { landingText } from '~/i18n/landing';
+
+interface Theme {
+  /** Name shown on the `theme:` YAML line. */
+  name: string;
+  title: string;
+  image: string;
+  width: number;
+  height: number;
+  alt: string;
+}
+interface Props {
+  /** YAML example, one entry per line (indentation kept). */
+  yaml: string[];
+  themes: Theme[];
+}
+const { yaml, themes } = Astro.props;
+const t = landingText(Astro.locals.starlightRoute.lang).scene;
+
+const themeLine = yaml.findIndex((l) => l.startsWith('theme:'));
+const lines = yaml.map((raw, i) => {
+  const m = /^(\s*(?:- )?)([\w-]+):(.*)$/.exec(raw);
+  return { raw, i, indent: m?.[1] ?? '', key: m?.[2], value: m ? m[3].trim() : raw.trim(), isTheme: i === themeLine };
+});
+---
+
+<section id="scene" class="scene not-content" data-scene aria-labelledby="scene-label">
+  <div class="scene-pin" data-pin>
+    <h2 id="scene-label" class="scene-label">{t.label}</h2>
+    <div class="act-titles" data-act-titles>
+      {
+        t.actTitles.map((title, i) => (
+          <div class="act-title" data-act-title={i}>
+            <strong>{title}</strong>
+            <span>{t.actHints[i]}</span>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="stage" data-stage>
+      <div class="yaml" data-yaml>
+        <div class="bar"><i></i><i></i><i></i><span>{t.yamlFile}</span></div>
+        <pre><code>{
+          lines.map((l) => (
+            <span class:list={['yl', { theme: l.isTheme }]} data-line data-theme-line={l.isTheme ? '' : undefined}>
+              {l.key ? (
+                <><span class="ind">{l.indent}</span><span class="k">{l.key}:</span>{' '}{l.isTheme ? <span class="v" data-theme-name>{l.value}</span> : <span class="v">{l.value}</span>}</>
+              ) : (
+                <span class="v">{l.raw}</span>
+              )}
+            </span>
+          ))
+        }</code></pre>
+      </div>
+
+      <div class="cv-stage" data-cv>
+      <div class="cv">
+        <div class="bar"><i></i><i></i><i></i><span>{t.cvFile}</span></div>
+        <div class="viewport" data-viewport>
+          {
+            themes.map((th, i) => (
+              <figure class="preview" id={`preview-${i}`} role="tabpanel" data-preview={i} data-theme-name={th.name} aria-label={`${t.preview}: ${th.title}`}>
+                <img src={th.image} alt={th.alt} width={th.width} height={th.height} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+                <figcaption>{th.title}</figcaption>
+              </figure>
+            ))
+          }
+          <div class="veil" data-veil aria-hidden="true"><span class="scan"></span></div>
+          <div class="edge" data-edge aria-hidden="true"></div>
+        </div>
+      </div>
+      <span class="badge b-html" data-badge aria-hidden="true">{t.htmlBadge}</span>
+      <span class="badge b-pdf" data-badge aria-hidden="true">{t.pdfBadge}</span>
+      </div>
+    </div>
+
+    <div class="chips" role="tablist" aria-label={t.chips} data-chips>
+      {
+        themes.map((th, i) => (
+          <button type="button" role="tab" class="chip" id={`chip-${i}`} aria-controls={`preview-${i}`} aria-selected={i === 0 ? 'true' : 'false'} data-chip={i}>
+            {th.title}
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="tabs" role="group" aria-label={t.tabs} data-tabs>
+      {t.acts.map((a, i) => <button type="button" class="tab" data-tab={i} aria-pressed={i === 0 ? 'true' : 'false'}>{a}</button>)}
+    </div>
+    <div class="progress" aria-hidden="true"><i data-progress></i></div>
+  </div>
+</section>
+
+<style>
+  .scene {
+    margin-block: 2.5rem;
+    scroll-margin-top: var(--sl-nav-height);
+  }
+  .scene-label {
+    margin: 0 0 1.25rem;
+    text-align: center;
+    border: 0;
+  }
+  .act-titles,
+  .chips,
+  .tabs,
+  .progress {
+    display: none;
+  }
+
+  /* Default (static) layout: YAML, then the previews stacked as captioned figures. */
+  .stage {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: center;
+  }
+  .yaml,
+  .cv {
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+  .yaml,
+  .cv-stage {
+    width: min(100%, 46rem);
+  }
+  .yaml {
+    background: #0b0b0f;
+    border: 1px solid #26262e;
+    box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.45);
+    font-family: var(--sl-font-system-mono);
+    font-size: clamp(0.78rem, 2.2vw, 0.9rem);
+    color: #ececf0;
+  }
+  .cv {
+    background: var(--sl-color-gray-7);
+    border: 1px solid var(--sl-color-hairline);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.9rem;
+    background: #1c1c22;
+    color: #a8a8b3;
+    font-size: 0.75rem;
+  }
+  .bar i {
+    display: inline-block;
+    flex: none;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: #3f3f48;
+  }
+  .bar span:not(.badges) {
+    margin-left: 0.5rem;
+  }
+  .badge {
+    display: none;
+  }
+  pre {
+    margin: 0;
+    padding: 1rem 1.1rem 1.2rem;
+    overflow-x: auto;
+    background: transparent;
+    border: 0;
+  }
+  code {
+    display: block;
+  }
+  .yl {
+    display: block;
+    white-space: normal; /* the markup is indented: only the inner spans keep their spaces */
+    line-height: 1.55;
+  }
+  .yl > span {
+    white-space: pre;
+  }
+  /* --tint (0..1) is the resting tint of a line once the CV is rendered; --focus (0..1) emphasizes the
+     `theme:` line. GSAP animates both in the pinned scene; CSS sets them elsewhere. */
+  .yl {
+    --tint: 0;
+    --focus: 0;
+  }
+  /* The line's own opacity belongs to the act-one animation, so the tint dims its parts instead. */
+  .yl .k,
+  .yl .v {
+    opacity: calc(1 - var(--tint) * 0.35);
+  }
+  .k {
+    color: color-mix(in srgb, #fb923c, #a5b4fc calc(var(--tint) * 60%));
+  }
+  .v {
+    color: color-mix(in srgb, #c4c4cc, #8b93c4 calc(var(--tint) * 70%));
+  }
+  .yl.theme {
+    position: relative;
+    margin-inline: -1.1rem;
+    padding-inline: 1.1rem;
+    background: color-mix(in srgb, #fb923c calc(var(--focus) * 14%), transparent);
+    box-shadow:
+      inset calc(var(--focus) * 3px) 0 0 #fb923c,
+      0 0 calc(var(--focus) * 22px) calc(var(--focus) * -6px) #fb923c;
+  }
+  .yl.theme::before {
+    content: '\25B8';
+    position: absolute;
+    left: 0.45rem;
+    color: #fb923c;
+    opacity: var(--focus);
+  }
+  .yl.theme .v {
+    color: color-mix(in srgb, #c4c4cc, #fdba74 calc(var(--focus) * 100%));
+    font-weight: calc(400 + var(--focus) * 300);
+  }
+  .yl.theme .v.flash {
+    animation: theme-flash 0.9s ease-out;
+  }
+  @keyframes theme-flash {
+    0% {
+      background: color-mix(in srgb, #fb923c 65%, transparent);
+      color: #fff;
+    }
+    100% {
+      background: transparent;
+    }
+  }
+  /* Static and tabs modes: no timeline, so the `theme:` line is emphasized and the other lines stay untinted. */
+  .yl.theme {
+    --focus: 1;
+  }
+  .viewport {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1rem;
+    background: var(--sl-color-gray-6);
+  }
+  .preview {
+    margin: 0;
+  }
+  .preview img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #fff;
+    border-radius: 0.5rem;
+    border: 1px solid var(--sl-color-hairline);
+  }
+  figcaption {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+  }
+  .veil,
+  .edge {
+    display: none;
+  }
+  .chip,
+  .tab {
+    font: inherit;
+    line-height: 1.25;
+    cursor: pointer;
+  }
+
+  /* ---- Tabs mode (script): narrow screens and reduced motion ---- */
+  .scene[data-mode='tabs'] .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.25rem;
+  }
+  .scene[data-mode='tabs'] .preview[hidden] {
+    display: none;
+  }
+  .scene[data-mode='tabs'] .viewport {
+    padding: 0.75rem;
+  }
+  .chip {
+    margin: 0;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+    color: var(--sl-color-gray-2);
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-hairline);
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+  }
+  .chip:hover {
+    border-color: var(--cvw-accent);
+  }
+  .chip[aria-selected='true'] {
+    color: var(--cvw-accent);
+    border-color: var(--cvw-accent);
+    background: color-mix(in srgb, var(--cvw-accent) 12%, transparent);
+  }
+  /* Order: label, YAML, chips, selected preview. The stage dissolves so its children can be reordered. */
+  .scene[data-mode='tabs'] .stage {
+    display: contents;
+  }
+  .scene[data-mode='tabs'] .scene-pin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .scene[data-mode='tabs'] .scene-label {
+    order: 0;
+    margin: 0;
+  }
+  .scene[data-mode='tabs'] .yaml {
+    order: 1;
+  }
+  .scene[data-mode='tabs'] .chips {
+    order: 2;
+    margin: 0;
+  }
+  .scene[data-mode='tabs'] .cv-stage {
+    order: 3;
+    width: min(100%, 46rem);
+  }
+
+  /* ---- Pin mode (script, >= 900px, animation enabled) ---- */
+  .scene[data-mode='pin'] {
+    margin-block: 0;
+    margin-inline: calc(50% - 50vw);
+    padding-inline: 2rem;
+  }
+  .scene[data-mode='pin'] .scene-pin {
+    --yaml-w: clamp(27rem, calc(100vw - 54rem), 40rem);
+    --cv-w: min(46rem, calc(100vw - var(--yaml-w) - 7.5rem));
+    --cv-h: clamp(20rem, calc(100vh - 19rem), 46rem);
+    height: calc(100vh - var(--sl-nav-height));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block: 0.75rem;
+    gap: 0.5rem;
+    overflow: hidden;
+  }
+  .scene[data-mode='pin'] .scene-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .scene[data-mode='pin'] .act-titles {
+    display: block;
+    position: relative;
+    flex: none;
+    width: 100%;
+    height: 4.5rem;
+    text-align: center;
+  }
+  .scene[data-mode='pin'] .act-title {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    opacity: 0;
+  }
+  .scene[data-mode='pin'] .act-title:first-child {
+    opacity: 1;
+  }
+  .act-title strong {
+    font-size: clamp(1.4rem, 2.6vw, 2rem);
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    color: var(--sl-color-white);
+  }
+  .act-title span {
+    color: var(--sl-color-gray-2);
+  }
+  .scene[data-mode='pin'] .stage {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5rem;
+    position: relative;
+  }
+  .scene[data-mode='pin'] pre {
+    overflow: hidden;
+  }
+  .scene[data-mode='pin'] .yaml {
+    position: relative;
+    flex: none;
+    width: var(--yaml-w);
+    font-size: clamp(0.72rem, calc((100vh - 21rem) / 28), 1rem);
+    will-change: transform;
+  }
+  .scene[data-mode='pin'] pre {
+    padding-left: 1.7rem; /* room for the marker of the theme line */
+  }
+  .scene[data-mode='pin'] .yl.theme {
+    margin-left: -1.7rem;
+    padding-left: 1.7rem;
+  }
+  .scene[data-mode='pin'] .yl {
+    will-change: transform, opacity;
+  }
+  .scene[data-mode='pin'] .cv-stage {
+    position: relative;
+    flex: none;
+    width: var(--cv-w);
+    will-change: transform;
+  }
+  .scene[data-mode='pin'] .cv {
+    box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.55);
+  }
+  /* Output pills hang over the right edge of the CV frame. */
+  .scene[data-mode='pin'] .badge {
+    display: block;
+    position: absolute;
+    right: -0.9rem;
+    z-index: 7;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    font: 600 0.78rem/1.2 var(--sl-font-system-mono);
+    white-space: nowrap;
+    color: #fff;
+    background: rgba(15, 15, 20, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.6);
+  }
+  .badge::before {
+    content: '\2713  ';
+    color: #86efac;
+  }
+  .b-html {
+    top: 3.4rem;
+  }
+  .b-pdf {
+    top: 6.4rem;
+  }
+  .scene[data-mode='pin'] .viewport {
+    position: relative;
+    display: block;
+    height: var(--cv-h);
+    padding: 0;
+    overflow: hidden;
+    background: #fff;
+  }
+  .scene[data-mode='pin'] .preview {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: #fff;
+  }
+  .scene[data-mode='pin'] .preview img {
+    border: 0;
+    border-radius: 0;
+    will-change: transform;
+  }
+  .scene[data-mode='pin'] figcaption {
+    display: none;
+  }
+  .scene[data-mode='pin'] .veil {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background: #fff;
+    pointer-events: none;
+  }
+  .scan {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -2px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #fb923c, #fb7185, transparent);
+    box-shadow: 0 0 18px 4px rgba(251, 146, 60, 0.7);
+  }
+  .scene[data-mode='pin'] .edge {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .edge::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, transparent, #fb923c, #fb7185, transparent);
+    box-shadow: 0 0 18px 4px rgba(251, 146, 60, 0.7);
+  }
+  .scene[data-mode='pin'] .chips {
+    display: flex;
+    flex: none;
+    gap: 0.5rem;
+    min-height: 2.25rem;
+    opacity: 0;
+  }
+  .scene[data-mode='pin'] .tabs {
+    display: flex;
+    flex: none;
+    gap: 0.4rem;
+    align-items: center;
+    padding: 0.25rem;
+    border-radius: 999px;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-hairline);
+  }
+  .tab {
+    margin: 0;
+    padding: 0.3rem 1rem;
+    border-radius: 999px;
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+    color: var(--sl-color-gray-2);
+    background: transparent;
+    border: 0;
+  }
+  .tab[aria-pressed='true'] {
+    color: var(--cvw-on-accent);
+    background: var(--cvw-accent);
+  }
+  .scene[data-mode='pin'] .progress {
+    display: block;
+    flex: none;
+    width: min(22rem, 60%);
+    height: 3px;
+    border-radius: 3px;
+    background: var(--sl-color-gray-5);
+    overflow: hidden;
+  }
+  .progress i {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--cvw-grad-1), var(--cvw-grad-2), var(--cvw-grad-3));
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+import Default from '@astrojs/starlight/components/Footer.astro';
+
+const locale = Astro.locals.starlightRoute.locale;
+const prefix = locale ? `/${locale}` : '';
+const label = locale === 'fr' ? 'Licence MIT' : 'MIT license';
+---
+
+<Default {...Astro.props}><slot /></Default>
+<p class="cvw-footer">
+  <a href={`${prefix}/license/`}>{label}</a> · © {new Date().getFullYear()} Germain Lefebvre
+</p>
+
+<style>
+  .cvw-footer {
+    margin-top: 1rem;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+  }
+  .cvw-footer a {
+    color: inherit;
+  }
+</style>
