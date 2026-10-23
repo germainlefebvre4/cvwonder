@@ -7,7 +7,7 @@
 - TypeScript for configuration
 - Mermaid for diagrams
 - FontAwesome for icons
-- pnpm for package management
+- npm for package management (Node 24)
 
 ## Folder Structure
 

@@ -149,8 +149,8 @@ Documentation is built using [Astro Starlight](https://starlight.astro.build/) a
 
 ```bash
 cd docs/github-pages
-pnpm install
-pnpm dev
+npm ci
+npm run dev
 ```
 
 This starts a local development server at `http://localhost:4321/`
@@ -159,7 +159,7 @@ This starts a local development server at `http://localhost:4321/`
 
 ```bash
 cd docs/github-pages
-pnpm build
+npm run build
 ```
 
 ## Architecture

@@ -1,5 +1,5 @@
 // Computes the WCAG contrast ratio of every accent/background pair declared in
-// src/styles/theme.css and fails below 4.5:1. Run: `pnpm check:contrast`.
+// src/styles/theme.css and fails below 4.5:1. Run: `npm run check:contrast`.
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 

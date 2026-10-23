@@ -17,7 +17,7 @@ updates:
       - "dependencies"
       - "actions"
   - package-ecosystem: "npm"
-    directory: "/docs"
+    directory: "/docs/github-pages"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5

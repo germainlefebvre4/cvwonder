@@ -33,6 +33,6 @@ repos:
         verbose: true
       # - id: cvwonder-documentation
       #   name: cvwonder-documentation
-      #   entry: bash -c 'cd docs/github-pages && pnpm build'
+      #   entry: bash -c 'cd docs/github-pages && npm run build'
       #   language: system
       #   verbose: false

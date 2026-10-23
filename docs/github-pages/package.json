@@ -12,7 +12,7 @@
     "check:contrast": "node scripts/check-contrast.mjs"
   },
   "engines": {
-    "node": ">=22.23.4"
+    "node": ">=24"
   },
   "dependencies": {
     "@astrojs/starlight": "0.42.6",

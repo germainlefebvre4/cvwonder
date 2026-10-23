@@ -1,5 +1,5 @@
 // Asserts that every previously published URL has a redirect, and that every
-// redirect target exists in the built site. Run after `pnpm build`.
+// redirect target exists in the built site. Run after `npm run build`.
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { redirects } from '../redirects.ts';

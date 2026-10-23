@@ -14,18 +14,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v6
-        name: Install pnpm
-        with:
-          run_install: false
-          version: 10
-
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: 22
-          cache: 'pnpm'
-          cache-dependency-path: 'docs/github-pages/pnpm-lock.yaml'
+          node-version-file: docs/github-pages/.node-version
+          check-latest: true
+          cache: npm
+          cache-dependency-path: docs/github-pages/package-lock.json
 
       - name: Install Go
         uses: actions/setup-go@v7
@@ -34,19 +29,19 @@ jobs:
 
       - name: Install dependencies
         working-directory: docs/github-pages
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Build site (validates internal links)
         working-directory: docs/github-pages
-        run: pnpm build
+        run: npm run build
 
       - name: Check legacy redirects
         working-directory: docs/github-pages
-        run: pnpm check:redirects
+        run: npm run check:redirects
 
       - name: Check accent contrast
         working-directory: docs/github-pages
-        run: pnpm check:contrast
+        run: npm run check:contrast
 
       - name: Validate the example CV
         run: go run ./cmd/cvwonder validate --input docs/github-pages/src/examples/cv.yml

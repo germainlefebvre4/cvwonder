@@ -12,16 +12,16 @@ The documentation of [cvwonder.fr](https://cvwonder.fr) is built with [Astro](ht
 
 ## Commands
 
-Run from this directory, with Node 22 and pnpm 10:
+Run from this directory, with Node 24 and npm:
 
 | Command | Action |
 | --- | --- |
-| `pnpm install` | Install dependencies |
-| `pnpm dev` | Start the local dev server at `http://localhost:4321/` |
-| `pnpm build` | Build the site into `dist/` (fails on broken internal links) |
-| `pnpm preview` | Serve the built site locally |
-| `pnpm check:redirects` | Check every legacy URL redirects to an existing page (needs a prior build) |
-| `pnpm check:contrast` | Check the WCAG contrast of the accent color tokens |
+| `npm ci` | Install dependencies |
+| `npm run dev` | Start the local dev server at `http://localhost:4321/` |
+| `npm run build` | Build the site into `dist/` (fails on broken internal links) |
+| `npm run preview` | Serve the built site locally |
+| `npm run check:redirects` | Check every legacy URL redirects to an existing page (needs a prior build) |
+| `npm run check:contrast` | Check the WCAG contrast of the accent color tokens |
 
 The header shows the release version read from `CVWONDER_VERSION` (`dev` when unset).
 
