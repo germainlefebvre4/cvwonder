@@ -43,5 +43,9 @@ jobs:
         working-directory: docs/github-pages
         run: npm run check:contrast
 
+      - name: Check landing page
+        working-directory: docs/github-pages
+        run: npm run check:landing
+
       - name: Validate the example CV
         run: go run ./cmd/cvwonder validate --input docs/github-pages/src/examples/cv.yml

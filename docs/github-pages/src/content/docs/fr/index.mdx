@@ -15,21 +15,31 @@ hero:
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
-import TerminalDemo from '~/components/TerminalDemo.astro';
-import ThemeCards from '~/components/ThemeCards.astro';
-import Showcase from '~/components/Showcase.astro';
+import Scene from '~/components/Scene.astro';
 import Cta from '~/components/Cta.astro';
 
-<Showcase image="/img/theme-default-w800px.png" alt="Un CV généré avec le thème default" caption="Généré avec le thème default">
-  <TerminalDemo
-    label="Terminal"
-    lines={[
-      { cmd: 'cvwonder init', out: ['Created cv.yml — edit it and run: cvwonder generate'] },
-      { cmd: 'cvwonder serve', out: ['Listening on: http://localhost:3000'] },
-      { cmd: 'cvwonder generate', out: ['CV generated successfully'] },
-    ]}
-  />
-</Showcase>
+<Scene
+  yaml={[
+    "person:",
+    "  name: Ada Lovelace",
+    "  profession: Ingénieure plateforme",
+    "  location: Lille",
+    "abstract:",
+    "  - Je construis des plateformes agréables à utiliser.",
+    "career:",
+    "  - company: Acme",
+    "    position: Ingénieure plateforme",
+    "    dates: 2022 - aujourd'hui",
+    "theme: default",
+  ]}
+  themes={[
+    { name: 'default', title: 'Default', image: '/img/theme-default-w800px.png', width: 800, height: 1643, alt: 'CV généré avec le thème default' },
+    { name: 'horizon-timeline', title: 'Horizon timeline', image: '/img/theme-horizon-timeline-w800px.png', width: 800, height: 2831, alt: 'CV généré avec le thème horizon timeline' },
+    { name: 'my-theme', title: 'Créer le vôtre', image: '/img/theme-create-your-own-w800px.png', width: 800, height: 533, alt: 'Aperçu générique d’un thème personnalisé' },
+  ]}
+/>
+
+<section id="why">
 
 ## Pourquoi CV Wonder
 
@@ -52,6 +62,10 @@ import Cta from '~/components/Cta.astro';
 
 </div>
 
+</section>
+
+<section id="start">
+
 ## Par où commencer
 
 <CardGrid>
@@ -66,33 +80,7 @@ import Cta from '~/components/Cta.astro';
   </Card>
 </CardGrid>
 
-## Thèmes
-
-<ThemeCards
-  items={[
-    {
-      title: 'Default',
-      description: 'Un CV sobre sur une seule colonne. Le thème utilisé dans le pas-à-pas.',
-      image: '/img/theme-default-w800px.png',
-      href: '/fr/themes/gallery/',
-      alt: 'CV généré avec le thème default',
-    },
-    {
-      title: 'Horizon timeline',
-      description: 'Une frise chronologique qui met votre parcours en avant.',
-      image: '/img/theme-horizon-timeline-w800px.png',
-      href: '/fr/themes/gallery/',
-      alt: 'CV généré avec le thème horizon timeline',
-    },
-    {
-      title: 'Créer le vôtre',
-      description: 'Partez de zéro et publiez-le pour les autres.',
-      image: '/img/theme-create-your-own-w800px.png',
-      href: '/fr/themes/write/',
-      alt: 'Aperçu générique d’un thème personnalisé',
-    },
-  ]}
-/>
+</section>
 
 <Cta
   title="Prêt à créer votre CV ?"

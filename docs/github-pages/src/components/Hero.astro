@@ -1,0 +1,381 @@
+---
+// Landing hero (replaces Starlight's Hero, which only renders on pages declaring `hero`).
+// Title, tagline and actions come from the page frontmatter. The default markup is the
+// complete static page: scripts only add motion on top (see src/scripts/landing.ts).
+import { LinkButton } from '@astrojs/starlight/components';
+import DefaultHero from '@astrojs/starlight/components/Hero.astro';
+import LandingScript from './LandingScript.astro';
+import { landingText } from '~/i18n/landing';
+
+const { data, id } = Astro.locals.starlightRoute.entry;
+// Other pages that declare a hero (the 404 page) keep Starlight's own.
+const isLanding = id === '' || id === 'fr' || id === 'index' || id === 'fr/index';
+const { title = data.title, tagline, actions = [] } = data.hero || {};
+const t = landingText(Astro.locals.starlightRoute.lang);
+
+const words = title.split(/\s+/).filter(Boolean);
+const lines = [
+  { cmd: 'cvwonder init', out: 'Created cv.yml — edit it and run: cvwonder generate' },
+  { cmd: 'cvwonder serve', out: 'Listening on: http://localhost:3000' },
+  { cmd: 'cvwonder generate', out: 'CV generated successfully' },
+].map((l) => ({ ...l, text: `$ ${l.cmd}` }));
+
+const sections = [
+  { id: 'intro', label: t.rail.intro },
+  { id: 'scene', label: t.rail.scene },
+  { id: 'why', label: t.rail.why },
+  { id: 'start', label: t.rail.start },
+  { id: 'get-started', label: t.rail.getStarted },
+];
+---
+
+{!isLanding && <DefaultHero {...Astro.props} />}
+{isLanding && <>
+<div class="aurora" aria-hidden="true" data-aurora><i></i><i></i><i></i></div>
+
+<div class="cvw-hero" id="intro" data-hero>
+  <div class="copy">
+    <h1 id="_top" data-page-title>
+      {words.map((w, i) => <><span class:list={['hw', { grad: i === words.length - 1 }]} data-word>{w}</span>{i < words.length - 1 ? ' ' : ''}</>)}
+    </h1>
+    {tagline && <p class="tagline" data-tagline set:html={tagline} />}
+    <div class="actions" data-actions>
+      {
+        actions.map(({ attrs: { class: className, ...attrs } = {}, icon, link: href, text, variant }) => (
+          <LinkButton {href} {variant} icon={icon?.name} class:list={[className]} {...attrs}>
+            {text}
+            {icon?.html && <Fragment set:html={icon.html} />}
+          </LinkButton>
+        ))
+      }
+      <a class="how" href="#scene" data-jump="scene">{t.seeHow} <span aria-hidden="true">↓</span></a>
+    </div>
+  </div>
+
+  <div class="stage" data-hero-stage>
+    <figure class="term" role="img" aria-label={t.terminal} data-term>
+      <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>{t.terminal}</span></div>
+      <div class="body">
+        {
+          lines.map((l) => (
+            <div class="row" data-row>
+              <div class="cmd" data-cmd={l.text}>
+                <span class="on">{l.text}</span>
+                <span class="off" aria-hidden="true" />
+              </div>
+              <div class="out" data-out>{l.out}</div>
+            </div>
+          ))
+        }
+      </div>
+    </figure>
+    <div class="cv" data-cv-float>
+      <div class="cv-inner" data-cv-inner>
+        <img src="/img/theme-default-w800px.png" alt={t.heroCvAlt} width="800" height="1643" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="rail" aria-label={t.rail.label} data-rail>
+  <ul>
+    {
+      sections.map((s) => (
+        <li>
+          <a href={`#${s.id}`} data-section={s.id} aria-label={s.label}>
+            <span class="lbl" aria-hidden="true">{s.label}</span>
+            <span class="dot" aria-hidden="true" />
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+<a class="skip" href="#why" data-skip>{t.skip}</a>
+
+<LandingScript />
+</>}
+
+<style>
+  /* ---- Aurora: three plain radial gradients, no blur filter, no blend mode ---- */
+  .aurora {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .aurora i {
+    position: absolute;
+    border-radius: 50%;
+    will-change: transform;
+  }
+  .aurora i:nth-child(1) {
+    width: 70vmax;
+    height: 70vmax;
+    left: -15vmax;
+    top: -30vmax;
+    background: radial-gradient(closest-side, var(--cvw-aurora-1), transparent);
+  }
+  .aurora i:nth-child(2) {
+    width: 60vmax;
+    height: 60vmax;
+    right: -20vmax;
+    top: -10vmax;
+    background: radial-gradient(closest-side, var(--cvw-aurora-2), transparent);
+  }
+  .aurora i:nth-child(3) {
+    width: 55vmax;
+    height: 55vmax;
+    left: 25vw;
+    bottom: -35vmax;
+    background: radial-gradient(closest-side, var(--cvw-aurora-3), transparent);
+  }
+
+  /* ---- Hero ---- */
+  .cvw-hero {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+    padding-block: clamp(1.5rem, 5vw, 3.5rem) 1rem;
+    scroll-margin-top: var(--sl-nav-height);
+  }
+  .copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+  h1 {
+    margin: 0;
+    max-width: 18ch;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    line-height: 1.05;
+    font-weight: 800;
+    color: var(--sl-color-white);
+  }
+  .hw {
+    display: inline-block;
+  }
+  .hw.grad {
+    background: linear-gradient(90deg, var(--cvw-grad-1), var(--cvw-grad-2), var(--cvw-grad-3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--cvw-grad-1);
+  }
+  .tagline {
+    margin: 0;
+    max-width: 38rem;
+    font-size: clamp(1rem, 0.0625rem + 2vw, 1.25rem);
+    color: var(--sl-color-gray-2);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+  .how {
+    color: var(--sl-color-gray-2);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .how:hover {
+    color: var(--cvw-accent);
+  }
+
+  .stage {
+    position: relative;
+    display: grid;
+    gap: 1.75rem;
+    align-items: center;
+    justify-items: center;
+    perspective: 1200px;
+  }
+  @media (min-width: 58rem) {
+    .stage {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 0;
+    }
+  }
+  .term {
+    width: 100%;
+    margin: 0;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #0b0b0f;
+    color: #ececf0;
+    border: 1px solid #26262e;
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.02);
+    font-family: var(--sl-font-system-mono);
+    font-size: clamp(0.8rem, 2.4vw, 0.95rem);
+    text-align: left;
+    will-change: transform;
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.9rem;
+    background: #1c1c22;
+    color: #a8a8b3;
+    font-size: 0.75rem;
+  }
+  .bar i {
+    display: inline-block;
+    flex: none;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: #3f3f48;
+  }
+  .bar span {
+    margin-left: 0.5rem;
+  }
+  .body {
+    padding: 1rem 1.1rem 1.2rem;
+    min-height: 13.5rem;
+    overflow-x: auto;
+  }
+  .row + .row {
+    margin-top: 0.7rem;
+  }
+  .cmd {
+    white-space: pre;
+    color: #fb923c;
+  }
+  .off {
+    visibility: hidden;
+  }
+  .out {
+    white-space: pre;
+    color: #a8a8b3;
+  }
+  .cv {
+    justify-self: center;
+    width: min(100%, 22rem);
+    will-change: transform;
+  }
+  @media (min-width: 58rem) {
+    .cv {
+      width: min(100%, 31rem);
+      margin-left: -4rem;
+      z-index: 1;
+    }
+  }
+  .cv-inner {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 0.9rem;
+    background: #fff;
+    border: 1px solid var(--sl-color-hairline);
+    box-shadow: 0 40px 80px -28px rgba(0, 0, 0, 0.5);
+    transform: rotate(1.5deg);
+  }
+  .cv-inner img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  /* ---- Section rail ---- */
+  .rail {
+    display: none;
+  }
+  @media (min-width: 1180px) {
+    .rail {
+      display: block;
+      position: fixed;
+      right: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+    }
+  }
+  .rail ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .rail li {
+    margin: 0;
+  }
+  .rail a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    padding: 0.35rem;
+    text-decoration: none;
+  }
+  .dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--sl-color-gray-4);
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .rail a:hover .dot,
+  .rail a:focus-visible .dot {
+    background: var(--sl-color-gray-2);
+  }
+  .rail a[aria-current='true'] .dot {
+    background: var(--cvw-accent);
+    transform: scale(1.5);
+  }
+  .lbl {
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--sl-color-white);
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-hairline);
+    opacity: 0;
+    transform: translateX(6px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    pointer-events: none;
+  }
+  .rail a:hover .lbl,
+  .rail a:focus-visible .lbl {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ---- Skip pill: visible and focusable only while the scene is pinned ---- */
+  .skip {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 6;
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--sl-color-white);
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-hairline);
+    box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.4);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease, visibility 0.2s;
+  }
+  .skip[data-active='true'] {
+    visibility: visible;
+    opacity: 1;
+  }
+  .skip:hover {
+    border-color: var(--cvw-accent);
+  }
+</style>

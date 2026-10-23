@@ -57,6 +57,7 @@ export default defineConfig({
       components: {
         SocialIcons: './src/components/SocialIcons.astro',
         Footer: './src/components/Footer.astro',
+        Hero: './src/components/Hero.astro',
       },
       expressiveCode: { defaultProps: { frame: 'code' } },
       customCss: [

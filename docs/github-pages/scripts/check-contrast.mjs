@@ -41,9 +41,22 @@ const pairs = [
   ['--cvw-accent', '--cvw-bg-raised', 'accent text/links on raised surface'],
   ['--cvw-on-accent', '--cvw-accent', 'text on accent button'],
   ['--cvw-text', '--cvw-bg', 'body text on page background'],
+  // Landing title gradient: every stop must be readable on its own.
+  ...Object.keys(scopes.dark)
+    .filter((name) => /^--cvw-grad-\d+$/.test(name))
+    .map((name) => [name, '--cvw-bg', `gradient text stop ${name} on page background`]),
 ];
 
 let failed = false;
+
+// Light mode inherits dark values by default; the new landing tokens must be set in both.
+const lightOwn = tokens(":root[data-theme='light']");
+for (const name of Object.keys(scopes.dark).filter((n) => /^--cvw-(grad|aurora)-\d+$/.test(n))) {
+  if (!(name in lightOwn)) {
+    failed = true;
+    console.log(`FAIL light token ${name} is not defined for light mode`);
+  }
+}
 for (const [mode, scope] of Object.entries(scopes)) {
   for (const [fg, bg, usage] of pairs) {
     const r = ratio(resolve(scope, scope[fg]), resolve(scope, scope[bg]));

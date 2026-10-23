@@ -41,6 +41,15 @@
   --cvw-border: #26262e;
   --cvw-glow: rgba(251, 146, 60, 0.18);
 
+  /* Landing aurora: decorative hues, never used for text, links or buttons. */
+  --cvw-aurora-1: rgba(251, 146, 60, 0.30);
+  --cvw-aurora-2: rgba(99, 102, 241, 0.30);
+  --cvw-aurora-3: rgba(217, 70, 239, 0.20);
+  /* Gradient-text stops of the hero title; each is checked at 4.5:1 by check-contrast.mjs. */
+  --cvw-grad-1: #fb923c;
+  --cvw-grad-2: #fb7185;
+  --cvw-grad-3: #a78bfa;
+
   --sl-color-accent-low: var(--cvw-accent-low);
   --sl-color-accent: var(--cvw-accent);
   --sl-color-accent-high: var(--cvw-accent);
@@ -77,6 +86,13 @@
   --cvw-text: #18181b;
   --cvw-border: #e6e6ec;
   --cvw-glow: rgba(194, 65, 12, 0.12);
+
+  --cvw-aurora-1: rgba(251, 146, 60, 0.20);
+  --cvw-aurora-2: rgba(99, 102, 241, 0.16);
+  --cvw-aurora-3: rgba(217, 70, 239, 0.12);
+  --cvw-grad-1: #c2410c;
+  --cvw-grad-2: #be123c;
+  --cvw-grad-3: #6d28d9;
 
   --sl-color-white: #09090b;
   --sl-color-gray-1: #18181b;
@@ -143,42 +159,12 @@ header.header {
   box-shadow: 0 8px 24px var(--cvw-glow);
 }
 
-/* Landing: accent glow behind the hero */
-:root[data-has-hero] .page,
-:root[data-has-hero] .main-frame {
-  position: relative;
+/* Landing: the page frame must not scroll sideways (the scene is full-bleed). */
+:root[data-has-hero] body {
+  overflow-x: clip;
 }
-:root[data-has-hero] .main-pane::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 36rem;
-  z-index: -1;
-  background:
-    radial-gradient(60% 70% at 50% 0%, var(--cvw-glow), transparent 70%),
-    radial-gradient(40% 50% at 85% 10%, rgba(99, 102, 241, 0.10), transparent 70%);
-  pointer-events: none;
-}
-.hero h1 {
-  font-size: clamp(2.4rem, 6vw, 4rem);
-  line-height: 1.05;
-  font-weight: 800;
-}
-
-/* Landing hero: centered, tight to the terminal demo */
-.hero {
-  grid-template-columns: 1fr !important;
-  justify-items: center;
-  text-align: center;
-  padding-block: clamp(2rem, 6vw, 4.5rem) 1rem !important;
-}
-.hero .sl-flex {
-  align-items: center;
-  justify-content: center;
-}
-.hero .tagline {
-  max-width: 38rem;
-  color: var(--sl-color-gray-2);
+:root[data-has-hero] {
+  scroll-padding-top: var(--sl-nav-height);
 }
 :root[data-has-hero] .sl-markdown-content > :first-child {
   margin-top: 0;
@@ -246,4 +232,44 @@ header.header {
 /* "Why" grid: as many columns as fit, never an orphan row of one */
 .why .card-grid {
   grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr)) !important;
+}
+
+/* Card pointer spotlight (pointer position set by the landing script) */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(14rem circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--cvw-accent) 16%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.card:hover::after {
+  opacity: 1;
+}
+
+/* Landing sections: stable anchors below the fixed header */
+#why,
+#start,
+#get-started {
+  scroll-margin-top: var(--sl-nav-height);
+}
+
+/* Closing call to action: pulsing halo, only while animation is enabled */
+@media (prefers-reduced-motion: no-preference) {
+  .cvw-anim .cta::before {
+    animation: cvw-halo 4s ease-in-out infinite;
+  }
+}
+@keyframes cvw-halo {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.04);
+  }
 }
