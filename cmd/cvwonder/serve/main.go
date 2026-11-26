@@ -58,8 +58,12 @@ func ServeCmd() *cobra.Command {
 				logrus.Fatal(err)
 			}
 
+			// "name@ref" selects a git ref of an installed theme; the directory, the
+			// config and the render all use the bare theme name.
+			themeName := themes.ParseThemeName(utils.CliArgs.ThemeName).Name
+
 			// Check Theme version compatibility
-			themeCfg, err := theme_config.GetThemeConfigFromThemeName(utils.CliArgs.ThemeName)
+			themeCfg, err := theme_config.GetThemeConfigFromThemeName(themeName)
 			if err != nil {
 				logrus.Fatal("Error loading theme config: ", err)
 			}
@@ -108,7 +112,7 @@ func ServeCmd() *cobra.Command {
 			if err != nil {
 				logrus.Fatal(err)
 			}
-			err = renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format, utils.CliArgs.Watch, mergedConfig)
+			err = renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeName, utils.CliArgs.Format, utils.CliArgs.Watch, mergedConfig)
 			if err != nil {
 				logrus.Fatal("Error rendering CV: ", err)
 			}
@@ -120,7 +124,7 @@ func ServeCmd() *cobra.Command {
 				}
 				// Setup failures are fatal; runtime failures (a bad edit that fails to
 				// re-render) are logged and watching continues.
-				watchErrs, err := watcherService.ObserveFileEvents(baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format, mergedConfig)
+				watchErrs, err := watcherService.ObserveFileEvents(baseDirectory, outputDir.FullPath, inputFile.FullPath, themeName, utils.CliArgs.Format, mergedConfig)
 				if err != nil {
 					logrus.Fatal("Error watching files: ", err)
 				}
