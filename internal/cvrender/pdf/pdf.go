@@ -91,11 +91,16 @@ func (r *RenderPDFServices) convertPageToPDF(localServerUrl string, outputFilePa
 // launched, so no other caller can steal the port between allocation and use.
 // The returned stop function closes the listener; the caller must call it.
 func (r *RenderPDFServices) runWebServer(inputFilename string, outputDirectory string) (string, func(), error) {
-	listener, err := net.Listen("tcp", ":0")
+	listener, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
 		return "", nil, fmt.Errorf("binding listener for PDF server: %w", err)
 	}
-	port := listener.Addr().(*net.TCPAddr).Port
+	tcpAddr, ok := listener.Addr().(*net.TCPAddr)
+	if !ok {
+		_ = listener.Close()
+		return "", nil, fmt.Errorf("unexpected listener address type %T", listener.Addr())
+	}
+	port := tcpAddr.Port
 
 	localServerUrl := fmt.Sprintf("http://localhost:%d/%s.html", port, inputFilename)
 	logrus.Info("Serve temporary the CV on server at address ", localServerUrl)

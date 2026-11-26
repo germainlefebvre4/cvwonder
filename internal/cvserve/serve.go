@@ -158,8 +158,7 @@ func serveOnListener(listener net.Listener, handler http.Handler) <-chan error {
 // ready is closed immediately before http.Serve is called, signalling to the
 // caller that the handler is configured and connections will be accepted.
 func (s *ServeServices) StartServerOnListener(listener net.Listener, outputDirectory string, ready chan<- struct{}) {
-	port := listener.Addr().(*net.TCPAddr).Port
-	logrus.Info(fmt.Sprintf("Listening on: http://localhost:%d", port))
+	logrus.Info(fmt.Sprintf("Listening on: %s", listener.Addr()))
 	logrus.Info("")
 
 	mux := http.NewServeMux()
