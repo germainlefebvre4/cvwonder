@@ -496,9 +496,57 @@ func TestGenerateRandomString(t *testing.T) {
 
 		for _, char := range result {
 			isAlphanumeric := (char >= 'a' && char <= 'z') ||
-							  (char >= 'A' && char <= 'Z') ||
-							  (char >= '0' && char <= '9')
+				(char >= 'A' && char <= 'Z') ||
+				(char >= '0' && char <= '9')
 			assert.True(t, isAlphanumeric, "Character %c is not alphanumeric", char)
 		}
 	})
+}
+
+func TestIsGitPath(t *testing.T) {
+	cases := map[string]bool{
+		".git":             true,
+		".git/config":      true,
+		"sub/.git/HEAD":    true,
+		".gitignore":       true,
+		".github/ci.yml":   true,
+		"digit.png":        false,
+		"legit.css":        false,
+		"gitlab-logo.svg":  false,
+		"assets/widget.js": false,
+		"github/style.css": false,
+		".":                false,
+		"":                 false,
+	}
+	for path, want := range cases {
+		assert.Equal(t, want, isGitPath(path), path)
+	}
+}
+
+// Names that merely contain "git", and a copy root whose own path contains
+// "git", must not make files disappear from the output.
+func TestCopyDirectory_GitLookalikes(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "github", "my-cv")
+	src := filepath.Join(root, "theme")
+	dst := filepath.Join(root, "out")
+	require.NoError(t, os.MkdirAll(filepath.Join(src, ".git"), 0o750))
+	require.NoError(t, os.MkdirAll(filepath.Join(src, "assets"), 0o750))
+	require.NoError(t, os.MkdirAll(dst, 0o750))
+	for name, content := range map[string]string{
+		"style.css":        "css",
+		"digit.png":        "png",
+		"assets/legit.css": "css",
+		".git/config":      "secret",
+		".gitignore":       "ignored",
+	} {
+		require.NoError(t, os.WriteFile(filepath.Join(src, name), []byte(content), 0o644))
+	}
+
+	require.NoError(t, CopyDirectory(src, dst))
+
+	assert.FileExists(t, filepath.Join(dst, "style.css"))
+	assert.FileExists(t, filepath.Join(dst, "digit.png"))
+	assert.FileExists(t, filepath.Join(dst, "assets", "legit.css"))
+	assert.NoDirExists(t, filepath.Join(dst, ".git"))
+	assert.NoFileExists(t, filepath.Join(dst, ".gitignore"))
 }

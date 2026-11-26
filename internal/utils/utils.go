@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"regexp"
+	"strings"
 	"time"
 
 	dotignore "github.com/codeglyph/go-dotignore/v2"
@@ -93,8 +93,9 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 	if err != nil {
 		return err
 	}
-	// Cleanup the .git/ dir
-	if ok, _ := regexp.MatchString(".git", scrDir); ok {
+	// Cleanup the .git/ dir. Only the path below the copy root is inspected: the
+	// location of the theme or of the output directory must not matter.
+	if relDir, err := filepath.Rel(baseDir, scrDir); err == nil && isGitPath(relDir) {
 		return nil
 	}
 	for _, entry := range entries {
@@ -174,7 +175,7 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 			if destPath == filepath.Join(dest, "index.html") {
 				continue
 			}
-			if ok, _ := regexp.MatchString(".git", destPath); ok {
+			if isGitPath(relPath) {
 				continue
 			}
 			if err := Copy(sourcePath, destPath); err != nil {
@@ -195,6 +196,20 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 		}
 	}
 	return nil
+}
+
+// isGitPath reports whether any element of the slash- or OS-separated relative
+// path is a git metadata entry: ".git" itself or a dot-file starting with
+// ".git" (.gitignore, .github, .gitattributes...). Names that merely contain
+// "git" (digit.png, legit.css) and parent directories outside the path are not
+// matched.
+func isGitPath(relPath string) bool {
+	for _, element := range strings.FieldsFunc(relPath, func(r rune) bool { return r == '/' || r == filepath.Separator }) {
+		if strings.HasPrefix(element, ".git") {
+			return true
+		}
+	}
+	return false
 }
 
 func Exists(filePath string) bool {
