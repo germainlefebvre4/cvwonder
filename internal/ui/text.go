@@ -30,6 +30,8 @@ var (
 
 func marker(s Status) string {
 	switch s {
+	case Success:
+		return styleSuccess.Render("✓")
 	case Warning:
 		return styleWarning.Render("!")
 	case Failure:
@@ -43,6 +45,18 @@ func marker(s Status) string {
 type Text struct {
 	out io.Writer
 	err io.Writer
+	// writeErr is the first write failure (for example a closed pipe). Output
+	// is best effort, so it is recorded instead of interrupting the command.
+	writeErr error
+}
+
+// Err returns the first error hit while writing, if any.
+func (t *Text) Err() error { return t.writeErr }
+
+func (t *Text) printf(w io.Writer, format string, a ...any) {
+	if _, err := fmt.Fprintf(w, format, a...); err != nil && t.writeErr == nil {
+		t.writeErr = err
+	}
 }
 
 // NewText builds a Text reporter. Each destination is wrapped with a
@@ -64,7 +78,7 @@ var _ Reporter = (*Text)(nil)
 
 // Header prints the title and one "Label: value" line per field.
 func (t *Text) Header(title string, fields ...Field) {
-	_, _ = fmt.Fprintln(t.out, styleTitle.Render(title))
+	t.printf(t.out, "%s\n", styleTitle.Render(title))
 	width := 0
 	for _, f := range fields {
 		if len(f.Label) > width {
@@ -73,20 +87,20 @@ func (t *Text) Header(title string, fields ...Field) {
 	}
 	for _, f := range fields {
 		label := styleDim.Render(fmt.Sprintf("%-*s", width+1, f.Label+":"))
-		_, _ = fmt.Fprintf(t.out, "  %s %s\n", label, f.Value)
+		t.printf(t.out, "  %s %s\n", label, f.Value)
 	}
-	_, _ = fmt.Fprintln(t.out)
+	t.printf(t.out, "\n")
 }
 
 // Step prints "<marker> text".
 func (t *Text) Step(status Status, text string) {
-	_, _ = fmt.Fprintf(t.out, "%s %s\n", marker(status), text)
+	t.printf(t.out, "%s %s\n", marker(status), text)
 }
 
 // Detail prints each line indented under the previous step.
 func (t *Text) Detail(lines ...string) {
 	for _, l := range lines {
-		_, _ = fmt.Fprintf(t.out, "  %s\n", l)
+		t.printf(t.out, "  %s\n", l)
 	}
 }
 
@@ -116,7 +130,7 @@ func (t *Text) Table(headers []string, rows [][]string) {
 		if style != nil {
 			s = style.Render(s)
 		}
-		_, _ = fmt.Fprintln(t.out, s)
+		t.printf(t.out, "%s\n", s)
 	}
 	line(headers, &styleDim)
 	for _, r := range rows {
@@ -129,8 +143,8 @@ func (t *Text) Result(status Status, text string) { t.Step(status, text) }
 
 // Error prints "✗ error: message" and an optional hint on the error stream.
 func (t *Text) Error(err error, hint string) {
-	_, _ = fmt.Fprintf(t.err, "%s %s\n", styleFailure.Render("✗ error:"), err)
+	t.printf(t.err, "%s %s\n", styleFailure.Render("✗ error:"), err)
 	if hint != "" {
-		_, _ = fmt.Fprintf(t.err, "  %s %s\n", styleDim.Render("hint:"), hint)
+		t.printf(t.err, "  %s %s\n", styleDim.Render("hint:"), hint)
 	}
 }

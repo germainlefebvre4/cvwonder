@@ -36,6 +36,91 @@ func (r reportingRenderer) Render(cv model.CV, baseDirectory string, outputDirec
 	return err
 }
 
+// serveAndWait starts the live-reload server, optionally opens the browser and
+// blocks until the HTTP server stops.
+func serveAndWait(rep ui.Reporter, serveService cvserve.ServeInterface, outputDir, inputPath string) error {
+	serveErrs, err := serveService.StartLiveReloader(utils.CliArgs.Port, outputDir, inputPath)
+	if err != nil {
+		return fmt.Errorf("starting server: %w", err)
+	}
+	rep.Step(ui.Success, fmt.Sprintf("Listening on http://localhost:%d", utils.CliArgs.Port))
+	if utils.CliArgs.Browser {
+		if err := serveService.OpenBrowser(outputDir, inputPath); err != nil {
+			return fmt.Errorf("opening browser: %w", err)
+		}
+	}
+
+	// The channel delivers the error that stopped the HTTP server, if any, and
+	// is closed when serving ends.
+	if err := <-serveErrs; err != nil {
+		return fmt.Errorf("server stopped: %w", err)
+	}
+	return nil
+}
+
+type watchParams struct {
+	baseDirectory, outputDir, inputPath, inputRel, themeName string
+	config                                                   map[string]interface{}
+}
+
+// startWatcher re-renders on file changes and reports each outcome as a step.
+// Setup failures are returned; runtime failures (a bad edit that fails to
+// re-render) are reported and watching continues.
+func startWatcher(rep ui.Reporter, parser cvparser.ParserInterface, renderer cvrender.RenderInterface, p watchParams) error {
+	watcherService, err := watcher.NewWatcherServices(parser, reportingRenderer{RenderInterface: renderer, rep: rep, input: p.inputRel})
+	if err != nil {
+		return err
+	}
+	watchErrs, err := watcherService.ObserveFileEvents(p.baseDirectory, p.outputDir, p.inputPath, p.themeName, utils.CliArgs.Format, p.config)
+	if err != nil {
+		return fmt.Errorf("watching files: %w", err)
+	}
+	rep.Step(ui.Success, "Watching for changes")
+	go reportWatchErrors(rep, watchErrs)
+	return nil
+}
+
+// prepareTheme checks the theme exists and is compatible, and returns its bare
+// name with the merged configuration (theme defaults + --config overrides).
+func prepareTheme() (string, map[string]interface{}, error) {
+	if err := themes.CheckThemeExists(utils.CliArgs.ThemeName); err != nil {
+		return "", nil, ui.WithHint(fmt.Errorf("theme not found: %s", utils.CliArgs.ThemeName), ui.ThemeNotFoundHint)
+	}
+
+	// "name@ref" selects a git ref of an installed theme; the directory, the
+	// config and the render all use the bare theme name.
+	themeName := themes.ParseThemeName(utils.CliArgs.ThemeName).Name
+
+	themeCfg, err := theme_config.GetThemeConfigFromThemeName(themeName)
+	if err != nil {
+		return "", nil, fmt.Errorf("loading theme config: %w", err)
+	}
+	themeCfg.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
+
+	mergedConfig, err := theme_config.ParseConfigOverrides(utils.CliArgs.ConfigOverrides, themeCfg.Configuration)
+	if err != nil {
+		return "", nil, fmt.Errorf("parsing --config overrides: %w", err)
+	}
+	return themeName, mergedConfig, nil
+}
+
+// newRenderService wires the HTML, PDF and screenshot renderers.
+func newRenderService(serveService cvserve.ServeInterface) (cvrender.RenderInterface, error) {
+	renderHTMLService, err := render_html.NewRenderHTMLServices()
+	if err != nil {
+		return nil, err
+	}
+	renderPDFService, err := render_pdf.NewRenderPDFServices(serveService)
+	if err != nil {
+		return nil, err
+	}
+	renderScreenshotService, err := render_screenshot.NewRenderScreenshotServices(serveService)
+	if err != nil {
+		return nil, err
+	}
+	return cvrender.NewRenderServices(renderHTMLService, renderPDFService, renderScreenshotService)
+}
+
 // reportWatchErrors reports every failed re-render as a step line. It returns
 // when the channel is closed; a failure never stops the server.
 func reportWatchErrors(rep ui.Reporter, errs <-chan error) {
@@ -74,26 +159,9 @@ func ServeCmd() *cobra.Command {
 				ui.Field{Label: ui.LabelBrowser, Value: fmt.Sprint(utils.CliArgs.Browser)},
 			)
 
-			// Check Theme exists
-			if err := themes.CheckThemeExists(utils.CliArgs.ThemeName); err != nil {
-				return ui.WithHint(fmt.Errorf("theme not found: %s", utils.CliArgs.ThemeName), ui.ThemeNotFoundHint)
-			}
-
-			// "name@ref" selects a git ref of an installed theme; the directory, the
-			// config and the render all use the bare theme name.
-			themeName := themes.ParseThemeName(utils.CliArgs.ThemeName).Name
-
-			// Check Theme version compatibility
-			themeCfg, err := theme_config.GetThemeConfigFromThemeName(themeName)
+			themeName, mergedConfig, err := prepareTheme()
 			if err != nil {
-				return fmt.Errorf("loading theme config: %w", err)
-			}
-			themeCfg.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
-
-			// Build merged config: theme defaults + CLI overrides.
-			mergedConfig, err := theme_config.ParseConfigOverrides(utils.CliArgs.ConfigOverrides, themeCfg.Configuration)
-			if err != nil {
-				return fmt.Errorf("parsing --config overrides: %w", err)
+				return err
 			}
 
 			// Parse the CV
@@ -107,24 +175,11 @@ func ServeCmd() *cobra.Command {
 			}
 			rep.Step(ui.Success, fmt.Sprintf("Parsed %s", inputFile.RelativePath))
 
-			// Create render services
 			serveService, err := cvserve.NewServeServices()
 			if err != nil {
 				return err
 			}
-			renderHTMLService, err := render_html.NewRenderHTMLServices()
-			if err != nil {
-				return err
-			}
-			renderPDFService, err := render_pdf.NewRenderPDFServices(serveService)
-			if err != nil {
-				return err
-			}
-			renderScreenshotService, err := render_screenshot.NewRenderScreenshotServices(serveService)
-			if err != nil {
-				return err
-			}
-			renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService, renderScreenshotService)
+			renderService, err := newRenderService(serveService)
 			if err != nil {
 				return err
 			}
@@ -141,38 +196,12 @@ func ServeCmd() *cobra.Command {
 			rep.Step(ui.Success, fmt.Sprintf("Rendered %s to %s", utils.CliArgs.Format, outputDir.RelativePath))
 
 			if utils.CliArgs.Watch {
-				watcherService, err := watcher.NewWatcherServices(parserService, reportingRenderer{RenderInterface: renderService, rep: rep, input: inputFile.RelativePath})
-				if err != nil {
+				if err := startWatcher(rep, parserService, renderService, watchParams{baseDirectory, outputDir.FullPath, inputFile.FullPath, inputFile.RelativePath, themeName, mergedConfig}); err != nil {
 					return err
 				}
-				// Setup failures are fatal; runtime failures (a bad edit that fails to
-				// re-render) are reported and watching continues.
-				watchErrs, err := watcherService.ObserveFileEvents(baseDirectory, outputDir.FullPath, inputFile.FullPath, themeName, utils.CliArgs.Format, mergedConfig)
-				if err != nil {
-					return fmt.Errorf("watching files: %w", err)
-				}
-				rep.Step(ui.Success, "Watching for changes")
-				go reportWatchErrors(rep, watchErrs)
 			}
 
-			// Serve the CV
-			serveErrs, err := serveService.StartLiveReloader(utils.CliArgs.Port, outputDir.FullPath, inputFile.FullPath)
-			if err != nil {
-				return fmt.Errorf("starting server: %w", err)
-			}
-			rep.Step(ui.Success, fmt.Sprintf("Listening on http://localhost:%d", utils.CliArgs.Port))
-			if utils.CliArgs.Browser {
-				if err := serveService.OpenBrowser(outputDir.FullPath, inputFile.FullPath); err != nil {
-					return fmt.Errorf("opening browser: %w", err)
-				}
-			}
-
-			// Block while serving. The channel delivers the error that stopped the
-			// HTTP server, if any, and is closed when serving ends.
-			if err := <-serveErrs; err != nil {
-				return fmt.Errorf("server stopped: %w", err)
-			}
-			return nil
+			return serveAndWait(rep, serveService, outputDir.FullPath, inputFile.FullPath)
 		},
 	}
 	cobraCmd.Flags().BoolVarP(&utils.CliArgs.Browser, "browser", "b", false, "Open the browser.")

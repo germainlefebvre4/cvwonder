@@ -61,8 +61,8 @@
 ## 10. Cleanup, docs and integration
 
 - [x] 10.1 Remove the logrus bridge and `logrus` from `go.mod`; verify `grep -rn logrus .` finds nothing and `go build ./... && go test ./...` pass
-- [ ] 10.2 Update `docs/github-pages/src/content/docs/reference/cli/options.md` and `commands.md` for `--log-level`, `--quiet`, the `--debug` deprecation and the stdout/stderr contract; verify the Starlight docs build succeeds and each documented command runs as written
-- [ ] 10.3 Add the contributor rule (`cmd/*` → UI, `internal/*` → logger) to `docs/github-pages/src/content/docs/contribute/architecture.md`; verify the page renders and links resolve
+- [x] 10.2 Update `docs/github-pages/src/content/docs/reference/cli/options.md` and `commands.md` for `--log-level`, `--quiet`, the `--debug` deprecation and the stdout/stderr contract; verify the Starlight docs build succeeds and each documented command runs as written
+- [x] 10.3 Add the contributor rule (`cmd/*` → UI, `internal/*` → logger) to `docs/github-pages/src/content/docs/contribute/architecture.md`; verify the page renders and links resolve
 - [x] 10.4 Integration check: build the binary and verify end to end that `generate`, `validate`, `serve`, `themes list` and `validate show-schema` match the specs for stream placement (stdout/stderr redirection), `NO_COLOR`, redirected-to-file output with no ANSI, and unchanged exit codes
 - [x] 10.5 Run `openspec validate improve-cli-output --strict`; verify it passes
 

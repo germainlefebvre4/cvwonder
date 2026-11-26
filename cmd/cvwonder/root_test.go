@@ -189,3 +189,25 @@ func TestThemesVerifyUnknownThemeHintOnStderr(t *testing.T) {
 	assert.Contains(t, errb, "error:")
 	assert.Contains(t, errb, "themes install")
 }
+
+func TestBulkGenerateReportEndToEnd(t *testing.T) {
+	dir := workdir(t)
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "themes", "demo", "index.html"), []byte("<html>{{ .Person.Name }}</html>"), 0o644))
+	cvs := filepath.Join(dir, "cvs")
+	require.NoError(t, os.MkdirAll(cvs, 0o755))
+	require.NoError(t, os.WriteFile(filepath.Join(cvs, "a.yml"), []byte("person:\n  name: A\n"), 0o644))
+	require.NoError(t, os.WriteFile(filepath.Join(cvs, "b.yml"), []byte("person:\n  name: B\n"), 0o644))
+	require.NoError(t, os.WriteFile(filepath.Join(cvs, "c.yml"), []byte("person: [broken\n"), 0o644))
+
+	code, out, _ := execCLI(t, "generate", "-i", "cvs", "-t", "demo", "-o", "out", "--validate")
+	assert.Equal(t, 0, code, "exit code is unchanged by this change")
+	assert.Contains(t, out, "CV Wonder - Bulk Mode")
+	assert.Contains(t, out, "cvs (3 files)")
+	assert.Contains(t, out, "Total: 3 | Success: 2 | Failed: 1")
+	assert.Equal(t, 1, strings.Count(out, "✗"))
+
+	code, out, _ = execCLI(t, "generate", "-i", "cvs", "-t", "demo", "-o", "out2", "--validate", "--quiet")
+	assert.Equal(t, 0, code)
+	assert.NotContains(t, out, "CV Wonder - Bulk Mode")
+	assert.Contains(t, out, "Total: 3 | Success: 2 | Failed: 1", "the report is the final result, kept by --quiet")
+}

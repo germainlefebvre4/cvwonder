@@ -23,7 +23,7 @@ const (
 	Failure
 )
 
-// Field is one labelled setting shown in a header.
+// Field is one labeled setting shown in a header.
 type Field struct {
 	Label string
 	Value string

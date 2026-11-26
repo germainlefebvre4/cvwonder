@@ -88,7 +88,9 @@ func newRootCmd() *cobra.Command {
 	pf.StringVar(&utils.CliArgs.LogLevel, "log-level", "info", "Log level: "+strings.Join(logger.Names, ", ")+".")
 	pf.BoolVar(&utils.CliArgs.Quiet, "quiet", false, "Only print errors and the final result.")
 	pf.BoolVarP(&debugAlias, "debug", "d", false, "Alias of --log-level debug.")
-	_ = pf.MarkDeprecated("debug", "use --log-level debug instead")
+	if err := pf.MarkDeprecated("debug", "use --log-level debug instead"); err != nil {
+		panic(err) // the flag is registered just above
+	}
 	rootCmd.MarkFlagsMutuallyExclusive("quiet", "log-level", "debug")
 
 	rootCmd.AddCommand(cmdGenerate.GenerateCmd())

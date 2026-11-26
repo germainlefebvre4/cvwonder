@@ -108,9 +108,9 @@ func TestGenerateSingle_RenderFailureIsAnError(t *testing.T) {
 func TestReportBulk_Mixed(t *testing.T) {
 	rep, out, _ := newReporter()
 	reportBulk(rep, []cvbulk.BulkResult{
-		{FilePath: "a.yml", Success: true},
+		{FilePath: "c.yml", Success: true}, // results arrive in worker completion order
 		{FilePath: "b.yml", Success: false, Error: errors.New("parse error")},
-		{FilePath: "c.yml", Success: true},
+		{FilePath: "a.yml", Success: true},
 	})
 	want := "✓ a.yml\n✗ b.yml -- parse error\n✓ c.yml\n! Total: 3 | Success: 2 | Failed: 1\n"
 	assert.Equal(t, want, out.String())

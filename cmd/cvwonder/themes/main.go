@@ -42,8 +42,7 @@ func CmdList() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("creating themes service: %w", err)
 			}
-			themes.Out = ui.Payload()
-			if err := themesService.List(); err != nil {
+			if err := themesService.List(ui.Payload()); err != nil {
 				return fmt.Errorf("listing themes: %w", err)
 			}
 			return nil

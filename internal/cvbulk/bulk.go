@@ -138,7 +138,7 @@ func generateSingleFile(inputFile model.InputFile, outputDir string, themeName s
 			return fmt.Errorf("validating %s: %w", inputFile.FullPath, err)
 		}
 		if !result.Valid {
-			return fmt.Errorf("validation failed for %s: %s", inputFile.FullPath, result.Summary())
+			return fmt.Errorf("validation failed: %s", result.Summary())
 		}
 	}
 	themeRef := themes.ParseThemeName(themeName)

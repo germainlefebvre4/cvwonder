@@ -12,20 +12,17 @@ import (
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
 )
 
-// Out is where List writes the theme table. It is the command's payload, so the
-// root command points it at the real stdout.
-var Out io.Writer = os.Stdout
-
-func (t *ThemesService) List() error {
+// List writes the theme table, the command's payload, to out.
+func (t *ThemesService) List(out io.Writer) error {
 	slog.Debug("List themes")
 	baseDirectory, _ := os.Getwd()
 	themeDir := "themes"
 
 	// List directories in themes directory
-	return listThemes(baseDirectory, themeDir)
+	return listThemes(out, baseDirectory, themeDir)
 }
 
-func listThemes(baseDirectory string, themeDir string) error {
+func listThemes(out io.Writer, baseDirectory string, themeDir string) error {
 	if themeDir == "" {
 		themeDir = "themes"
 	}
@@ -35,7 +32,7 @@ func listThemes(baseDirectory string, themeDir string) error {
 	}
 
 	// Print directories in a table
-	output := tabwriter.NewWriter(Out, 0, 0, 2, ' ', 0)
+	output := tabwriter.NewWriter(out, 0, 0, 2, ' ', 0)
 	defer output.Flush()
 	// Table header
 	fmt.Fprintf(output, "%s", strings.ToUpper("Directory\tName\tDescription\tAuthor\tMin Version\n"))

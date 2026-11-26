@@ -11,6 +11,7 @@ import (
 	"github.com/germainlefebvre4/cvwonder/internal/ui"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func reporter() (*ui.Text, *bytes.Buffer) {
@@ -25,11 +26,11 @@ func TestReportingRenderer_SuccessAndFailure(t *testing.T) {
 	inner.EXPECT().Render(mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("bad template")).Once()
 	r := reportingRenderer{RenderInterface: inner, rep: rep, input: "cv.yml"}
 
-	assert.NoError(t, r.Render(model.CV{}, "", "", "", "", "html", true, nil))
+	require.NoError(t, r.Render(model.CV{}, "", "", "", "", "html", true, nil))
 	assert.Equal(t, "✓ Re-rendered cv.yml\n", out.String())
 
 	out.Reset()
-	assert.Error(t, r.Render(model.CV{}, "", "", "", "", "html", true, nil))
+	require.Error(t, r.Render(model.CV{}, "", "", "", "", "html", true, nil))
 	assert.Empty(t, out.String(), "failures are reported through the watcher error channel")
 }
 

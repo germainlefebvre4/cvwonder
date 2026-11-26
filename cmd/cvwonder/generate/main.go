@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"slices"
+	"strings"
 
 	"github.com/germainlefebvre4/cvwonder/internal/cvbulk"
 	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
@@ -123,6 +125,10 @@ func generateBulk(rep ui.Reporter) error {
 // reportBulk prints one line per input file and a totals line. They are
 // results, so they are shown even with --quiet.
 func reportBulk(rep ui.Reporter, results []cvbulk.BulkResult) {
+	// Workers finish in any order; sort so the report is deterministic.
+	results = slices.SortedFunc(slices.Values(results), func(a, b cvbulk.BulkResult) int {
+		return strings.Compare(a.FilePath, b.FilePath)
+	})
 	success := 0
 	for _, r := range results {
 		if r.Success {

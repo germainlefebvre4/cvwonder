@@ -35,7 +35,7 @@ from --output-file and re-runs the wizard with existing data pre-filled.`,
 					return err
 				}
 				if written == "" {
-					ui.Default().Step(ui.Warning, "Cancelled. No file was written.")
+					ui.Default().Step(ui.Warning, "Canceled. No file was written.")
 					return nil
 				}
 				ui.Default().Step(ui.Success, fmt.Sprintf("Created %s — edit it and run: cvwonder generate", written))
