@@ -31,7 +31,7 @@ type BulkResult struct {
 // BulkGenerateServices implements BulkGenerateInterface.
 type BulkGenerateServices struct {
 	// workerFn is the per-file generation function, injectable for testing.
-	workerFn func(inputFile model.InputFile, outputDir string, themeName string, format string, validate bool) error
+	workerFn func(inputFile model.InputFile, outputDir string, themeName string, format string, validate bool, configOverrides []string) error
 }
 
 // NewBulkGenerateServices returns a BulkGenerateInterface backed by the real
@@ -53,6 +53,7 @@ func (b *BulkGenerateServices) BulkGenerate(
 	format string,
 	validate bool,
 	concurrency int,
+	configOverrides []string,
 ) []BulkResult {
 	if len(inputFiles) == 0 {
 		return []BulkResult{}
@@ -80,7 +81,7 @@ func (b *BulkGenerateServices) BulkGenerate(
 					results <- BulkResult{FilePath: inputFile.FullPath, Success: false, Error: fmt.Errorf("creating output dir: %w", err)}
 					continue
 				}
-				if err := b.workerFn(inputFile, mirroredDir, themeName, format, validate); err != nil {
+				if err := b.workerFn(inputFile, mirroredDir, themeName, format, validate, configOverrides); err != nil {
 					results <- BulkResult{FilePath: inputFile.FullPath, Success: false, Error: err}
 					continue
 				}
@@ -126,7 +127,7 @@ func mirrorOutputDir(filePath, inputDir, outputDir string) (string, error) {
 }
 
 // generateSingleFile is the real per-file implementation used in production.
-func generateSingleFile(inputFile model.InputFile, outputDir string, themeName string, format string, validate bool) error {
+func generateSingleFile(inputFile model.InputFile, outputDir string, themeName string, format string, validate bool, configOverrides []string) error {
 	if validate {
 		validatorService, err := validator.NewValidatorServices()
 		if err != nil {
@@ -150,6 +151,11 @@ func generateSingleFile(inputFile model.InputFile, outputDir string, themeName s
 		return fmt.Errorf("loading theme config: %w", err)
 	}
 	cfg.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
+	// Theme defaults + --config overrides, like the single-file mode.
+	mergedConfig, err := theme_config.ParseConfigOverrides(configOverrides, cfg.Configuration)
+	if err != nil {
+		return fmt.Errorf("parsing --config overrides: %w", err)
+	}
 	parserService, err := cvparser.NewParserServices()
 	if err != nil {
 		return fmt.Errorf("creating parser: %w", err)
@@ -182,7 +188,7 @@ func generateSingleFile(inputFile model.InputFile, outputDir string, themeName s
 	if err != nil {
 		return fmt.Errorf("getting working directory: %w", err)
 	}
-	renderService.Render(content, baseDirectory, outputDir, inputFile.FullPath, themeRef.Name, format, false, cfg.Configuration)
+	renderService.Render(content, baseDirectory, outputDir, inputFile.FullPath, themeRef.Name, format, false, mergedConfig)
 	logrus.Infof("Generated: %s", inputFile.RelativePath)
 	return nil
 }

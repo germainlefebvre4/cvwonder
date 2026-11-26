@@ -64,6 +64,11 @@ func GenerateCmd() *cobra.Command {
 				logrus.Infof("  Concurrency: %d", utils.CliArgs.Concurrency)
 				logrus.Info("")
 
+				// Fail once, up front, on malformed --config values rather than for every file.
+				if _, err := theme_config.ParseConfigOverrides(utils.CliArgs.ConfigOverrides, nil); err != nil {
+					logrus.Fatal("Error parsing --config overrides: ", err)
+				}
+
 				bulkSvc := cvbulk.NewBulkGenerateServices()
 				results := bulkSvc.BulkGenerate(
 					inputFiles,
@@ -73,6 +78,7 @@ func GenerateCmd() *cobra.Command {
 					utils.CliArgs.Format,
 					utils.CliArgs.Validate,
 					utils.CliArgs.Concurrency,
+					utils.CliArgs.ConfigOverrides,
 				)
 				cvbulk.PrintBulkReport(results)
 			} else {

@@ -22,17 +22,17 @@ func (_m *BulkGenerateInterfaceMock) EXPECT() *BulkGenerateInterfaceMock_Expecte
 	return &BulkGenerateInterfaceMock_Expecter{mock: &_m.Mock}
 }
 
-// BulkGenerate provides a mock function with given fields: inputFiles, inputDir, outputDir, themeName, format, validate, concurrency
-func (_m *BulkGenerateInterfaceMock) BulkGenerate(inputFiles []model.InputFile, inputDir string, outputDir string, themeName string, format string, validate bool, concurrency int) []cvbulk.BulkResult {
-	ret := _m.Called(inputFiles, inputDir, outputDir, themeName, format, validate, concurrency)
+// BulkGenerate provides a mock function with given fields: inputFiles, inputDir, outputDir, themeName, format, validate, concurrency, configOverrides
+func (_m *BulkGenerateInterfaceMock) BulkGenerate(inputFiles []model.InputFile, inputDir string, outputDir string, themeName string, format string, validate bool, concurrency int, configOverrides []string) []cvbulk.BulkResult {
+	ret := _m.Called(inputFiles, inputDir, outputDir, themeName, format, validate, concurrency, configOverrides)
 
 	if len(ret) == 0 {
 		panic("no return value specified for BulkGenerate")
 	}
 
 	var r0 []cvbulk.BulkResult
-	if rf, ok := ret.Get(0).(func([]model.InputFile, string, string, string, string, bool, int) []cvbulk.BulkResult); ok {
-		r0 = rf(inputFiles, inputDir, outputDir, themeName, format, validate, concurrency)
+	if rf, ok := ret.Get(0).(func([]model.InputFile, string, string, string, string, bool, int, []string) []cvbulk.BulkResult); ok {
+		r0 = rf(inputFiles, inputDir, outputDir, themeName, format, validate, concurrency, configOverrides)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]cvbulk.BulkResult)
@@ -55,13 +55,14 @@ type BulkGenerateInterfaceMock_BulkGenerate_Call struct {
 //   - format string
 //   - validate bool
 //   - concurrency int
-func (_e *BulkGenerateInterfaceMock_Expecter) BulkGenerate(inputFiles interface{}, inputDir interface{}, outputDir interface{}, themeName interface{}, format interface{}, validate interface{}, concurrency interface{}) *BulkGenerateInterfaceMock_BulkGenerate_Call {
-	return &BulkGenerateInterfaceMock_BulkGenerate_Call{Call: _e.mock.On("BulkGenerate", inputFiles, inputDir, outputDir, themeName, format, validate, concurrency)}
+//   - configOverrides []string
+func (_e *BulkGenerateInterfaceMock_Expecter) BulkGenerate(inputFiles interface{}, inputDir interface{}, outputDir interface{}, themeName interface{}, format interface{}, validate interface{}, concurrency interface{}, configOverrides interface{}) *BulkGenerateInterfaceMock_BulkGenerate_Call {
+	return &BulkGenerateInterfaceMock_BulkGenerate_Call{Call: _e.mock.On("BulkGenerate", inputFiles, inputDir, outputDir, themeName, format, validate, concurrency, configOverrides)}
 }
 
-func (_c *BulkGenerateInterfaceMock_BulkGenerate_Call) Run(run func(inputFiles []model.InputFile, inputDir string, outputDir string, themeName string, format string, validate bool, concurrency int)) *BulkGenerateInterfaceMock_BulkGenerate_Call {
+func (_c *BulkGenerateInterfaceMock_BulkGenerate_Call) Run(run func(inputFiles []model.InputFile, inputDir string, outputDir string, themeName string, format string, validate bool, concurrency int, configOverrides []string)) *BulkGenerateInterfaceMock_BulkGenerate_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].([]model.InputFile), args[1].(string), args[2].(string), args[3].(string), args[4].(string), args[5].(bool), args[6].(int))
+		run(args[0].([]model.InputFile), args[1].(string), args[2].(string), args[3].(string), args[4].(string), args[5].(bool), args[6].(int), args[7].([]string))
 	})
 	return _c
 }
@@ -71,7 +72,7 @@ func (_c *BulkGenerateInterfaceMock_BulkGenerate_Call) Return(_a0 []cvbulk.BulkR
 	return _c
 }
 
-func (_c *BulkGenerateInterfaceMock_BulkGenerate_Call) RunAndReturn(run func([]model.InputFile, string, string, string, string, bool, int) []cvbulk.BulkResult) *BulkGenerateInterfaceMock_BulkGenerate_Call {
+func (_c *BulkGenerateInterfaceMock_BulkGenerate_Call) RunAndReturn(run func([]model.InputFile, string, string, string, string, bool, int, []string) []cvbulk.BulkResult) *BulkGenerateInterfaceMock_BulkGenerate_Call {
 	_c.Call.Return(run)
 	return _c
 }
