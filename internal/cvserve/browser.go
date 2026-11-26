@@ -12,7 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (s *ServeServices) OpenBrowser(outputDirectory string, inputFilePath string) {
+func (s *ServeServices) OpenBrowser(outputDirectory string, inputFilePath string) error {
 	logrus.Debug("Opening browser")
 
 	// Input file
@@ -34,5 +34,8 @@ func (s *ServeServices) OpenBrowser(outputDirectory string, inputFilePath string
 	default:
 		err = fmt.Errorf("unsupported platform")
 	}
-	utils.CheckError(err)
+	if err != nil {
+		return fmt.Errorf("opening browser at %s: %w", url, err)
+	}
+	return nil
 }

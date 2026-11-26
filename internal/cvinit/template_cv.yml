@@ -71,22 +71,22 @@ person:
 
 # -------------------------------------------------------------------
 # Technical Skills (optional)
-# Organize your skills into domains with a level 1 (beginner) to 5 (expert).
+# Organize your skills into domains with a level from 0 (beginner) to 100 (expert).
 # -------------------------------------------------------------------
 # technicalSkills:
 #   domains:
 #     - name: Backend Development
 #       competencies:
 #         - name: Go
-#           level: 4
+#           level: 80
 #         - name: Python
-#           level: 3
+#           level: 60
 #     - name: Infrastructure
 #       competencies:
 #         - name: Kubernetes
-#           level: 4
+#           level: 80
 #         - name: Terraform
-#           level: 3
+#           level: 60
 
 # -------------------------------------------------------------------
 # Education (optional)

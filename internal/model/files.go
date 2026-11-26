@@ -6,8 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/germainlefebvre4/cvwonder/internal/utils"
 )
 
 type InputFile struct {
@@ -17,12 +15,16 @@ type InputFile struct {
 	Directory    string
 }
 
-func BuildInputFile(filePath string) InputFile {
+func BuildInputFile(filePath string) (InputFile, error) {
 	// Get current directory and input file path
 	currentDirectory, err := os.Getwd()
-	utils.CheckError(err)
+	if err != nil {
+		return InputFile{}, fmt.Errorf("getting current directory: %w", err)
+	}
 	inputFilePath, err := filepath.Abs(filePath)
-	utils.CheckError(err)
+	if err != nil {
+		return InputFile{}, fmt.Errorf("resolving input file path %q: %w", filePath, err)
+	}
 
 	// Add trailing slash to the directory path
 	currentDirectory = currentDirectory + string(filepath.Separator)
@@ -37,7 +39,7 @@ func BuildInputFile(filePath string) InputFile {
 		RelativePath: relativePath,
 		FileName:     inputFileName,
 		Directory:    inputFileDirectory,
-	}
+	}, nil
 }
 
 // ValidateInputFileExtension returns an error if the file does not have a .yml or .yaml extension.
@@ -54,12 +56,16 @@ type OutputDirectory struct {
 	RelativePath string
 }
 
-func BuildOutputDirectory(dirPath string) OutputDirectory {
+func BuildOutputDirectory(dirPath string) (OutputDirectory, error) {
 	// Get current directory and output directory
 	currentDirectory, err := os.Getwd()
-	utils.CheckError(err)
+	if err != nil {
+		return OutputDirectory{}, fmt.Errorf("getting current directory: %w", err)
+	}
 	outputDirectoryPath, err := filepath.Abs(dirPath)
-	utils.CheckError(err)
+	if err != nil {
+		return OutputDirectory{}, fmt.Errorf("resolving output directory path %q: %w", dirPath, err)
+	}
 
 	// Add trailing slash to the directory path
 	currentDirectory = currentDirectory + string(filepath.Separator)
@@ -69,7 +75,7 @@ func BuildOutputDirectory(dirPath string) OutputDirectory {
 	return OutputDirectory{
 		FullPath:     outputDirectoryPath,
 		RelativePath: relativePath,
-	}
+	}, nil
 }
 
 // ScanInputDirectory recursively walks dirPath and returns an InputFile for each

@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"sync"
 	"testing"
 
 	"github.com/germainlefebvre4/cvwonder/internal/model"
@@ -13,16 +14,16 @@ import (
 )
 
 // newTestServices returns a BulkGenerateServices with an injected workerFn.
-func newTestServices(fn func(model.InputFile, string, string, string, bool) error) *BulkGenerateServices {
+func newTestServices(fn func(model.InputFile, string, string, string, bool, []string) error) *BulkGenerateServices {
 	return &BulkGenerateServices{workerFn: fn}
 }
 
 func TestBulkGenerate_ZeroFiles(t *testing.T) {
-	svc := newTestServices(func(f model.InputFile, outDir, theme, format string, validate bool) error {
+	svc := newTestServices(func(f model.InputFile, outDir, theme, format string, validate bool, overrides []string) error {
 		t.Fatal("workerFn should not be called for zero files")
 		return nil
 	})
-	results := svc.BulkGenerate([]model.InputFile{}, "/tmp/in", "/tmp/out", "default", "html", false, 4)
+	results := svc.BulkGenerate([]model.InputFile{}, "/tmp/in", "/tmp/out", "default", "html", false, 4, nil)
 	assert.Empty(t, results)
 }
 
@@ -40,10 +41,10 @@ func TestBulkGenerate_AllSucceed(t *testing.T) {
 		{FullPath: file2, FileName: "bob.yml"},
 	}
 
-	svc := newTestServices(func(f model.InputFile, outDir, theme, format string, validate bool) error {
+	svc := newTestServices(func(f model.InputFile, outDir, theme, format string, validate bool, overrides []string) error {
 		return nil
 	})
-	results := svc.BulkGenerate(inputFiles, tempIn, tempOut, "default", "html", false, 2)
+	results := svc.BulkGenerate(inputFiles, tempIn, tempOut, "default", "html", false, 2, nil)
 
 	assert.Len(t, results, 2)
 	for _, r := range results {
@@ -70,13 +71,13 @@ func TestBulkGenerate_SomeFail(t *testing.T) {
 	}
 
 	expectedErr := errors.New("parse error")
-	svc := newTestServices(func(f model.InputFile, outDir, theme, format string, validate bool) error {
+	svc := newTestServices(func(f model.InputFile, outDir, theme, format string, validate bool, overrides []string) error {
 		if f.FileName == "bob.yml" {
 			return expectedErr
 		}
 		return nil
 	})
-	results := svc.BulkGenerate(inputFiles, tempIn, tempOut, "default", "html", false, 2)
+	results := svc.BulkGenerate(inputFiles, tempIn, tempOut, "default", "html", false, 2, nil)
 
 	assert.Len(t, results, 3)
 	successes := 0
@@ -108,11 +109,11 @@ func TestBulkGenerate_ConcurrencyOne(t *testing.T) {
 		{FullPath: file2, FileName: "bob.yml"},
 	}
 
-	svc := newTestServices(func(f model.InputFile, outDir, theme, format string, validate bool) error {
+	svc := newTestServices(func(f model.InputFile, outDir, theme, format string, validate bool, overrides []string) error {
 		processed = append(processed, f.FileName)
 		return nil
 	})
-	results := svc.BulkGenerate(inputFiles, tempIn, tempOut, "default", "html", false, 1)
+	results := svc.BulkGenerate(inputFiles, tempIn, tempOut, "default", "html", false, 1, nil)
 
 	assert.Len(t, results, 2)
 	sort.Strings(processed)
@@ -133,11 +134,11 @@ func TestBulkGenerate_OutputDirMirror(t *testing.T) {
 	}
 
 	var capturedOutputDir string
-	svc := newTestServices(func(f model.InputFile, outDir, theme, format string, validate bool) error {
+	svc := newTestServices(func(f model.InputFile, outDir, theme, format string, validate bool, overrides []string) error {
 		capturedOutputDir = outDir
 		return nil
 	})
-	results := svc.BulkGenerate(inputFiles, tempIn, tempOut, "default", "html", false, 1)
+	results := svc.BulkGenerate(inputFiles, tempIn, tempOut, "default", "html", false, 1, nil)
 
 	require.Len(t, results, 1)
 	assert.True(t, results[0].Success)
@@ -169,4 +170,43 @@ func TestPrintBulkReport(t *testing.T) {
 	assert.NotPanics(t, func() {
 		PrintBulkReport(results)
 	})
+}
+
+// --config overrides must reach every per-file generation in bulk mode.
+func TestBulkGenerate_PassesConfigOverrides(t *testing.T) {
+	var mu sync.Mutex
+	var got [][]string
+	svc := newTestServices(func(f model.InputFile, outDir, theme, format string, validate bool, overrides []string) error {
+		mu.Lock()
+		defer mu.Unlock()
+		got = append(got, overrides)
+		return nil
+	})
+	tempIn, tempOut := t.TempDir(), t.TempDir()
+	inputFiles := []model.InputFile{
+		{FullPath: filepath.Join(tempIn, "a.yml"), FileName: "a.yml", Directory: tempIn},
+		{FullPath: filepath.Join(tempIn, "b.yml"), FileName: "b.yml", Directory: tempIn},
+	}
+
+	svc.BulkGenerate(inputFiles, tempIn, tempOut, "default", "html", false, 2, []string{"colors.primary=red"})
+
+	require.Len(t, got, 2)
+	for _, overrides := range got {
+		assert.Equal(t, []string{"colors.primary=red"}, overrides)
+	}
+}
+
+// A render failure must be reported as a failed file, not as a success.
+func TestGenerateSingleFile_ReturnsRenderError(t *testing.T) {
+	t.Chdir(t.TempDir())
+	require.NoError(t, os.MkdirAll(filepath.Join("themes", "broken"), 0o750))
+	require.NoError(t, os.WriteFile(filepath.Join("themes", "broken", "theme.yaml"), []byte("name: Broken\nslug: broken\n"), 0o600))
+	require.NoError(t, os.WriteFile(filepath.Join("themes", "broken", "index.html"), []byte("{{ .Missing.Field }}"), 0o600))
+	cvPath := filepath.Join(t.TempDir(), "cv.yml")
+	require.NoError(t, os.WriteFile(cvPath, []byte("person:\n  name: Jane Doe\n"), 0o600))
+
+	err := generateSingleFile(model.InputFile{FullPath: cvPath, RelativePath: "cv.yml"}, t.TempDir(), "broken", "html", false, nil)
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "rendering")
 }

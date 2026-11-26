@@ -1,6 +1,7 @@
 package themes
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -10,6 +11,7 @@ import (
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestThemesService_Create(t *testing.T) {
@@ -106,4 +108,30 @@ func TestThemesService_Create(t *testing.T) {
 			}
 		})
 	}
+}
+
+// A failure part-way through Create must not leave a half-built theme behind,
+// otherwise the next attempt fails with "already exists".
+func TestThemesService_Create_RemovesPartialThemeOnFailure(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	original := themeCreationSteps
+	t.Cleanup(func() { themeCreationSteps = original })
+	themeCreationSteps = []func(string, string) error{
+		createThemeConfig,
+		func(_, _ string) error { return errors.New("disk full") },
+	}
+
+	service := &ThemesService{}
+	err := service.Create("Half Built")
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "disk full")
+	assert.NoDirExists(t, "themes/half-built", "partial theme must be removed")
+
+	// A retry with working steps now succeeds instead of "already exists".
+	themeCreationSteps = original
+	require.NoError(t, service.Create("Half Built"))
+	assert.FileExists(t, "themes/half-built/theme.yaml")
+	assert.FileExists(t, "themes/half-built/index.html")
 }

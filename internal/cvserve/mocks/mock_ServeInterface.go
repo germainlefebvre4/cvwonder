@@ -22,8 +22,21 @@ func (_m *ServeInterfaceMock) EXPECT() *ServeInterfaceMock_Expecter {
 }
 
 // OpenBrowser provides a mock function with given fields: outputDirectory, inputFilePath
-func (_m *ServeInterfaceMock) OpenBrowser(outputDirectory string, inputFilePath string) {
-	_m.Called(outputDirectory, inputFilePath)
+func (_m *ServeInterfaceMock) OpenBrowser(outputDirectory string, inputFilePath string) error {
+	ret := _m.Called(outputDirectory, inputFilePath)
+
+	if len(ret) == 0 {
+		panic("no return value specified for OpenBrowser")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(outputDirectory, inputFilePath)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // ServeInterfaceMock_OpenBrowser_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'OpenBrowser'
@@ -45,19 +58,44 @@ func (_c *ServeInterfaceMock_OpenBrowser_Call) Run(run func(outputDirectory stri
 	return _c
 }
 
-func (_c *ServeInterfaceMock_OpenBrowser_Call) Return() *ServeInterfaceMock_OpenBrowser_Call {
-	_c.Call.Return()
+func (_c *ServeInterfaceMock_OpenBrowser_Call) Return(_a0 error) *ServeInterfaceMock_OpenBrowser_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *ServeInterfaceMock_OpenBrowser_Call) RunAndReturn(run func(string, string)) *ServeInterfaceMock_OpenBrowser_Call {
-	_c.Run(run)
+func (_c *ServeInterfaceMock_OpenBrowser_Call) RunAndReturn(run func(string, string) error) *ServeInterfaceMock_OpenBrowser_Call {
+	_c.Call.Return(run)
 	return _c
 }
 
 // StartLiveReloader provides a mock function with given fields: port, outputDirectory, inputFilePath
-func (_m *ServeInterfaceMock) StartLiveReloader(port int, outputDirectory string, inputFilePath string) {
-	_m.Called(port, outputDirectory, inputFilePath)
+func (_m *ServeInterfaceMock) StartLiveReloader(port int, outputDirectory string, inputFilePath string) (<-chan error, error) {
+	ret := _m.Called(port, outputDirectory, inputFilePath)
+
+	if len(ret) == 0 {
+		panic("no return value specified for StartLiveReloader")
+	}
+
+	var r0 <-chan error
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int, string, string) (<-chan error, error)); ok {
+		return rf(port, outputDirectory, inputFilePath)
+	}
+	if rf, ok := ret.Get(0).(func(int, string, string) <-chan error); ok {
+		r0 = rf(port, outputDirectory, inputFilePath)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(<-chan error)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(int, string, string) error); ok {
+		r1 = rf(port, outputDirectory, inputFilePath)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // ServeInterfaceMock_StartLiveReloader_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'StartLiveReloader'
@@ -80,19 +118,44 @@ func (_c *ServeInterfaceMock_StartLiveReloader_Call) Run(run func(port int, outp
 	return _c
 }
 
-func (_c *ServeInterfaceMock_StartLiveReloader_Call) Return() *ServeInterfaceMock_StartLiveReloader_Call {
-	_c.Call.Return()
+func (_c *ServeInterfaceMock_StartLiveReloader_Call) Return(_a0 <-chan error, _a1 error) *ServeInterfaceMock_StartLiveReloader_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *ServeInterfaceMock_StartLiveReloader_Call) RunAndReturn(run func(int, string, string)) *ServeInterfaceMock_StartLiveReloader_Call {
-	_c.Run(run)
+func (_c *ServeInterfaceMock_StartLiveReloader_Call) RunAndReturn(run func(int, string, string) (<-chan error, error)) *ServeInterfaceMock_StartLiveReloader_Call {
+	_c.Call.Return(run)
 	return _c
 }
 
 // StartServer provides a mock function with given fields: port, outputDirectory
-func (_m *ServeInterfaceMock) StartServer(port int, outputDirectory string) {
-	_m.Called(port, outputDirectory)
+func (_m *ServeInterfaceMock) StartServer(port int, outputDirectory string) (<-chan error, error) {
+	ret := _m.Called(port, outputDirectory)
+
+	if len(ret) == 0 {
+		panic("no return value specified for StartServer")
+	}
+
+	var r0 <-chan error
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int, string) (<-chan error, error)); ok {
+		return rf(port, outputDirectory)
+	}
+	if rf, ok := ret.Get(0).(func(int, string) <-chan error); ok {
+		r0 = rf(port, outputDirectory)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(<-chan error)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(int, string) error); ok {
+		r1 = rf(port, outputDirectory)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // ServeInterfaceMock_StartServer_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'StartServer'
@@ -114,13 +177,13 @@ func (_c *ServeInterfaceMock_StartServer_Call) Run(run func(port int, outputDire
 	return _c
 }
 
-func (_c *ServeInterfaceMock_StartServer_Call) Return() *ServeInterfaceMock_StartServer_Call {
-	_c.Call.Return()
+func (_c *ServeInterfaceMock_StartServer_Call) Return(_a0 <-chan error, _a1 error) *ServeInterfaceMock_StartServer_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *ServeInterfaceMock_StartServer_Call) RunAndReturn(run func(int, string)) *ServeInterfaceMock_StartServer_Call {
-	_c.Run(run)
+func (_c *ServeInterfaceMock_StartServer_Call) RunAndReturn(run func(int, string) (<-chan error, error)) *ServeInterfaceMock_StartServer_Call {
+	_c.Call.Return(run)
 	return _c
 }
 

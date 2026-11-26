@@ -20,7 +20,10 @@ func ValidateCmd() *cobra.Command {
 		Long:    `Validate the CV YAML file against the schema and provide helpful feedback`,
 		Run: func(cmd *cobra.Command, args []string) {
 			// Build InputFile object
-			inputFile := model.BuildInputFile(utils.CliArgs.InputFile)
+			inputFile, err := model.BuildInputFile(utils.CliArgs.InputFile)
+			if err != nil {
+				logrus.Fatal("Error building input file: ", err)
+			}
 
 			logrus.Info("CV Wonder - Validation")
 			logrus.Info("  Input file: ", inputFile.RelativePath)

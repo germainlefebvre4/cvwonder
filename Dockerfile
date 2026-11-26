@@ -15,9 +15,13 @@ COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
 COPY . .
-RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
+# Numeric versions are stamped with a "v" prefix (1.2.3 -> v1.2.3); anything else
+# (dev, latest) is kept as is rather than turned into "vdev" / "vlatest".
+RUN VERSION="${CVWONDER_VERSION#v}"; \
+    case "$VERSION" in [0-9]*) VERSION="v$VERSION" ;; *) VERSION="$CVWONDER_VERSION" ;; esac; \
+    CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
     go build -trimpath \
-      -ldflags "-s -w -X github.com/germainlefebvre4/cvwonder/internal/version.CVWONDER_VERSION=v${CVWONDER_VERSION#v}" \
+      -ldflags "-s -w -X github.com/germainlefebvre4/cvwonder/internal/version.CVWONDER_VERSION=${VERSION}" \
       -o /out/cvwonder ./cmd/cvwonder
 
 # ---- Runtime stage: only chromium + the static binary ------------------------

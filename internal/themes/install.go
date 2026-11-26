@@ -1,6 +1,7 @@
 package themes
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"net/url"
@@ -16,26 +17,28 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (t *ThemesService) Install(themeURL string, force bool) {
+func (t *ThemesService) Install(themeURL string, force bool) error {
 	logrus.Debug("Install")
-	verifyTheme(themeURL)
-	githubRepo := parseGitHubURL(themeURL)
-	verifyThemeConfig(githubRepo)
-	createThemesDir()
-	downloadTheme(githubRepo, force)
-}
-
-func verifyTheme(themeURL string) {
-	logrus.Debug("Verify theme")
-
-	if !isGitHubURL(themeURL) {
-		logrus.Error("Not a GitHub URL: ", themeURL)
+	githubRepo, err := parseGitHubURL(themeURL)
+	if err != nil {
+		return err
 	}
+	if err := verifyThemeConfig(githubRepo); err != nil {
+		return err
+	}
+	if err := createThemesDir(); err != nil {
+		return err
+	}
+	return downloadTheme(githubRepo, force)
 }
 
-func verifyThemeConfig(githubRepo theme_config.GithubRepo) {
-	themeConfig := theme_config.GetThemeConfigFromURL(githubRepo)
+func verifyThemeConfig(githubRepo theme_config.GithubRepo) error {
+	themeConfig, err := theme_config.GetThemeConfigFromURL(githubRepo)
+	if err != nil {
+		return err
+	}
 	themeConfig.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
+	return nil
 }
 
 func isGitHubURL(input string) bool {
@@ -54,7 +57,10 @@ func isGitHubURL(input string) bool {
 	return host == "github.com"
 }
 
-func parseGitHubURL(themeURL string) theme_config.GithubRepo {
+// parseGitHubURL parses "[https://]github.com/<owner>/<repo>[.git][@ref]" into a
+// GithubRepo. It returns an error for a non-GitHub host, a path lacking the
+// owner or repo segment, or a value that cannot be parsed as a URL.
+func parseGitHubURL(themeURL string) (theme_config.GithubRepo, error) {
 	logrus.Debug("Parse GitHub URL")
 
 	// Extract ref if present (format: url@ref)
@@ -65,13 +71,25 @@ func parseGitHubURL(themeURL string) theme_config.GithubRepo {
 		ref = themeURL[idx+1:]
 	}
 
+	if !isGitHubURL(urlPart) {
+		return theme_config.GithubRepo{}, fmt.Errorf("not a GitHub URL: %q (expected github.com/<owner>/<repo>)", themeURL)
+	}
+
 	formattedURL := fmt.Sprintf("%s%s", "https://", strings.ReplaceAll(urlPart, "https://", ""))
 	URL, err := url.Parse(formattedURL)
 	if err != nil {
-		logrus.Error("Error parsing URL")
+		return theme_config.GithubRepo{}, fmt.Errorf("parsing URL %q: %w", themeURL, err)
 	}
-	path := strings.Split(URL.Path, "/")
-	return theme_config.GithubRepo{URL: URL, Owner: path[1], Name: path[2], Ref: ref}
+
+	segments := strings.Split(strings.Trim(URL.Path, "/"), "/")
+	if len(segments) < 2 || segments[0] == "" || segments[1] == "" {
+		return theme_config.GithubRepo{}, fmt.Errorf("invalid GitHub URL %q: owner/repo is required (expected github.com/<owner>/<repo>)", themeURL)
+	}
+	name := strings.TrimSuffix(segments[1], ".git")
+	if name == "" {
+		return theme_config.GithubRepo{}, fmt.Errorf("invalid GitHub URL %q: owner/repo is required (expected github.com/<owner>/<repo>)", themeURL)
+	}
+	return theme_config.GithubRepo{URL: URL, Owner: segments[0], Name: name, Ref: ref}, nil
 }
 
 func checkoutRef(worktree *git.Worktree, repo *git.Repository, ref string, force bool) error {
@@ -123,15 +141,21 @@ func checkoutRef(worktree *git.Worktree, repo *git.Repository, ref string, force
 	return fmt.Errorf("unable to checkout ref '%s': not found as branch, tag, or commit", ref)
 }
 
-func downloadTheme(githubRepo theme_config.GithubRepo, force bool) {
+func downloadTheme(githubRepo theme_config.GithubRepo, force bool) error {
 	logrus.Debug("Download theme")
 
-	themeConfig := theme_config.GetThemeConfigFromURL(githubRepo)
+	themeConfig, err := theme_config.GetThemeConfigFromURL(githubRepo)
+	if err != nil {
+		return err
+	}
 
 	// Get the ref to use (either specified or default branch)
 	ref := githubRepo.Ref
 	if ref == "" {
-		ref = theme_config.GetDefaultBranch(githubRepo)
+		ref, err = theme_config.GetDefaultBranch(githubRepo)
+		if err != nil {
+			return err
+		}
 		logrus.Debug("Using default branch: ", ref)
 	}
 
@@ -145,8 +169,7 @@ func downloadTheme(githubRepo theme_config.GithubRepo, force bool) {
 
 		repo, err := git.PlainOpen(themeDirectory)
 		if err != nil {
-			logrus.Errorf("Error opening existing theme repository: %v", err)
-			return
+			return fmt.Errorf("opening existing theme repository: %w", err)
 		}
 
 		// Fetch the latest changes
@@ -155,28 +178,25 @@ func downloadTheme(githubRepo theme_config.GithubRepo, force bool) {
 			Auth:       utils.GetGitAuth(),
 			Force:      true,
 		})
-		if err != nil && err != git.NoErrAlreadyUpToDate {
+		if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
 			logrus.Debugf("Fetch warning (may be ignorable): %v", err)
 		}
 
 		// Get the worktree
 		worktree, err := repo.Worktree()
 		if err != nil {
-			logrus.Errorf("Error getting worktree: %v", err)
-			return
+			return fmt.Errorf("getting worktree: %w", err)
 		}
 
 		// Checkout the requested ref
-		err = checkoutRef(worktree, repo, ref, force)
-		if err != nil {
-			logrus.Errorf("Error switching ref '%s': %v", ref, err)
+		if err := checkoutRef(worktree, repo, ref, force); err != nil {
 			if !force {
 				logrus.Error("Hint: Use --force flag to discard local changes and force checkout")
 			}
-			return
+			return fmt.Errorf("switching ref '%s': %w", ref, err)
 		}
 
-		return
+		return nil
 	}
 
 	// Clone new theme
@@ -193,22 +213,19 @@ func downloadTheme(githubRepo theme_config.GithubRepo, force bool) {
 
 	repo, err := git.PlainClone(themeDirectory, false, cloneOptions)
 	if err != nil {
-		logrus.Errorf("Error cloning theme: %v", err)
-		return
+		return fmt.Errorf("cloning theme: %w", err)
 	}
 
 	// Checkout the requested ref
 	worktree, err := repo.Worktree()
 	if err != nil {
-		logrus.Errorf("Error getting worktree: %v", err)
-		return
+		return fmt.Errorf("getting worktree: %w", err)
 	}
 
-	err = checkoutRef(worktree, repo, ref, force)
-	if err != nil {
-		logrus.Errorf("Error switching ref '%s': %v", ref, err)
-		return
+	if err := checkoutRef(worktree, repo, ref, force); err != nil {
+		return fmt.Errorf("switching ref '%s': %w", ref, err)
 	}
 
 	logrus.Info("Theme '" + themeConfig.Name + "' (ref=" + ref + ") successfully installed in " + themeDirectory + "/")
+	return nil
 }

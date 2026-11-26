@@ -550,7 +550,7 @@ func collectCompetency() (model.Competency, error) {
 				}),
 			huh.NewInput().
 				Title("Level").
-				Description("1 (beginner) to 5 (expert)").
+				Description("0 (beginner) to 100 (expert)").
 				Value(&levelStr).
 				Validate(validateCompetencyLevel),
 		),

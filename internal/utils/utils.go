@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"regexp"
+	"strings"
 	"time"
 
 	dotignore "github.com/codeglyph/go-dotignore/v2"
@@ -13,15 +13,11 @@ import (
 	"golang.org/x/exp/rand"
 )
 
-func CheckError(err error) {
-	if err != nil {
-		logrus.Fatal(err)
-	}
-}
-
 func ReadDirectory(path string) ([]string, error) {
 	files, err := os.ReadDir(path)
-	CheckError(err)
+	if err != nil {
+		return nil, err
+	}
 
 	result := make([]string, 0)
 	for _, file := range files {
@@ -63,18 +59,18 @@ func Copy(srcFile, dstFile string) error {
 // Returns nil if the file doesn't exist (no error)
 func LoadIgnoreMatcher(rootDir string) (IgnoreMatcher, error) {
 	ignorePath := filepath.Join(rootDir, ".cvwonderignore")
-	
+
 	// Check if .cvwonderignore exists
 	if _, err := os.Stat(ignorePath); os.IsNotExist(err) {
 		return nil, nil
 	}
-	
+
 	// Load and parse the ignore file
 	matcher, err := dotignore.NewPatternMatcherFromFile(ignorePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load .cvwonderignore: %w", err)
 	}
-	
+
 	return matcher, nil
 }
 
@@ -97,14 +93,15 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 	if err != nil {
 		return err
 	}
-	// Cleanup the .git/ dir
-	if ok, _ := regexp.MatchString(".git", scrDir); ok {
+	// Cleanup the .git/ dir. Only the path below the copy root is inspected: the
+	// location of the theme or of the output directory must not matter.
+	if relDir, err := filepath.Rel(baseDir, scrDir); err == nil && isGitPath(relDir) {
 		return nil
 	}
 	for _, entry := range entries {
 		sourcePath := filepath.Join(scrDir, entry.Name())
 		destPath := filepath.Join(dest, entry.Name())
-		
+
 		// Calculate relative path from base directory for ignore matching
 		relPath, err := filepath.Rel(baseDir, sourcePath)
 		if err != nil {
@@ -130,7 +127,7 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 					logrus.Debugf("Directory %s matched ignore pattern, but checking contents for negations", relPath)
 				}
 			}
-			
+
 			// Always create the directory and recurse to check for negation patterns
 			if err := CreateIfNotExists(destPath, 0750); err != nil {
 				return err
@@ -138,7 +135,7 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 			if err := copyDirectoryWithIgnoreInternal(sourcePath, destPath, ignoreMatcher, baseDir); err != nil {
 				return err
 			}
-			
+
 			// After recursion, check if the directory is empty (all contents were ignored)
 			// If so, remove it and skip chmod
 			entries, err := os.ReadDir(destPath)
@@ -173,12 +170,13 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 					continue
 				}
 			}
-			
-			// Exclude the templated index.html theme file and path with .git/ dir from copying
-			if destPath == filepath.Join(dest, "index.html") {
+
+			// Exclude the templated index.html theme file (the root one only: an
+			// index.html in a sub-folder is a regular asset) and git metadata
+			if relPath == "index.html" {
 				continue
 			}
-			if ok, _ := regexp.MatchString(".git", destPath); ok {
+			if isGitPath(relPath) {
 				continue
 			}
 			if err := Copy(sourcePath, destPath); err != nil {
@@ -199,6 +197,20 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 		}
 	}
 	return nil
+}
+
+// isGitPath reports whether any element of the slash- or OS-separated relative
+// path is a git metadata entry: ".git" itself or a dot-file starting with
+// ".git" (.gitignore, .github, .gitattributes...). Names that merely contain
+// "git" (digit.png, legit.css) and parent directories outside the path are not
+// matched.
+func isGitPath(relPath string) bool {
+	for _, element := range strings.FieldsFunc(relPath, func(r rune) bool { return r == '/' || r == filepath.Separator }) {
+		if strings.HasPrefix(element, ".git") {
+			return true
+		}
+	}
+	return false
 }
 
 func Exists(filePath string) bool {

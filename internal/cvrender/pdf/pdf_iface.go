@@ -6,7 +6,7 @@ import (
 )
 
 type RenderPDFInterface interface {
-	RenderFormatPDF(cv model.CV, outputDirectory string, inputFilename string, themeName string)
+	RenderFormatPDF(cv model.CV, outputDirectory string, inputFilename string, themeName string) error
 }
 
 type RenderPDFServices struct {

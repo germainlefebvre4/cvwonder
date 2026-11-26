@@ -54,7 +54,8 @@ func TestParseGitHubURL(t *testing.T) {
 	t.Run("Should parse GitHub URL with https", func(t *testing.T) {
 		input := "https://github.com/germainlefebvre4/cvwonder-theme-default"
 
-		result := parseGitHubURL(input)
+		result, err := parseGitHubURL(input)
+		require.NoError(t, err)
 
 		assert.Equal(t, "germainlefebvre4", result.Owner)
 		assert.Equal(t, "cvwonder-theme-default", result.Name)
@@ -65,7 +66,8 @@ func TestParseGitHubURL(t *testing.T) {
 	t.Run("Should parse GitHub URL without https", func(t *testing.T) {
 		input := "github.com/user/repository"
 
-		result := parseGitHubURL(input)
+		result, err := parseGitHubURL(input)
+		require.NoError(t, err)
 
 		assert.Equal(t, "user", result.Owner)
 		assert.Equal(t, "repository", result.Name)
@@ -76,7 +78,8 @@ func TestParseGitHubURL(t *testing.T) {
 	t.Run("Should parse GitHub URL with ref", func(t *testing.T) {
 		input := "github.com/user/repository@develop"
 
-		result := parseGitHubURL(input)
+		result, err := parseGitHubURL(input)
+		require.NoError(t, err)
 
 		assert.Equal(t, "user", result.Owner)
 		assert.Equal(t, "repository", result.Name)
@@ -87,13 +90,67 @@ func TestParseGitHubURL(t *testing.T) {
 	t.Run("Should parse GitHub URL with https and ref", func(t *testing.T) {
 		input := "https://github.com/germainlefebvre4/cvwonder-theme-default@main"
 
-		result := parseGitHubURL(input)
+		result, err := parseGitHubURL(input)
+		require.NoError(t, err)
 
 		assert.Equal(t, "germainlefebvre4", result.Owner)
 		assert.Equal(t, "cvwonder-theme-default", result.Name)
 		assert.Equal(t, "main", result.Ref)
 		assert.Equal(t, "https://github.com/germainlefebvre4/cvwonder-theme-default", result.URL.String())
 	})
+}
+
+func TestParseGitHubURL_Errors(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		wantMsg string
+	}{
+		{"not a url", "not-a-url", "not a GitHub URL"},
+		{"other host", "https://gitlab.com/owner/repo", "not a GitHub URL"},
+		{"owner only", "github.com/owner", "owner/repo is required"},
+		{"host only", "github.com", "owner/repo is required"},
+		{"trailing slash owner only", "https://github.com/owner/", "owner/repo is required"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var err error
+			assert.NotPanics(t, func() { _, err = parseGitHubURL(tt.input) })
+			require.Error(t, err)
+			assert.Contains(t, err.Error(), tt.wantMsg)
+		})
+	}
+
+	t.Run("strips .git suffix and keeps the ref", func(t *testing.T) {
+		repo, err := parseGitHubURL("https://github.com/owner/repo.git@v1")
+		require.NoError(t, err)
+		assert.Equal(t, "owner", repo.Owner)
+		assert.Equal(t, "repo", repo.Name)
+		assert.Equal(t, "v1", repo.Ref)
+	})
+
+	t.Run("valid URL with a ref", func(t *testing.T) {
+		repo, err := parseGitHubURL("github.com/owner/repo@develop")
+		require.NoError(t, err)
+		assert.Equal(t, "owner", repo.Owner)
+		assert.Equal(t, "repo", repo.Name)
+		assert.Equal(t, "develop", repo.Ref)
+	})
+}
+
+func TestInstall_InvalidURLReturnsErrorBeforeAnyDownload(t *testing.T) {
+	originalDir, err := os.Getwd()
+	require.NoError(t, err)
+	defer os.Chdir(originalDir) //nolint:errcheck
+	tmp := t.TempDir()
+	require.NoError(t, os.Chdir(tmp))
+
+	service := &ThemesService{}
+	assert.NotPanics(t, func() { err = service.Install("not-a-url", false) })
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "not a GitHub URL")
+	assert.NoDirExists(t, filepath.Join(tmp, "themes"), "nothing should be created before the URL is validated")
 }
 
 func TestCreateThemesDir(t *testing.T) {

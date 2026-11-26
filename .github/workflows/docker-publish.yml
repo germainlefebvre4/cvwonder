@@ -57,32 +57,61 @@ jobs:
       - name: Set versions
         id: versions
         shell: bash
+        env:
+          # Inputs are passed through the environment, never interpolated into the script.
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_DOCKER_TAG: ${{ inputs.docker_tag }}
         run: |
+          set -euo pipefail
+
+          version="$INPUT_VERSION"
+          docker_tag="$INPUT_DOCKER_TAG"
+
+          # Refuse anything that is not a plain tag / version string
+          for value in "$version" "$docker_tag"; do
+            if [[ -n "$value" && ! "$value" =~ ^[A-Za-z0-9._-]+$ ]]; then
+              echo "::error::Invalid input value: '$value'"
+              exit 1
+            fi
+          done
+
           # Use docker_tag if provided, otherwise fall back to version
-          docker_tag="${{ inputs.docker_tag }}"
           if [ -z "$docker_tag" ]; then
-            docker_tag="${{ inputs.version }}"
+            docker_tag="$version"
           fi
 
-          # Normalize docker_tag
-          # Add 'v' prefix if in format X.Y.Z
+          # Normalize docker_tag: add 'v' prefix if in format X.Y.Z
           if [[ $docker_tag =~ ^[0-9]+(\.[0-9]+){2}$ ]]; then
             docker_tag="v$docker_tag"
           fi
 
-          # Normalize cvwonder_version
-          ## Remove 'v' prefix if in format vX.Y.Z
-          cvwonder_version="${{ inputs.version }}"
-          if [[ $cvwonder_version =~ ^v[0-9]+(\.[0-9]+){2}$ ]]; then
-            cvwonder_version="${cvwonder_version:1}"
+          # Floating tags (vX.Y, vX, latest) only move for stable releases (vX.Y.Z).
+          # A pre-release such as v1.2.3-rc.1 only publishes its own tag.
+          tag_names=("$docker_tag")
+          if [[ $docker_tag =~ ^v([0-9]+)\.([0-9]+)\.[0-9]+$ ]]; then
+            tag_names+=("v${BASH_REMATCH[1]}.${BASH_REMATCH[2]}" "v${BASH_REMATCH[1]}" "latest")
           fi
 
-          # Output results
-          echo "DOCKER_TAG=$docker_tag" >> $GITHUB_OUTPUT
-          echo "DOCKER_TAG_THREE_DIGIT=$(echo $docker_tag | cut -d '.' -f1-3)" >> $GITHUB_OUTPUT
-          echo "DOCKER_TAG_TWO_DIGIT=$(echo $docker_tag | cut -d '.' -f1-2)" >> $GITHUB_OUTPUT
-          echo "DOCKER_TAG_ONE_DIGIT=$(echo $docker_tag | cut -d '.' -f1)" >> $GITHUB_OUTPUT
-          echo "CVWONDER_VERSION=$cvwonder_version" >> $GITHUB_OUTPUT
+          # Version stamped in the binary. The Dockerfile prefixes numeric versions
+          # with 'v'; compute the value `cvwonder version` must report.
+          if [[ ${version#v} =~ ^[0-9] ]]; then
+            expected_version="v${version#v}"
+          else
+            expected_version="$version"
+          fi
+
+          {
+            echo "DOCKER_TAG=$docker_tag"
+            echo "CVWONDER_VERSION=$version"
+            echo "EXPECTED_VERSION=$expected_version"
+            echo "TAGS<<EOF_TAGS"
+            for repo in "$DOCKERHUB_REPO" "$GHCR_REPO"; do
+              for tag in "${tag_names[@]}"; do
+                echo "$repo:$tag"
+              done
+            done
+            echo "EOF_TAGS"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker
         uses: docker/setup-docker-action@v5
@@ -134,17 +163,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             CVWONDER_VERSION=${{ steps.versions.outputs.CVWONDER_VERSION }}
-          tags: |
-            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }}
-            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_THREE_DIGIT }}
-            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_TWO_DIGIT }}
-            ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_ONE_DIGIT }}
-            ${{ env.DOCKERHUB_REPO }}:latest
-            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }}
-            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_THREE_DIGIT }}
-            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_TWO_DIGIT }}
-            ${{ env.GHCR_REPO }}:${{ steps.versions.outputs.DOCKER_TAG_ONE_DIGIT }}
-            ${{ env.GHCR_REPO }}:latest
+          tags: ${{ steps.versions.outputs.TAGS }}
 
       - name: Export digest
         if: ${{ inputs.publish }}
@@ -154,8 +173,16 @@ jobs:
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
 
       - name: Validate image integrity
+        env:
+          IMAGE: ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }}
+          EXPECTED_VERSION: ${{ steps.versions.outputs.EXPECTED_VERSION }}
         run: |
-          docker run --rm ${{ env.DOCKERHUB_REPO }}:${{ steps.versions.outputs.DOCKER_TAG }} version
+          output="$(docker run --rm "$IMAGE" version 2>&1)"
+          echo "$output"
+          if ! grep -qxF "Version: $EXPECTED_VERSION" <<< "$output"; then
+            echo "::error::Image reports an unexpected version (expected '$EXPECTED_VERSION')"
+            exit 1
+          fi
 
       - name: Upload digest
         if: ${{ inputs.publish }}

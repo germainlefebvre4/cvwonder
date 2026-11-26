@@ -50,6 +50,47 @@ Theme configuration loading (downloading, reading, or parsing a theme's `theme.y
 - **WHEN** a theme's `theme.yaml` content cannot be parsed
 - **THEN** the responsible function returns a non-nil `error` describing the problem, and the calling process keeps running
 
+### Requirement: Theme URL parsing rejects invalid input with an error
+`themes.parseGitHubURL` and `ThemesInterface.Install` SHALL return a non-nil `error` for input that is not a usable GitHub repository URL (not a GitHub host, a path lacking `owner` and `repo` segments, or a value that cannot be parsed as a URL), and SHALL NOT panic or continue to the download step. A trailing `.git` suffix on the repository name SHALL be accepted and stripped.
+
+#### Scenario: Value is not a URL
+- **WHEN** `Install` is called with `not-a-url`
+- **THEN** it returns a non-nil `error` stating the value is not a GitHub URL, nothing is downloaded, and the calling process keeps running
+
+#### Scenario: URL lacks owner or repository
+- **WHEN** `parseGitHubURL` is called with `github.com/owner` or `github.com`
+- **THEN** it returns a non-nil `error` stating that `owner/repo` is required, instead of panicking on a missing path segment
+
+#### Scenario: Repository URL ends in .git
+- **WHEN** `parseGitHubURL` is called with `https://github.com/owner/repo.git@v1`
+- **THEN** it returns owner `owner`, name `repo` (without `.git`) and ref `v1`, with no error
+
+### Requirement: Theme configuration overrides reject malformed keys with an error
+`ParseConfigOverrides` SHALL return a non-nil `error` naming the offending `--config` value when an override has an empty key or a key made only of separators, and SHALL NOT panic.
+
+#### Scenario: Key is empty
+- **WHEN** `ParseConfigOverrides` is called with `=v`
+- **THEN** it returns a non-nil `error` identifying `=v` as invalid, and the calling process keeps running
+
+#### Scenario: Key contains no usable segment
+- **WHEN** `ParseConfigOverrides` is called with `..=v`
+- **THEN** it returns a non-nil `error` identifying `..=v` as invalid, and the calling process keeps running
+
+### Requirement: PDF and screenshot rendering release their resources and report the real cause
+`RenderPDFInterface.RenderFormatPDF` and `RenderScreenshotInterface.RenderFormatScreenshot` SHALL release the headless browser process and the temporary HTTP listener they started before returning, whether the render succeeded or failed, and any returned `error` SHALL wrap the underlying cause (browser launch, page load, PDF/screenshot capture or file write) rather than a generic connection message.
+
+#### Scenario: Successful render leaves no browser or listener behind
+- **WHEN** a PDF or screenshot render completes successfully
+- **THEN** the browser process it launched has exited and its temporary listener is closed
+
+#### Scenario: Failed render still releases resources
+- **WHEN** a PDF or screenshot render fails after the browser or listener was started
+- **THEN** both are released before the function returns the error
+
+#### Scenario: Browser cannot be launched
+- **WHEN** the browser binary cannot be launched
+- **THEN** the returned `error` wraps the launcher error instead of reporting a connection failure to the local server
+
 ### Requirement: cmd/ entrypoints are the only layer that terminates the process on error
 Every `cmd/cvwonder/*` command SHALL be the sole point where a returned `error` from the packages above results in a logged message and process termination.
 

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
+	"github.com/germainlefebvre4/cvwonder/internal/version"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -80,5 +81,34 @@ minimumVersion: "0.1.0"
 		assert.NotPanics(t, func() {
 			service.Verify(themeSlug)
 		})
+	})
+}
+
+func TestVerify_ReturnsErrorInsteadOfExiting(t *testing.T) {
+	originalDir, err := os.Getwd()
+	assert.NoError(t, err)
+	defer os.Chdir(originalDir) //nolint:errcheck
+	assert.NoError(t, os.Chdir(t.TempDir()))
+
+	t.Run("theme without theme.yaml", func(t *testing.T) {
+		service := &ThemesService{}
+		err := service.Verify("does-not-exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("theme requiring a newer CV Wonder version", func(t *testing.T) {
+		// A "dev" build cannot be compared, so pin a real version for this case.
+		previous := version.CVWONDER_VERSION
+		version.CVWONDER_VERSION = "v1.2.0"
+		t.Cleanup(func() { version.CVWONDER_VERSION = previous })
+
+		dir := filepath.Join("themes", "too-new")
+		assert.NoError(t, os.MkdirAll(dir, 0o750))
+		assert.NoError(t, os.WriteFile(filepath.Join(dir, "theme.yaml"), []byte("name: Too New\nslug: too-new\nminimumVersion: 1.10.0\n"), 0o600))
+
+		service := &ThemesService{}
+		err := service.Verify("too-new")
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "not valid")
 	})
 }

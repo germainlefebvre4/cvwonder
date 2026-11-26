@@ -1,11 +1,11 @@
 package themes
 
 type ThemesInterface interface {
-	List()
-	Install(theme string, force bool)
-	Create(theme string)
-	Verify(theme string)
-	Screenshot(theme string)
+	List() error
+	Install(theme string, force bool) error
+	Create(theme string) error
+	Verify(theme string) error
+	Screenshot(theme string) error
 }
 
 type ThemesService struct{}

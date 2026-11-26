@@ -1,6 +1,7 @@
 package cvrender
 
 import (
+	"errors"
 	"testing"
 
 	htmlMocks "github.com/germainlefebvre4/cvwonder/internal/cvrender/html/mocks"
@@ -56,7 +57,7 @@ func TestRender(t *testing.T) {
 		}
 
 		// Test
-		service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat, false, nil)
+		assert.NoError(t, service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat, false, nil))
 
 		// Assert
 		htmlMock.AssertCalled(t, "RenderFormatHTML", cv, baseDir, outputDir, "cv", themeName, false, map[string]interface{}(nil))
@@ -91,7 +92,7 @@ func TestRender(t *testing.T) {
 		}
 
 		// Test
-		service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat, false, nil)
+		assert.NoError(t, service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat, false, nil))
 
 		// Assert
 		htmlMock.AssertCalled(t, "RenderFormatHTML", cv, baseDir, outputDir, "cv", themeName, false, map[string]interface{}(nil))
@@ -125,9 +126,54 @@ func TestRender(t *testing.T) {
 		}
 
 		// Test
-		service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat, false, nil)
+		assert.NoError(t, service.Render(cv, baseDir, outputDir, inputFile, themeName, exportFormat, false, nil))
 
 		// Assert
 		htmlMock.AssertCalled(t, "RenderFormatHTML", cv, baseDir, outputDir, "my-cv", themeName, false, map[string]interface{}(nil))
+	})
+}
+
+func TestRender_PropagatesErrors(t *testing.T) {
+	htmlErr := errors.New("template failure")
+	pdfErr := errors.New("pdf failure")
+	shotErr := errors.New("screenshot failure")
+
+	t.Run("HTML renderer failure is returned and stops the PDF step", func(t *testing.T) {
+		htmlMock := htmlMocks.NewRenderHTMLInterfaceMock(t)
+		pdfMock := pdfMocks.NewRenderPDFInterfaceMock(t)
+		htmlMock.On("RenderFormatHTML", mock.Anything, mock.Anything, mock.Anything, "cv", "t", false, mock.Anything).Return(htmlErr)
+		service := &RenderServices{RenderHTMLService: htmlMock, RenderPDFService: pdfMock}
+
+		err := service.Render(model.CV{}, "base", "out", "cv.yml", "t", "pdf", false, nil)
+
+		assert.ErrorIs(t, err, htmlErr)
+		pdfMock.AssertNotCalled(t, "RenderFormatPDF", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+	})
+
+	t.Run("PDF renderer failure is returned", func(t *testing.T) {
+		htmlMock := htmlMocks.NewRenderHTMLInterfaceMock(t)
+		pdfMock := pdfMocks.NewRenderPDFInterfaceMock(t)
+		htmlMock.On("RenderFormatHTML", mock.Anything, mock.Anything, mock.Anything, "cv", "t", false, mock.Anything).Return(nil)
+		pdfMock.On("RenderFormatPDF", mock.Anything, "out", "cv", "t").Return(pdfErr)
+		service := &RenderServices{RenderHTMLService: htmlMock, RenderPDFService: pdfMock}
+
+		err := service.Render(model.CV{}, "base", "out", "cv.yml", "t", "pdf", false, nil)
+
+		assert.ErrorIs(t, err, pdfErr)
+	})
+
+	t.Run("Screenshot propagates HTML and screenshot failures", func(t *testing.T) {
+		htmlMock := htmlMocks.NewRenderHTMLInterfaceMock(t)
+		shotMock := screenshotMocks.NewRenderScreenshotInterfaceMock(t)
+		htmlMock.On("RenderFormatHTML", mock.Anything, "base", "tmp", "cv", "t", false, mock.Anything).Return(htmlErr).Once()
+		service := &RenderServices{RenderHTMLService: htmlMock, RenderScreenshotService: shotMock}
+
+		err := service.Screenshot(model.CV{}, "base", "tmp", "cv", "t", "out.png", nil)
+		assert.ErrorIs(t, err, htmlErr)
+
+		htmlMock.On("RenderFormatHTML", mock.Anything, "base", "tmp", "cv", "t", false, mock.Anything).Return(nil).Once()
+		shotMock.On("RenderFormatScreenshot", mock.Anything, "tmp", "cv", "t", "out.png").Return(shotErr)
+		err = service.Screenshot(model.CV{}, "base", "tmp", "cv", "t", "out.png", nil)
+		assert.ErrorIs(t, err, shotErr)
 	})
 }

@@ -78,7 +78,8 @@ minimumVersion: 1.0.0
 			assert.NoError(t, err, "Failed to create mock theme.yaml file")
 
 			// Call the function
-			got := GetThemeConfigFromDir(tt.args.dir)
+			got, err := GetThemeConfigFromDir(tt.args.dir)
+			assert.NoError(t, err)
 
 			// Assert results
 			assert.Equal(t, tt.want, got)
@@ -103,10 +104,9 @@ func TestGetThemeConfigFromDir_FileNotFound(t *testing.T) {
 		}
 	}
 
-	// Assert that the function panics due to logrus.Fatal
-	assert.Panics(t, func() {
-		GetThemeConfigFromDir(outputDirectory)
-	}, "Expected GetThemeConfigFromDir to panic when theme.yaml is not found")
+	// The function must report the failure as an error, not terminate
+	_, err = GetThemeConfigFromDir(outputDirectory)
+	assert.Error(t, err, "Expected GetThemeConfigFromDir to return an error when theme.yaml is not found")
 
 	// Clean
 	err = os.RemoveAll(outputDirectory)
@@ -142,10 +142,9 @@ invalid_yaml:
 	err = os.WriteFile(themeYamlPath, []byte(invalidYamlContent), 0644)
 	assert.NoError(t, err, "Failed to create invalid theme.yaml file")
 
-	// Assert that the function panics due to logrus.Fatal
-	assert.Panics(t, func() {
-		GetThemeConfigFromDir(outputDirectory)
-	}, "Expected GetThemeConfigFromDir to panic when theme.yaml is invalid")
+	// The function must report the failure as an error, not terminate
+	_, err = GetThemeConfigFromDir(outputDirectory)
+	assert.Error(t, err, "Expected GetThemeConfigFromDir to return an error when theme.yaml is invalid")
 
 	// Clean
 	err = os.RemoveAll(outputDirectory)
@@ -192,6 +191,17 @@ func TestVerifyThemeMinimumVersion(t *testing.T) {
 			cvwonderVersion:  "1.0.0",
 			expectedValidity: true,
 		},
+		{name: "0.10.0 is newer than 0.9.0", themeConfig: ThemeConfig{MinimumVersion: "0.9.0"}, cvwonderVersion: "0.10.0", expectedValidity: true},
+		{name: "0.9.0 is older than 0.10.0", themeConfig: ThemeConfig{MinimumVersion: "0.10.0"}, cvwonderVersion: "0.9.0", expectedValidity: false},
+		{name: "v prefix on the current version", themeConfig: ThemeConfig{MinimumVersion: "0.5.0"}, cvwonderVersion: "v0.5.0", expectedValidity: true},
+		{name: "v prefix on the minimum version", themeConfig: ThemeConfig{MinimumVersion: "v0.5.0"}, cvwonderVersion: "0.5.0", expectedValidity: true},
+		{name: "v prefix on both, minimum not met", themeConfig: ThemeConfig{MinimumVersion: "v1.10.0"}, cvwonderVersion: "v1.2.0", expectedValidity: false},
+		{name: "partial minimum version", themeConfig: ThemeConfig{MinimumVersion: "1.2"}, cvwonderVersion: "1.2.0", expectedValidity: true},
+		{name: "pre-release is older than its release", themeConfig: ThemeConfig{MinimumVersion: "0.6.0"}, cvwonderVersion: "0.6.0-rc.1", expectedValidity: false},
+		{name: "release satisfies a pre-release minimum", themeConfig: ThemeConfig{MinimumVersion: "0.6.0-rc.1"}, cvwonderVersion: "0.6.0", expectedValidity: true},
+		{name: "dev build satisfies any minimum", themeConfig: ThemeConfig{MinimumVersion: "9.9.9"}, cvwonderVersion: "dev", expectedValidity: true},
+		{name: "latest satisfies any minimum", themeConfig: ThemeConfig{MinimumVersion: "9.9.9"}, cvwonderVersion: "vlatest", expectedValidity: true},
+		{name: "non numeric minimum is not enforced", themeConfig: ThemeConfig{MinimumVersion: "dev"}, cvwonderVersion: "1.0.0", expectedValidity: true},
 		// {
 		// 	name: "Valid version - empty CV Wonder version",
 		// 	themeConfig: ThemeConfig{
@@ -398,4 +408,34 @@ func TestParseConfigOverrides(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestParseConfigOverrides_InvalidKeys(t *testing.T) {
+	tests := []struct {
+		name     string
+		override string
+	}{
+		{"empty key", "=v"},
+		{"only separators", "..=v"},
+		{"single separator", ".=v"},
+		{"empty override", ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got map[string]interface{}
+			var err error
+			assert.NotPanics(t, func() {
+				got, err = ParseConfigOverrides([]string{tt.override}, nil)
+			})
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), tt.override)
+			assert.Nil(t, got)
+		})
+	}
+
+	t.Run("valid key still works", func(t *testing.T) {
+		got, err := ParseConfigOverrides([]string{"a.b=v"}, nil)
+		assert.NoError(t, err)
+		assert.Equal(t, map[string]interface{}{"a": map[string]interface{}{"b": "v"}}, got)
+	})
 }

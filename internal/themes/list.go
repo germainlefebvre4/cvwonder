@@ -12,22 +12,22 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (t *ThemesService) List() {
+func (t *ThemesService) List() error {
 	logrus.Debug("List themes")
 	baseDirectory, _ := os.Getwd()
 	themeDir := "themes"
 
 	// List directories in themes directory
-	listThemes(baseDirectory, themeDir)
+	return listThemes(baseDirectory, themeDir)
 }
 
-func listThemes(baseDirectory string, themeDir string) {
+func listThemes(baseDirectory string, themeDir string) error {
 	if themeDir == "" {
 		themeDir = "themes"
 	}
 	dirs, err := os.ReadDir(filepath.Join(baseDirectory, themeDir))
 	if err != nil {
-		logrus.Fatal("Error reading themes directory: ", err)
+		return fmt.Errorf("reading themes directory: %w", err)
 	}
 
 	// Print directories in a table
@@ -38,11 +38,15 @@ func listThemes(baseDirectory string, themeDir string) {
 	// Table body
 	for _, dir := range dirs {
 		if dir.IsDir() {
-			printRow(baseDirectory, themeDir, dir, output)
+			if err := printRow(baseDirectory, themeDir, dir, output); err != nil {
+				return err
+			}
 			continue
 		} else if dir.Type() == os.ModeSymlink {
 			if _, err := os.Stat(filepath.Join(baseDirectory, themeDir, dir.Name())); err == nil {
-				printRow(baseDirectory, themeDir, dir, output)
+				if err := printRow(baseDirectory, themeDir, dir, output); err != nil {
+					return err
+				}
 			} else {
 				logrus.Warn("Symlink to non-existing directory: ", dir.Name())
 			}
@@ -50,9 +54,14 @@ func listThemes(baseDirectory string, themeDir string) {
 			logrus.Warn("Non-directory file in themes directory: ", dir.Name())
 		}
 	}
+	return nil
 }
 
-func printRow(baseDirectory string, themeDir string, dir os.DirEntry, output *tabwriter.Writer) {
-	themeConfig := theme_config.GetThemeConfigFromDir(filepath.Join(baseDirectory, themeDir, dir.Name()))
+func printRow(baseDirectory string, themeDir string, dir os.DirEntry, output *tabwriter.Writer) error {
+	themeConfig, err := theme_config.GetThemeConfigFromDir(filepath.Join(baseDirectory, themeDir, dir.Name()))
+	if err != nil {
+		return fmt.Errorf("loading theme '%s': %w", dir.Name(), err)
+	}
 	fmt.Fprintf(output, "%s\t%s\t%s\t%s\t%s\n", themeConfig.Slug, themeConfig.Name, themeConfig.Description, themeConfig.Author, themeConfig.MinimumVersion)
+	return nil
 }

@@ -123,18 +123,18 @@ The `abstract` and `mission.description` fields SHALL be collected via `huh.NewT
 - **THEN** the `abstract` slice SHALL contain two entries, one per line
 
 ### Requirement: Competency level as validated integer input
-The wizard SHALL collect `competency.level` as a free-text `huh.NewInput` with inline validation. The value SHALL be an integer between 1 and 5 (inclusive). Invalid input SHALL display an error and re-prompt.
+The wizard SHALL collect `competency.level` as a free-text `huh.NewInput` with inline validation. The value SHALL be an integer between 0 and 100 (inclusive), matching the CV schema (a percentage of expertise). Invalid input SHALL display an error and re-prompt.
 
 #### Scenario: Valid competency level accepted
-- **WHEN** the user enters `3` for competency level
-- **THEN** the level SHALL be stored as integer `3`
+- **WHEN** the user enters `80` for competency level
+- **THEN** the level SHALL be stored as integer `80`
 
 #### Scenario: Non-numeric competency level rejected
 - **WHEN** the user enters `abc` for competency level
 - **THEN** the wizard SHALL display a validation error and not advance
 
 #### Scenario: Out-of-range competency level rejected
-- **WHEN** the user enters `0` or `6` for competency level
+- **WHEN** the user enters `101` or `-1` for competency level
 - **THEN** the wizard SHALL display a validation error and not advance
 
 ### Requirement: Image path fields as plain text input with placeholder description

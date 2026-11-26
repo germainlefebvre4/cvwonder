@@ -15,7 +15,7 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X 'cmd.cvwonder.main.Version={{.Version}}' -X 'cmd.cvwonder.main.Commit={{.Commit}}' -X 'cmd.cvwonder.main.Date={{.CommitDate}}'
+      - -s -w -X 'github.com/germainlefebvre4/cvwonder/internal/version.CVWONDER_VERSION=v{{.Version}}'
     goos:
       - linux
       - windows

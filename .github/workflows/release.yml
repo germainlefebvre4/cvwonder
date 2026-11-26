@@ -34,16 +34,6 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Update binary version
-        shell: bash
-        run: |
-          sed -i 's/\(var CVWONDER_VERSION =\).*/\1 "${{ github.ref_name }}"/' internal/version/version.go
-
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "germain.lefebvre4@gmail.com"
-          git add internal/version/version.go
-          git commit -m "chore: update version to ${{ github.ref_name }}" || echo "No changes to commit"
-
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v7
         with:

@@ -1,7 +1,10 @@
 package cvserve
 
 import (
+	"errors"
+	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -9,6 +12,7 @@ import (
 	"time"
 
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
+	"github.com/jaschaephraim/lrserver"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -105,4 +109,110 @@ func TestStartLiveReloader(t *testing.T) {
 		service := &ServeServices{}
 		assert.NotNil(t, service)
 	})
+}
+
+func TestStartServer_PortAlreadyInUse(t *testing.T) {
+	occupied, err := net.Listen("tcp", ":0")
+	require.NoError(t, err)
+	defer occupied.Close()
+	port := occupied.Addr().(*net.TCPAddr).Port
+
+	service := &ServeServices{}
+	errs, err := service.StartServer(port, t.TempDir())
+
+	require.Error(t, err)
+	assert.Nil(t, errs)
+	assert.Contains(t, err.Error(), fmt.Sprintf("binding port %d", port))
+}
+
+func TestStartLiveReloader_SetupErrors(t *testing.T) {
+	service := &ServeServices{}
+
+	t.Run("output file cannot be watched", func(t *testing.T) {
+		errs, err := service.StartLiveReloader(0, t.TempDir(), "missing.yml")
+		require.Error(t, err)
+		assert.Nil(t, errs)
+	})
+
+	t.Run("port already in use", func(t *testing.T) {
+		outputDir := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(outputDir, "cv.html"), []byte("x"), 0o600))
+		occupied, err := net.Listen("tcp", ":0")
+		require.NoError(t, err)
+		defer occupied.Close()
+
+		errs, err := service.StartLiveReloader(occupied.Addr().(*net.TCPAddr).Port, outputDir, "cv.yml")
+		require.Error(t, err)
+		assert.Nil(t, errs)
+	})
+}
+
+// failingListener returns a non-closed error from Accept to simulate the HTTP
+// server dying while it is already serving.
+type failingListener struct{ net.Listener }
+
+func (failingListener) Accept() (net.Conn, error) { return nil, errors.New("accept exploded") }
+
+func TestServeOnListener_SurfacesRuntimeError(t *testing.T) {
+	inner, err := net.Listen("tcp", ":0")
+	require.NoError(t, err)
+	defer inner.Close()
+
+	errs := serveOnListener(failingListener{inner}, http.NewServeMux())
+
+	select {
+	case err := <-errs:
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "accept exploded")
+	case <-time.After(2 * time.Second):
+		t.Fatal("runtime error was not surfaced")
+	}
+}
+
+func TestServeOnListener_ClosedListenerIsNotAnError(t *testing.T) {
+	inner, err := net.Listen("tcp", ":0")
+	require.NoError(t, err)
+
+	errs := serveOnListener(inner, http.NewServeMux())
+	require.NoError(t, inner.Close())
+
+	select {
+	case err, ok := <-errs:
+		assert.False(t, ok, "channel should be closed without an error, got %v", err)
+	case <-time.After(2 * time.Second):
+		t.Fatal("serving did not stop")
+	}
+}
+
+// In watch mode a busy LiveReload port must be reported instead of silently
+// leaving the page connected to another instance's LiveReload server.
+func TestStartLiveReloader_LiveReloadPortInUse(t *testing.T) {
+	occupied, err := net.Listen("tcp", fmt.Sprintf(":%d", lrserver.DefaultPort))
+	if err != nil {
+		t.Skipf("LiveReload port %d is not available in this environment: %v", lrserver.DefaultPort, err)
+	}
+	defer occupied.Close()
+
+	previous := utils.CliArgs.Watch
+	utils.CliArgs.Watch = true
+	t.Cleanup(func() { utils.CliArgs.Watch = previous })
+
+	outputDir := t.TempDir()
+	require.NoError(t, os.WriteFile(filepath.Join(outputDir, "cv.html"), []byte("x"), 0o600))
+	free, err := net.Listen("tcp", ":0")
+	require.NoError(t, err)
+	httpPort := free.Addr().(*net.TCPAddr).Port
+	require.NoError(t, free.Close())
+
+	service := &ServeServices{}
+	errs, err := service.StartLiveReloader(httpPort, outputDir, "cv.yml")
+
+	require.Error(t, err)
+	assert.Nil(t, errs)
+	assert.Contains(t, err.Error(), "LiveReload port unavailable")
+
+	// Nothing may be left listening on the HTTP port after the failure.
+	l, listenErr := net.Listen("tcp", fmt.Sprintf(":%d", httpPort))
+	require.NoError(t, listenErr, "HTTP port must not be left bound")
+	_ = l.Close()
 }
