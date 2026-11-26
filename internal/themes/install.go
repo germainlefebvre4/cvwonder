@@ -1,6 +1,7 @@
 package themes
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"net/url"
@@ -177,7 +178,7 @@ func downloadTheme(githubRepo theme_config.GithubRepo, force bool) error {
 			Auth:       utils.GetGitAuth(),
 			Force:      true,
 		})
-		if err != nil && err != git.NoErrAlreadyUpToDate {
+		if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
 			logrus.Debugf("Fetch warning (may be ignorable): %v", err)
 		}
 

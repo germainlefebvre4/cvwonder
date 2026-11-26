@@ -243,11 +243,9 @@ func DeepMerge(dst, src map[string]interface{}) map[string]interface{} {
 // Keys are camelCase-normalized. Values are auto-coerced via YAML parsing.
 func ParseConfigOverrides(overrides []string, base map[string]interface{}) (map[string]interface{}, error) {
 	// Start with a copy of base (may be nil)
-	merged := make(map[string]interface{})
-	if base != nil {
-		for k, v := range base {
-			merged[k] = v
-		}
+	merged := make(map[string]interface{}, len(base))
+	for k, v := range base {
+		merged[k] = v
 	}
 
 	for _, override := range overrides {

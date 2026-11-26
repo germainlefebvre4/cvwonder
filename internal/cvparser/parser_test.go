@@ -219,7 +219,6 @@ func TestParseFile(t *testing.T) {
 func TestSocialNetworksParsing(t *testing.T) {
 	type args struct {
 		content  []byte
-		filePath string
 	}
 	tests := []struct {
 		name    string
@@ -388,7 +387,7 @@ func TestReadFile(t *testing.T) {
 			args: args{
 				filePath: outputDirectory + "/TestReadFile.yaml",
 			},
-			want:    []byte(fixtures.CvYamlGood01),
+			want:    fixtures.CvYamlGood01,
 			wantErr: false,
 		},
 	}

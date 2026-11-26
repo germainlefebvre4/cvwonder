@@ -42,7 +42,7 @@ func (t *ThemesService) Create(themeName string) error {
 		if err := step(themeName, themeSlugName); err != nil {
 			themeDir := "themes/" + themeSlugName
 			if rmErr := os.RemoveAll(themeDir); rmErr != nil {
-				return fmt.Errorf("%w (also failed removing partial theme %s: %v)", err, themeDir, rmErr)
+				return fmt.Errorf("%w (also failed removing partial theme %s: %w)", err, themeDir, rmErr)
 			}
 			return err
 		}

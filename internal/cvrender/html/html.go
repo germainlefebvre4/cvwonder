@@ -129,7 +129,7 @@ func (r *RenderHTMLServices) generateTemplateFile(themeDirectory string, outputD
 	err = tmpl.ExecuteTemplate(outputTmpFile, "index.html", renderCtx)
 	if err != nil {
 		if errFile := os.Remove(outputTmpFilePath); errFile != nil {
-			return fmt.Errorf("executing template %s: %w (also failed removing tmp file %s: %v)", tmplFile, err, outputTmpFilePath, errFile)
+			return fmt.Errorf("executing template %s: %w (also failed removing tmp file %s: %w)", tmplFile, err, outputTmpFilePath, errFile)
 		}
 		return fmt.Errorf("executing template %s: %w", tmplFile, err)
 	}
