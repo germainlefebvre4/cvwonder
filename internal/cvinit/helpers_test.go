@@ -96,34 +96,29 @@ assert.False(t, forcesFirstEntry(5))
 }
 
 func TestValidateCompetencyLevel(t *testing.T) {
-t.Run("valid levels 1 to 5", func(t *testing.T) {
-for _, v := range []string{"1", "2", "3", "4", "5"} {
-assert.NoError(t, validateCompetencyLevel(v))
-}
-})
+	t.Run("valid levels from 0 to 100", func(t *testing.T) {
+		for _, v := range []string{"0", "1", "50", "80", "99", "100"} {
+			assert.NoError(t, validateCompetencyLevel(v), v)
+		}
+	})
 
-t.Run("whitespace trimmed", func(t *testing.T) {
-assert.NoError(t, validateCompetencyLevel("  3  "))
-})
+	t.Run("whitespace trimmed", func(t *testing.T) {
+		assert.NoError(t, validateCompetencyLevel("  60  "))
+	})
 
-t.Run("non-numeric rejected", func(t *testing.T) {
-err := validateCompetencyLevel("abc")
-assert.Error(t, err)
-assert.Contains(t, err.Error(), "must be a number")
-})
+	t.Run("non-numeric rejected", func(t *testing.T) {
+		err := validateCompetencyLevel("abc")
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "must be a number")
+	})
 
-t.Run("zero rejected", func(t *testing.T) {
-err := validateCompetencyLevel("0")
-assert.Error(t, err)
-})
+	t.Run("above 100 rejected", func(t *testing.T) {
+		err := validateCompetencyLevel("101")
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "between 0 and 100")
+	})
 
-t.Run("six rejected", func(t *testing.T) {
-err := validateCompetencyLevel("6")
-assert.Error(t, err)
-})
-
-t.Run("negative rejected", func(t *testing.T) {
-err := validateCompetencyLevel("-1")
-assert.Error(t, err)
-})
+	t.Run("negative rejected", func(t *testing.T) {
+		assert.Error(t, validateCompetencyLevel("-1"))
+	})
 }

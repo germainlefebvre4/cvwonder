@@ -58,14 +58,15 @@ func forcesFirstEntry(existingCount int) bool {
 	return existingCount == 0
 }
 
-// validateCompetencyLevel validates that s is an integer between 1 and 5 inclusive.
+// validateCompetencyLevel validates that s is an integer between 0 and 100
+// inclusive, the range accepted by the CV schema (a percentage of expertise).
 func validateCompetencyLevel(s string) error {
 	n, err := strconv.Atoi(strings.TrimSpace(s))
 	if err != nil {
-		return fmt.Errorf("must be a number between 1 and 5")
+		return fmt.Errorf("must be a number between 0 and 100")
 	}
-	if n < 1 || n > 5 {
-		return fmt.Errorf("must be between 1 and 5 (got %d)", n)
+	if n < 0 || n > 100 {
+		return fmt.Errorf("must be between 0 and 100 (got %d)", n)
 	}
 	return nil
 }
