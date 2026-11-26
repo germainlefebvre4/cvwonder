@@ -191,6 +191,17 @@ func TestVerifyThemeMinimumVersion(t *testing.T) {
 			cvwonderVersion:  "1.0.0",
 			expectedValidity: true,
 		},
+		{name: "0.10.0 is newer than 0.9.0", themeConfig: ThemeConfig{MinimumVersion: "0.9.0"}, cvwonderVersion: "0.10.0", expectedValidity: true},
+		{name: "0.9.0 is older than 0.10.0", themeConfig: ThemeConfig{MinimumVersion: "0.10.0"}, cvwonderVersion: "0.9.0", expectedValidity: false},
+		{name: "v prefix on the current version", themeConfig: ThemeConfig{MinimumVersion: "0.5.0"}, cvwonderVersion: "v0.5.0", expectedValidity: true},
+		{name: "v prefix on the minimum version", themeConfig: ThemeConfig{MinimumVersion: "v0.5.0"}, cvwonderVersion: "0.5.0", expectedValidity: true},
+		{name: "v prefix on both, minimum not met", themeConfig: ThemeConfig{MinimumVersion: "v1.10.0"}, cvwonderVersion: "v1.2.0", expectedValidity: false},
+		{name: "partial minimum version", themeConfig: ThemeConfig{MinimumVersion: "1.2"}, cvwonderVersion: "1.2.0", expectedValidity: true},
+		{name: "pre-release is older than its release", themeConfig: ThemeConfig{MinimumVersion: "0.6.0"}, cvwonderVersion: "0.6.0-rc.1", expectedValidity: false},
+		{name: "release satisfies a pre-release minimum", themeConfig: ThemeConfig{MinimumVersion: "0.6.0-rc.1"}, cvwonderVersion: "0.6.0", expectedValidity: true},
+		{name: "dev build satisfies any minimum", themeConfig: ThemeConfig{MinimumVersion: "9.9.9"}, cvwonderVersion: "dev", expectedValidity: true},
+		{name: "latest satisfies any minimum", themeConfig: ThemeConfig{MinimumVersion: "9.9.9"}, cvwonderVersion: "vlatest", expectedValidity: true},
+		{name: "non numeric minimum is not enforced", themeConfig: ThemeConfig{MinimumVersion: "dev"}, cvwonderVersion: "1.0.0", expectedValidity: true},
 		// {
 		// 	name: "Valid version - empty CV Wonder version",
 		// 	themeConfig: ThemeConfig{

@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 	"unicode"
 
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
@@ -124,9 +126,26 @@ func GetThemeConfigFromThemeName(themeName string) (ThemeConfig, error) {
 	return GetThemeConfigFromDir("themes/" + themeName)
 }
 
+// VerifyThemeMinimumVersion reports whether cvwonderVersion satisfies the theme's
+// minimum version. Versions are compared numerically (0.9.0 < 0.10.0) and an
+// optional "v" prefix is ignored. A missing minimum, or a version that is not
+// numeric (a "dev" build, "latest"), cannot be judged and is treated as
+// satisfying the requirement.
 func (tc *ThemeConfig) VerifyThemeMinimumVersion(cvwonderVersion string) bool {
-	// Check if the minimum version is less than or equal to the current version
-	if tc.MinimumVersion <= cvwonderVersion {
+	if strings.TrimSpace(tc.MinimumVersion) == "" {
+		return true
+	}
+	minimum, ok := parseVersion(tc.MinimumVersion)
+	if !ok {
+		logrus.Debugf("Theme minimum version %q is not a version number, skipping the check", tc.MinimumVersion)
+		return true
+	}
+	current, ok := parseVersion(cvwonderVersion)
+	if !ok {
+		logrus.Debugf("CV Wonder version %q is not a version number, skipping the theme minimum version check", cvwonderVersion)
+		return true
+	}
+	if compareVersions(minimum, current) <= 0 {
 		return true
 	}
 	logrus.Error("CV Wonder version: ", cvwonderVersion)
@@ -134,6 +153,61 @@ func (tc *ThemeConfig) VerifyThemeMinimumVersion(cvwonderVersion string) bool {
 	logrus.Error("The theme minimum version not met. You might encounter issues with this theme.")
 	logrus.Error("")
 	return false
+}
+
+// version is a parsed X.Y.Z[-prerelease] version; build metadata is dropped.
+type version struct {
+	numbers    [3]int
+	prerelease string
+}
+
+// parseVersion parses "1", "1.2", "1.2.3", "v1.2.3", "1.2.3-rc.1" and
+// "1.2.3+build". It returns false for anything else (e.g. "dev").
+func parseVersion(raw string) (version, bool) {
+	s := strings.TrimSpace(raw)
+	s = strings.TrimPrefix(strings.TrimPrefix(s, "v"), "V")
+	if i := strings.IndexByte(s, '+'); i >= 0 {
+		s = s[:i]
+	}
+	var v version
+	if i := strings.IndexByte(s, '-'); i >= 0 {
+		v.prerelease = s[i+1:]
+		s = s[:i]
+	}
+	parts := strings.Split(s, ".")
+	if s == "" || len(parts) > len(v.numbers) {
+		return version{}, false
+	}
+	for i, part := range parts {
+		n, err := strconv.Atoi(part)
+		if err != nil || n < 0 {
+			return version{}, false
+		}
+		v.numbers[i] = n
+	}
+	return v, true
+}
+
+// compareVersions returns -1, 0 or 1. A pre-release sorts before its release.
+func compareVersions(a, b version) int {
+	for i := range a.numbers {
+		if a.numbers[i] != b.numbers[i] {
+			if a.numbers[i] < b.numbers[i] {
+				return -1
+			}
+			return 1
+		}
+	}
+	switch {
+	case a.prerelease == b.prerelease:
+		return 0
+	case a.prerelease == "":
+		return 1
+	case b.prerelease == "":
+		return -1
+	default:
+		return strings.Compare(a.prerelease, b.prerelease)
+	}
 }
 
 func GetDefaultBranch(githubRepo GithubRepo) (string, error) {
