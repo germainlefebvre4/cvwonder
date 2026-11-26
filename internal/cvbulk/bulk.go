@@ -188,7 +188,9 @@ func generateSingleFile(inputFile model.InputFile, outputDir string, themeName s
 	if err != nil {
 		return fmt.Errorf("getting working directory: %w", err)
 	}
-	renderService.Render(content, baseDirectory, outputDir, inputFile.FullPath, themeRef.Name, format, false, mergedConfig)
+	if err := renderService.Render(content, baseDirectory, outputDir, inputFile.FullPath, themeRef.Name, format, false, mergedConfig); err != nil {
+		return fmt.Errorf("rendering %s: %w", inputFile.FullPath, err)
+	}
 	logrus.Infof("Generated: %s", inputFile.RelativePath)
 	return nil
 }

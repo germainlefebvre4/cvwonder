@@ -195,3 +195,18 @@ func TestBulkGenerate_PassesConfigOverrides(t *testing.T) {
 		assert.Equal(t, []string{"colors.primary=red"}, overrides)
 	}
 }
+
+// A render failure must be reported as a failed file, not as a success.
+func TestGenerateSingleFile_ReturnsRenderError(t *testing.T) {
+	t.Chdir(t.TempDir())
+	require.NoError(t, os.MkdirAll(filepath.Join("themes", "broken"), 0o750))
+	require.NoError(t, os.WriteFile(filepath.Join("themes", "broken", "theme.yaml"), []byte("name: Broken\nslug: broken\n"), 0o600))
+	require.NoError(t, os.WriteFile(filepath.Join("themes", "broken", "index.html"), []byte("{{ .Missing.Field }}"), 0o600))
+	cvPath := filepath.Join(t.TempDir(), "cv.yml")
+	require.NoError(t, os.WriteFile(cvPath, []byte("person:\n  name: Jane Doe\n"), 0o600))
+
+	err := generateSingleFile(model.InputFile{FullPath: cvPath, RelativePath: "cv.yml"}, t.TempDir(), "broken", "html", false, nil)
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "rendering")
+}
