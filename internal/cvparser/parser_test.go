@@ -95,22 +95,49 @@ func TestConvertFileContentToStruct(t *testing.T) {
 			want:    fixtures.CvModelWithCustomFields,
 			wantErr: false,
 		},
-		// {
-		// 	name: "Should return an error",
-		// 	p:    &ParserServices{},
-		// 	args: args{
-		// 		content: fixtures.CvYamlError01,
-		// 	},
-		// 	want:    fixtures.CvModelError01,
-		// 	wantErr: true,
-		// },
+		{
+			name: "Should return an error",
+			p:    &ParserServices{},
+			args: args{
+				content: fixtures.CvYamlError01,
+			},
+			want:    fixtures.CvModelError01,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.p.convertFileContentToStruct(tt.args.content)
+			got, err := tt.p.convertFileContentToStruct(tt.args.content)
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func TestParseFileErrors(t *testing.T) {
+	p := &ParserServices{}
+
+	t.Run("Should return an error when the file is not valid YAML", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "invalid.yml")
+		assert.NoError(t, os.WriteFile(path, fixtures.CvYamlError01, 0o600))
+
+		got, err := p.ParseFile(path)
+		assert.Error(t, err)
+		assert.Equal(t, model.CV{}, got)
+	})
+
+	t.Run("Should return an error when the file does not exist", func(t *testing.T) {
+		missing := filepath.Join(t.TempDir(), "missing.yml")
+
+		got, err := p.ParseFile(missing)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), missing)
+		assert.Equal(t, model.CV{}, got)
+	})
 }
 
 func TestParseFile(t *testing.T) {
@@ -249,7 +276,8 @@ socialNetworks:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.p.convertFileContentToStruct(tt.args.content)
+			got, err := tt.p.convertFileContentToStruct(tt.args.content)
+			assert.NoError(t, err)
 			assert.Equal(t, tt.want, got)
 		})
 	}
@@ -270,7 +298,8 @@ references:
     description: "Great engineer!"
 `)
 		p := &ParserServices{}
-		got := p.convertFileContentToStruct(yamlContent)
+		got, err := p.convertFileContentToStruct(yamlContent)
+		assert.NoError(t, err)
 
 		assert.Len(t, got.References, 1)
 		assert.Equal(t, "Jane Doe", got.References[0].Name)
@@ -290,7 +319,8 @@ references:
     description: "Talented developer"
 `)
 		p := &ParserServices{}
-		got := p.convertFileContentToStruct(yamlContent)
+		got, err := p.convertFileContentToStruct(yamlContent)
+		assert.NoError(t, err)
 
 		assert.Len(t, got.References, 1)
 		assert.Equal(t, "John Smith", got.References[0].Name)
@@ -315,7 +345,8 @@ func TestCustomFieldsDeclarationOrderPreserved(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &ParserServices{}
-			got := p.convertFileContentToStruct(tt.content)
+			got, err := p.convertFileContentToStruct(tt.content)
+			assert.NoError(t, err)
 
 			gotLabels := make([]string, len(got.Person.Custom))
 			for i, f := range got.Person.Custom {
@@ -375,7 +406,8 @@ func TestReadFile(t *testing.T) {
 		}
 
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.p.readFile(tt.args.filePath)
+			got, err := tt.p.readFile(tt.args.filePath)
+			assert.NoError(t, err)
 			assert.Equal(t, tt.want, got)
 		})
 

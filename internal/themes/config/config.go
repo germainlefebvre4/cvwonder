@@ -57,7 +57,7 @@ func normalizeValue(v interface{}) interface{} {
 	}
 }
 
-func GetThemeConfigFromURL(githubRepo GithubRepo) ThemeConfig {
+func GetThemeConfigFromURL(githubRepo GithubRepo) (ThemeConfig, error) {
 	// Download theme.yaml
 	client := utils.GetGitHubClient()
 
@@ -71,20 +71,20 @@ func GetThemeConfigFromURL(githubRepo GithubRepo) ThemeConfig {
 
 	fileContent, _, _, err := client.Repositories.GetContents(context.TODO(), githubRepo.Owner, githubRepo.Name, "theme.yaml", opts)
 	if err != nil {
-		logrus.Fatal("Error downloading theme.yaml: ", err)
+		return ThemeConfig{}, fmt.Errorf("downloading theme.yaml: %w", err)
 	}
 
 	// Read theme.yaml
 	config, err := fileContent.GetContent()
 	if err != nil {
-		logrus.Fatal("Error reading theme.yaml: ", err)
+		return ThemeConfig{}, fmt.Errorf("reading theme.yaml: %w", err)
 	}
 
 	// Parse theme.yaml
 	themeConfig := ThemeConfig{}
 	err = yaml.Unmarshal([]byte(config), &themeConfig)
 	if err != nil {
-		logrus.Fatal("Error parsing theme.yaml: ", err)
+		return ThemeConfig{}, fmt.Errorf("parsing theme.yaml: %w", err)
 	}
 
 	// Normalize configuration keys to camelCase
@@ -92,22 +92,22 @@ func GetThemeConfigFromURL(githubRepo GithubRepo) ThemeConfig {
 		themeConfig.Configuration = NormalizeConfigKeys(themeConfig.Configuration)
 	}
 
-	return themeConfig
+	return themeConfig, nil
 }
 
-func GetThemeConfigFromDir(dir string) ThemeConfig {
+func GetThemeConfigFromDir(dir string) (ThemeConfig, error) {
 	// Read theme.yaml
 	config, err := os.ReadFile(dir + "/theme.yaml")
 
 	if err != nil {
-		logrus.Panic("Error reading theme.yaml")
+		return ThemeConfig{}, fmt.Errorf("reading theme.yaml in %s: %w", dir, err)
 	}
 
 	// Parse theme.yaml
 	themeConfig := ThemeConfig{}
 	err = yaml.Unmarshal(config, &themeConfig)
 	if err != nil {
-		logrus.Panic("Error parsing theme.yaml")
+		return ThemeConfig{}, fmt.Errorf("parsing theme.yaml in %s: %w", dir, err)
 	}
 
 	// Normalize configuration keys to camelCase
@@ -115,10 +115,10 @@ func GetThemeConfigFromDir(dir string) ThemeConfig {
 		themeConfig.Configuration = NormalizeConfigKeys(themeConfig.Configuration)
 	}
 
-	return themeConfig
+	return themeConfig, nil
 }
 
-func GetThemeConfigFromThemeName(themeName string) ThemeConfig {
+func GetThemeConfigFromThemeName(themeName string) (ThemeConfig, error) {
 	// This function now expects themeName to already be resolved to the actual directory name
 	// The caller should use GetThemeDirectory from themes package first
 	return GetThemeConfigFromDir("themes/" + themeName)
@@ -136,13 +136,13 @@ func (tc *ThemeConfig) VerifyThemeMinimumVersion(cvwonderVersion string) bool {
 	return false
 }
 
-func GetDefaultBranch(githubRepo GithubRepo) string {
+func GetDefaultBranch(githubRepo GithubRepo) (string, error) {
 	client := utils.GetGitHubClient()
 	repo, _, err := client.Repositories.Get(context.TODO(), githubRepo.Owner, githubRepo.Name)
 	if err != nil {
-		logrus.Fatal("Error getting repository info: ", err)
+		return "", fmt.Errorf("getting repository info: %w", err)
 	}
-	return repo.GetDefaultBranch()
+	return repo.GetDefaultBranch(), nil
 }
 
 // DeepMerge merges src into dst at the leaf level. Values in src override dst.
@@ -199,6 +199,9 @@ func ParseConfigOverrides(overrides []string, base map[string]interface{}) (map[
 
 		// Build a nested map from the dot-notation key, with camelCase normalization
 		segments := splitDotKey(rawKey)
+		if len(segments) == 0 {
+			return nil, fmt.Errorf("invalid --config value %q: key must contain at least one non-empty segment", override)
+		}
 		overrideMap := buildNestedMap(segments, coercedValue)
 		merged = DeepMerge(merged, overrideMap)
 	}

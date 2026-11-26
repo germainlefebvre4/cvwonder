@@ -39,7 +39,9 @@ func CmdList() *cobra.Command {
 			if err != nil {
 				logrus.Fatal("Error creating themes service: ", err)
 			}
-			themesService.List()
+			if err := themesService.List(); err != nil {
+				logrus.Fatal("Error listing themes: ", err)
+			}
 		},
 	}
 
@@ -59,7 +61,9 @@ func CmdInstall() *cobra.Command {
 			if err != nil {
 				logrus.Fatal("Error creating themes service: ", err)
 			}
-			themesService.Install(args[0], utils.CliArgs.ForceThemeInstall)
+			if err := themesService.Install(args[0], utils.CliArgs.ForceThemeInstall); err != nil {
+				logrus.Fatal("Error installing theme: ", err)
+			}
 		},
 	}
 
@@ -82,7 +86,9 @@ func CmdCreate() *cobra.Command {
 			}
 			themeName := strings.ReplaceAll(utils.CliArgs.CreateThemeName, "'", "")
 			themeName = strings.ReplaceAll(themeName, "\"", "")
-			themesService.Create(themeName)
+			if err := themesService.Create(themeName); err != nil {
+				logrus.Fatal("Error creating theme: ", err)
+			}
 		},
 	}
 
@@ -104,7 +110,9 @@ func CmdCheck() *cobra.Command {
 			if err != nil {
 				logrus.Fatal("Error creating themes service: ", err)
 			}
-			themesService.Verify(args[0])
+			if err := themesService.Verify(args[0]); err != nil {
+				logrus.Fatal("Error verifying theme: ", err)
+			}
 		},
 	}
 
@@ -128,7 +136,9 @@ if present, otherwise falls back to ./cv.yml in the current directory.`,
 			if err != nil {
 				logrus.Fatal("Error creating themes service: ", err)
 			}
-			themesService.Screenshot(args[0])
+			if err := themesService.Screenshot(args[0]); err != nil {
+				logrus.Fatal("Error generating theme screenshot: ", err)
+			}
 		},
 	}
 

@@ -56,10 +56,12 @@ func TestGenerateOutputFile(t *testing.T) {
 		// Run test
 		t.Run(tt.name, func(t *testing.T) {
 			service := NewRenderPDFServicesTest()
+			got, err := service.generateOutputFile(tt.args.outputDirectory, tt.args.inputFilename)
+			assert.NoError(t, err)
 			assert.Equalf(
 				t,
 				tt.want,
-				service.generateOutputFile(tt.args.outputDirectory, tt.args.inputFilename),
+				got,
 				"generateOutputFile(%v, %v)",
 				tt.args.outputDirectory,
 				tt.args.inputFilename,

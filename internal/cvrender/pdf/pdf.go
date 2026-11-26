@@ -2,6 +2,7 @@ package render_pdf
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"path/filepath"
@@ -11,47 +12,88 @@ import (
 
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
+	"github.com/go-rod/rod/lib/proto"
 	"github.com/sirupsen/logrus"
 )
 
-func (r *RenderPDFServices) RenderFormatPDF(cv model.CV, outputDirectory string, inputFilename string, themeName string) {
+func (r *RenderPDFServices) RenderFormatPDF(cv model.CV, outputDirectory string, inputFilename string, themeName string) error {
 	logrus.Debug("Generating PDF")
 
 	// Output file
-	outputFilePath := r.generateOutputFile(outputDirectory, inputFilename)
+	outputFilePath, err := r.generateOutputFile(outputDirectory, inputFilename)
+	if err != nil {
+		return err
+	}
 
-	// Run the server to output the HTML
-	localServerUrl := r.runWebServer(inputFilename, outputDirectory)
+	// Run the server to output the HTML. The listener is released before returning.
+	localServerUrl, stopServer, err := r.runWebServer(inputFilename, outputDirectory)
+	if err != nil {
+		return err
+	}
+	defer stopServer()
 
 	// Open the browser and convert the page to PDF
-	r.convertPageToPDF(localServerUrl, outputFilePath)
+	return r.convertPageToPDF(localServerUrl, outputFilePath)
 }
 
-func (r *RenderPDFServices) convertPageToPDF(localServerUrl string, outputFilePath string) {
-	err := rod.Try(func() {
-		l := launcher.New().NoSandbox(true)
-		if bin := os.Getenv("CHROME_BIN"); bin != "" {
-			l = l.Bin(bin)
-		}
-		if utils.CliArgs.Debug {
-			l = l.Logger(os.Stdout)
-		}
-		u := l.MustLaunch()
-		rod.New().ControlURL(u).MustConnect().MustPage(localServerUrl).MustWaitLoad().MustPDF(outputFilePath)
-	})
-	if err != nil {
-		message := fmt.Sprintf("ERROR: Failed to connect to the server %s", localServerUrl)
-		logrus.Fatal(message)
+// convertPageToPDF launches a headless browser, prints localServerUrl to PDF and
+// writes it to outputFilePath. The browser and its launcher are released before
+// returning, whether the conversion succeeded or not.
+func (r *RenderPDFServices) convertPageToPDF(localServerUrl string, outputFilePath string) error {
+	l := launcher.New().NoSandbox(true)
+	if bin := os.Getenv("CHROME_BIN"); bin != "" {
+		l = l.Bin(bin)
 	}
+	if utils.CliArgs.Debug {
+		l = l.Logger(os.Stdout)
+	}
+	u, err := l.Launch()
+	if err != nil {
+		return fmt.Errorf("launching browser: %w", err)
+	}
+	defer l.Cleanup()
+
+	browser := rod.New().ControlURL(u)
+	if err := browser.Connect(); err != nil {
+		l.Kill()
+		return fmt.Errorf("connecting to browser: %w", err)
+	}
+	defer func() {
+		if err := browser.Close(); err != nil {
+			logrus.Debugf("Closing browser failed, killing it: %v", err)
+			l.Kill()
+		}
+	}()
+
+	page, err := browser.Page(proto.TargetCreateTarget{URL: localServerUrl})
+	if err != nil {
+		return fmt.Errorf("opening page %s: %w", localServerUrl, err)
+	}
+	if err := page.WaitLoad(); err != nil {
+		return fmt.Errorf("waiting for page %s to load: %w", localServerUrl, err)
+	}
+	stream, err := page.PDF(&proto.PagePrintToPDF{})
+	if err != nil {
+		return fmt.Errorf("printing page %s to PDF: %w", localServerUrl, err)
+	}
+	pdfData, err := io.ReadAll(stream)
+	if err != nil {
+		return fmt.Errorf("reading PDF data: %w", err)
+	}
+	if err := os.WriteFile(outputFilePath, pdfData, 0o644); err != nil {
+		return fmt.Errorf("writing PDF file %s: %w", outputFilePath, err)
+	}
+	return nil
 }
 
 // runWebServer binds a listener on a random free port and starts serving
 // outputDirectory over HTTP. The listener is bound before the goroutine is
 // launched, so no other caller can steal the port between allocation and use.
-func (r *RenderPDFServices) runWebServer(inputFilename string, outputDirectory string) string {
+// The returned stop function closes the listener; the caller must call it.
+func (r *RenderPDFServices) runWebServer(inputFilename string, outputDirectory string) (string, func(), error) {
 	listener, err := net.Listen("tcp", ":0")
 	if err != nil {
-		logrus.Fatal("Failed to bind listener for PDF server: ", err)
+		return "", nil, fmt.Errorf("binding listener for PDF server: %w", err)
 	}
 	port := listener.Addr().(*net.TCPAddr).Port
 
@@ -62,17 +104,23 @@ func (r *RenderPDFServices) runWebServer(inputFilename string, outputDirectory s
 		r.ServeService.StartServerOnListener(listener, outputDirectory, ready)
 	}()
 	<-ready
-	return localServerUrl
+	return localServerUrl, func() { _ = listener.Close() }, nil
 }
 
-func (r *RenderPDFServices) generateOutputFile(outputDirectory string, inputFilename string) string {
+func (r *RenderPDFServices) generateOutputFile(outputDirectory string, inputFilename string) (string, error) {
 	outputDirectory, err := filepath.Abs(outputDirectory)
-	utils.CheckError(err)
+	if err != nil {
+		return "", fmt.Errorf("resolving output directory: %w", err)
+	}
 	outputFilename := filepath.Base(inputFilename) + ".pdf"
 	outputFilePath, err := filepath.Abs(outputDirectory + "/" + outputFilename)
-	utils.CheckError(err)
+	if err != nil {
+		return "", fmt.Errorf("resolving output file path: %w", err)
+	}
 	w, err := os.Create(outputFilePath)
-	utils.CheckError(err)
+	if err != nil {
+		return "", fmt.Errorf("creating output file %s: %w", outputFilePath, err)
+	}
 	defer w.Close()
-	return outputFilePath
+	return outputFilePath, nil
 }

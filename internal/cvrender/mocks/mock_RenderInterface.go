@@ -21,8 +21,21 @@ func (_m *RenderInterfaceMock) EXPECT() *RenderInterfaceMock_Expecter {
 }
 
 // Render provides a mock function with given fields: cv, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, isWatch, config
-func (_m *RenderInterfaceMock) Render(cv model.CV, baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, isWatch bool, config map[string]interface{}) {
-	_m.Called(cv, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, isWatch, config)
+func (_m *RenderInterfaceMock) Render(cv model.CV, baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, isWatch bool, config map[string]interface{}) error {
+	ret := _m.Called(cv, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, isWatch, config)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Render")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(model.CV, string, string, string, string, string, bool, map[string]interface{}) error); ok {
+		r0 = rf(cv, baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, isWatch, config)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // RenderInterfaceMock_Render_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Render'
@@ -50,19 +63,32 @@ func (_c *RenderInterfaceMock_Render_Call) Run(run func(cv model.CV, baseDirecto
 	return _c
 }
 
-func (_c *RenderInterfaceMock_Render_Call) Return() *RenderInterfaceMock_Render_Call {
-	_c.Call.Return()
+func (_c *RenderInterfaceMock_Render_Call) Return(_a0 error) *RenderInterfaceMock_Render_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *RenderInterfaceMock_Render_Call) RunAndReturn(run func(model.CV, string, string, string, string, string, bool, map[string]interface{})) *RenderInterfaceMock_Render_Call {
-	_c.Run(run)
+func (_c *RenderInterfaceMock_Render_Call) RunAndReturn(run func(model.CV, string, string, string, string, string, bool, map[string]interface{}) error) *RenderInterfaceMock_Render_Call {
+	_c.Call.Return(run)
 	return _c
 }
 
 // Screenshot provides a mock function with given fields: cv, baseDirectory, tmpDirectory, inputFilename, themeName, outputFilePath, config
-func (_m *RenderInterfaceMock) Screenshot(cv model.CV, baseDirectory string, tmpDirectory string, inputFilename string, themeName string, outputFilePath string, config map[string]interface{}) {
-	_m.Called(cv, baseDirectory, tmpDirectory, inputFilename, themeName, outputFilePath, config)
+func (_m *RenderInterfaceMock) Screenshot(cv model.CV, baseDirectory string, tmpDirectory string, inputFilename string, themeName string, outputFilePath string, config map[string]interface{}) error {
+	ret := _m.Called(cv, baseDirectory, tmpDirectory, inputFilename, themeName, outputFilePath, config)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Screenshot")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(model.CV, string, string, string, string, string, map[string]interface{}) error); ok {
+		r0 = rf(cv, baseDirectory, tmpDirectory, inputFilename, themeName, outputFilePath, config)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // RenderInterfaceMock_Screenshot_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Screenshot'
@@ -89,13 +115,13 @@ func (_c *RenderInterfaceMock_Screenshot_Call) Run(run func(cv model.CV, baseDir
 	return _c
 }
 
-func (_c *RenderInterfaceMock_Screenshot_Call) Return() *RenderInterfaceMock_Screenshot_Call {
-	_c.Call.Return()
+func (_c *RenderInterfaceMock_Screenshot_Call) Return(_a0 error) *RenderInterfaceMock_Screenshot_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *RenderInterfaceMock_Screenshot_Call) RunAndReturn(run func(model.CV, string, string, string, string, string, map[string]interface{})) *RenderInterfaceMock_Screenshot_Call {
-	_c.Run(run)
+func (_c *RenderInterfaceMock_Screenshot_Call) RunAndReturn(run func(model.CV, string, string, string, string, string, map[string]interface{}) error) *RenderInterfaceMock_Screenshot_Call {
+	_c.Call.Return(run)
 	return _c
 }
 

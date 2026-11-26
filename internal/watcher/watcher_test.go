@@ -1,6 +1,7 @@
 package watcher
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -68,7 +69,8 @@ func TestObserveFileEvents(t *testing.T) {
 		}
 
 		// Start watcher in goroutine
-		go service.ObserveFileEvents(tempDir, outputDir, inputFile, "default", "html", nil)
+		_, err = service.ObserveFileEvents(tempDir, outputDir, inputFile, "default", "html", nil)
+		require.NoError(t, err)
 
 		// Give watcher time to start
 		time.Sleep(100 * time.Millisecond)
@@ -124,7 +126,8 @@ func TestObserveFileEvents(t *testing.T) {
 		}
 
 		// Start watcher in goroutine
-		go service.ObserveFileEvents(tempDir, outputDir, inputFile, "custom-theme", "html", nil)
+		_, err = service.ObserveFileEvents(tempDir, outputDir, inputFile, "custom-theme", "html", nil)
+		require.NoError(t, err)
 
 		// Give watcher time to start
 		time.Sleep(200 * time.Millisecond)
@@ -139,5 +142,104 @@ func TestObserveFileEvents(t *testing.T) {
 		// Note: File watching is asynchronous and may not always trigger in test environment
 		// We just verify the service was created correctly
 		assert.NotNil(t, service)
+	})
+}
+
+func setupWatchFixture(t *testing.T) (tempDir, inputFile, outputDir, themeFile string) {
+	t.Helper()
+	tempDir = t.TempDir()
+	inputFile = filepath.Join(tempDir, "cv.yml")
+	outputDir = filepath.Join(tempDir, "generated")
+	themeDir := filepath.Join(tempDir, "themes", "default")
+	themeFile = filepath.Join(themeDir, "index.html")
+	require.NoError(t, os.MkdirAll(outputDir, 0o750))
+	require.NoError(t, os.MkdirAll(themeDir, 0o750))
+	require.NoError(t, os.WriteFile(inputFile, []byte("initial"), 0o600))
+	require.NoError(t, os.WriteFile(themeFile, []byte("theme"), 0o600))
+	return
+}
+
+func TestObserveFileEvents_SetupErrors(t *testing.T) {
+	t.Run("missing theme index.html returns an error before the loop starts", func(t *testing.T) {
+		tempDir, inputFile, outputDir, themeFile := setupWatchFixture(t)
+		require.NoError(t, os.Remove(themeFile))
+
+		service := &WatcherServices{
+			ParserService: parserMocks.NewParserInterfaceMock(t),
+			RenderService: renderMocks.NewRenderInterfaceMock(t),
+		}
+		errs, err := service.ObserveFileEvents(tempDir, outputDir, inputFile, "default", "html", nil)
+
+		require.Error(t, err)
+		assert.Nil(t, errs)
+		assert.Contains(t, err.Error(), "index.html")
+	})
+
+	t.Run("missing input file returns an error before the loop starts", func(t *testing.T) {
+		tempDir, inputFile, outputDir, _ := setupWatchFixture(t)
+		require.NoError(t, os.Remove(inputFile))
+
+		service := &WatcherServices{
+			ParserService: parserMocks.NewParserInterfaceMock(t),
+			RenderService: renderMocks.NewRenderInterfaceMock(t),
+		}
+		errs, err := service.ObserveFileEvents(tempDir, outputDir, inputFile, "default", "html", nil)
+
+		require.Error(t, err)
+		assert.Nil(t, errs)
+	})
+}
+
+func TestObserveFileEvents_RuntimeErrors(t *testing.T) {
+	waitErr := func(t *testing.T, errs <-chan error) error {
+		t.Helper()
+		select {
+		case err := <-errs:
+			return err
+		case <-time.After(3 * time.Second):
+			t.Fatal("no error surfaced on the channel")
+			return nil
+		}
+	}
+
+	t.Run("render failure on file change is surfaced and the loop keeps watching", func(t *testing.T) {
+		tempDir, inputFile, outputDir, _ := setupWatchFixture(t)
+		renderErr := errors.New("render exploded")
+		cv := model.CV{}
+
+		parserMock := parserMocks.NewParserInterfaceMock(t)
+		renderMock := renderMocks.NewRenderInterfaceMock(t)
+		parserMock.On("ParseFile", inputFile).Return(cv, nil)
+		renderMock.On("Render", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(renderErr)
+
+		service := &WatcherServices{ParserService: parserMock, RenderService: renderMock}
+		errs, err := service.ObserveFileEvents(tempDir, outputDir, inputFile, "default", "html", nil)
+		require.NoError(t, err)
+
+		require.NoError(t, os.WriteFile(inputFile, []byte("edit 1"), 0o600))
+		got := waitErr(t, errs)
+		assert.ErrorIs(t, got, renderErr)
+
+		// The loop is still running: a second change yields a second error.
+		require.NoError(t, os.WriteFile(inputFile, []byte("edit 2"), 0o600))
+		got = waitErr(t, errs)
+		assert.ErrorIs(t, got, renderErr)
+	})
+
+	t.Run("parse failure on file change is surfaced without rendering", func(t *testing.T) {
+		tempDir, inputFile, outputDir, _ := setupWatchFixture(t)
+		parseErr := errors.New("bad yaml")
+
+		parserMock := parserMocks.NewParserInterfaceMock(t)
+		renderMock := renderMocks.NewRenderInterfaceMock(t)
+		parserMock.On("ParseFile", inputFile).Return(model.CV{}, parseErr)
+
+		service := &WatcherServices{ParserService: parserMock, RenderService: renderMock}
+		errs, err := service.ObserveFileEvents(tempDir, outputDir, inputFile, "default", "html", nil)
+		require.NoError(t, err)
+
+		require.NoError(t, os.WriteFile(inputFile, []byte("broken"), 0o600))
+		assert.ErrorIs(t, waitErr(t, errs), parseErr)
+		renderMock.AssertNotCalled(t, "Render", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything)
 	})
 }

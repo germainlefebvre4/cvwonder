@@ -13,25 +13,31 @@ import (
 func (p *ParserServices) ParseFile(filePath string) (model.CV, error) {
 	logrus.Debug("Parsing YAML file")
 
-	fileContent := p.readFile(filePath)
-	dataContent := p.convertFileContentToStruct(fileContent)
+	fileContent, err := p.readFile(filePath)
+	if err != nil {
+		return model.CV{}, err
+	}
+	dataContent, err := p.convertFileContentToStruct(fileContent)
+	if err != nil {
+		return model.CV{}, err
+	}
 
 	return dataContent, nil
 }
 
-func (p *ParserServices) convertFileContentToStruct(content []byte) model.CV {
+func (p *ParserServices) convertFileContentToStruct(content []byte) (model.CV, error) {
 	cvOutput := model.CV{}
-	err := yaml.Unmarshal([]byte(content), &cvOutput)
+	err := yaml.Unmarshal(content, &cvOutput)
 	if err != nil {
-		logrus.Fatal("Error on reading YAML file. It may not be a valid YAML file.")
+		return model.CV{}, fmt.Errorf("reading YAML content, it may not be a valid YAML file: %w", err)
 	}
-	return cvOutput
+	return cvOutput, nil
 }
 
-func (p *ParserServices) readFile(filePath string) []byte {
+func (p *ParserServices) readFile(filePath string) ([]byte, error) {
 	content, err := os.ReadFile(filePath)
 	if err != nil {
-		logrus.Fatal(fmt.Sprintf("Error while reading file: %s", filePath))
+		return nil, fmt.Errorf("reading file %s: %w", filePath, err)
 	}
-	return content
+	return content, nil
 }

@@ -1,11 +1,15 @@
 package render_pdf
 
 import (
+	"errors"
+	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
 	serveMocks "github.com/germainlefebvre4/cvwonder/internal/cvserve/mocks"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	"github.com/stretchr/testify/assert"
@@ -38,7 +42,8 @@ func TestGenerateOutputFile_New(t *testing.T) {
 		}
 
 		// Test
-		result := service.generateOutputFile(outputDir, "test-cv")
+		result, err := service.generateOutputFile(outputDir, "test-cv")
+		require.NoError(t, err)
 
 		// Assert
 		assert.Contains(t, result, "test-cv.pdf")
@@ -68,10 +73,11 @@ func TestGenerateOutputFile_New(t *testing.T) {
 					ServeService: serveMock,
 				}
 
-				result := service.generateOutputFile(tempDir, tc.inputFilename)
+				result, err := service.generateOutputFile(tempDir, tc.inputFilename)
+				require.NoError(t, err)
 
 				assert.Contains(t, result, tc.expectedExt)
-				_, err := os.Stat(result)
+				_, err = os.Stat(result)
 				assert.NoError(t, err)
 			})
 		}
@@ -94,7 +100,9 @@ func TestRunWebServer_New(t *testing.T) {
 		}
 
 		// Test
-		url := service.runWebServer("test-cv", tempDir)
+		url, stop, err := service.runWebServer("test-cv", tempDir)
+		require.NoError(t, err)
+		defer stop()
 
 		// Assert URL is well-formed; port is dynamic so we check prefix and suffix
 		assert.True(t, strings.HasPrefix(url, "http://localhost:"), "URL should start with http://localhost:")
@@ -123,7 +131,9 @@ func TestRunWebServer_New(t *testing.T) {
 
 				service := &RenderPDFServices{ServeService: serveMock}
 
-				url := service.runWebServer(tc.filename, tempDir)
+				url, stop, err := service.runWebServer(tc.filename, tempDir)
+				require.NoError(t, err)
+				defer stop()
 				assert.True(t, strings.HasSuffix(url, tc.expectedSuffix))
 				assert.True(t, strings.HasPrefix(url, "http://localhost:"))
 				serveMock.AssertExpectations(t)
@@ -150,4 +160,40 @@ func TestRenderFormatPDF_Structure(t *testing.T) {
 		assert.NotNil(t, cv)
 		assert.NotNil(t, service)
 	})
+}
+
+// listenerRecorder wraps a ServeInterface and records the address of the
+// listener handed to StartServerOnListener, so tests can check it is released.
+type listenerRecorder struct {
+	cvserve.ServeInterface
+	addr chan net.Addr
+}
+
+func (l *listenerRecorder) StartServerOnListener(listener net.Listener, outputDirectory string, ready chan<- struct{}) {
+	l.addr <- listener.Addr()
+	l.ServeInterface.StartServerOnListener(listener, outputDirectory, ready)
+}
+
+func TestRenderFormatPDF_LaunchFailureWrapsCauseAndReleasesListener(t *testing.T) {
+	t.Setenv("CHROME_BIN", filepath.Join(t.TempDir(), "no-such-browser"))
+
+	serveService, err := cvserve.NewServeServices()
+	require.NoError(t, err)
+	recorder := &listenerRecorder{ServeInterface: serveService, addr: make(chan net.Addr, 1)}
+	service := &RenderPDFServices{ServeService: recorder}
+
+	outputDir := t.TempDir()
+	err = service.RenderFormatPDF(model.CV{}, outputDir, "cv", "default")
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "launching browser")
+	assert.NotContains(t, err.Error(), "Failed to connect to the server")
+	assert.NotNil(t, errors.Unwrap(err), "the launcher error must be wrapped with %w")
+
+	// The temporary listener must be closed: its port can be bound again.
+	addr := <-recorder.addr
+	port := addr.(*net.TCPAddr).Port
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	require.NoError(t, err, "port should be rebindable after the render")
+	_ = l.Close()
 }

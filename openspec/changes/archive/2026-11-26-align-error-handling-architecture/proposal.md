@@ -11,6 +11,8 @@ Most `internal/` packages report failures by calling `logrus.Fatal`/`log.Fatal` 
 - Move the decision to terminate the process (`logrus.Fatal` / non-zero exit) to the `cmd/` entrypoints only, which already contain most of the `if err != nil` guards needed to receive these errors — they were written assuming this contract and were previously dead code.
 - Regenerate mockery mocks for every interface whose signature changes, and update existing tests that construct `.On(...)` expectations against those mocks.
 - Add error-path unit tests for the newly-honest error returns (invalid YAML, unreadable file, template render failure, port bind failure, etc.) that were previously impossible to write without killing the test process.
+- Replace input-validation panics with returned errors: `themes.parseGitHubURL` (and therefore `themes install <not-a-url>`, which today panics with an index-out-of-range after only logging "Not a GitHub URL") returns `(GithubRepo, error)` and `Install` stops on it; `theme_config.ParseConfigOverrides` (which already returns `error`) rejects empty or segment-less keys such as `--config "=v"` or `--config "..=v"` instead of panicking in `buildNestedMap`.
+- Give PDF and screenshot rendering a proper resource lifecycle: Chromium (rod browser and launcher) and the temporary HTTP listener are released after every render, success or failure, and the returned error carries the real cause instead of the generic "Failed to connect to the server" message that today hides it.
 
 ## Capabilities
 
@@ -24,6 +26,6 @@ Most `internal/` packages report failures by calling `logrus.Fatal`/`log.Fatal` 
 ## Impact
 
 - Affected packages: `internal/utils`, `internal/cvparser`, `internal/cvrender` (+ `html`, `pdf`, `screenshot`), `internal/cvserve`, `internal/watcher`, `internal/themes` (+ `config`), and every `cmd/cvwonder/*` entrypoint that calls into them.
-- Affected interfaces (signature changes): `RenderInterface`, `RenderPDFInterface`, `RenderScreenshotInterface`, `ThemesInterface`, and the behavior (not signature) of `ParserInterface.ParseFile` / `RenderHTMLInterface.RenderFormatHTML`.
+- Affected interfaces (signature changes): `RenderInterface`, `RenderPDFInterface`, `RenderScreenshotInterface`, `ThemesInterface`, and the behavior (not signature) of `ParserInterface.ParseFile` / `RenderHTMLInterface.RenderFormatHTML`. Unexported-function signature change: `parseGitHubURL` in `internal/themes` now returns an `error`; `ParseConfigOverrides` keeps its signature but gains input validation.
 - Affected mocks: every `mocks/` package generated for the interfaces above, plus every test file that programs those mocks.
 - No user-facing CLI flag or command changes; observable difference is that some failures that previously crashed with a raw `logrus.Fatal` message (or, in `cvserve.StartServer`'s case, failed silently) now produce a consistent, catchable error reported by the `cmd/` layer.

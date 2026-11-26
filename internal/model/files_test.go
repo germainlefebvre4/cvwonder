@@ -28,7 +28,10 @@ func TestBuildInputFile(t *testing.T) {
 		require.NoError(t, err)
 
 		// Test
-		result := BuildInputFile(testFile)
+		result, err := BuildInputFile(testFile)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 
 		// Assert
 		assert.Equal(t, testFile, result.FullPath)
@@ -58,7 +61,10 @@ func TestBuildInputFile(t *testing.T) {
 		require.NoError(t, err)
 
 		// Test with relative path
-		result := BuildInputFile("test.yml")
+		result, err := BuildInputFile("test.yml")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 
 		// Assert
 		assert.Equal(t, testFile, result.FullPath)
@@ -87,7 +93,10 @@ func TestBuildInputFile(t *testing.T) {
 		require.NoError(t, err)
 
 		// Test
-		result := BuildInputFile(testFile)
+		result, err := BuildInputFile(testFile)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 
 		// Assert
 		assert.Equal(t, testFile, result.FullPath)
@@ -116,7 +125,10 @@ func TestBuildOutputDirectory(t *testing.T) {
 		require.NoError(t, err)
 
 		// Test
-		result := BuildOutputDirectory(outputDir)
+		result, err := BuildOutputDirectory(outputDir)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 
 		// Assert
 		assert.True(t, filepath.IsAbs(result.FullPath))
@@ -139,7 +151,10 @@ func TestBuildOutputDirectory(t *testing.T) {
 		require.NoError(t, err)
 
 		// Test with relative path
-		result := BuildOutputDirectory("generated/")
+		result, err := BuildOutputDirectory("generated/")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 
 		// Assert
 		assert.True(t, filepath.IsAbs(result.FullPath))
@@ -165,7 +180,10 @@ func TestBuildOutputDirectory(t *testing.T) {
 		require.NoError(t, err)
 
 		// Test
-		result := BuildOutputDirectory(outputDir)
+		result, err := BuildOutputDirectory(outputDir)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 
 		// Assert - should have trailing separator
 		assert.Equal(t, filepath.Separator, rune(result.FullPath[len(result.FullPath)-1]))

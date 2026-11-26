@@ -21,8 +21,21 @@ func (_m *RenderScreenshotInterfaceMock) EXPECT() *RenderScreenshotInterfaceMock
 }
 
 // RenderFormatScreenshot provides a mock function with given fields: cv, outputDirectory, inputFilename, themeName, outputFilePath
-func (_m *RenderScreenshotInterfaceMock) RenderFormatScreenshot(cv model.CV, outputDirectory string, inputFilename string, themeName string, outputFilePath string) {
-	_m.Called(cv, outputDirectory, inputFilename, themeName, outputFilePath)
+func (_m *RenderScreenshotInterfaceMock) RenderFormatScreenshot(cv model.CV, outputDirectory string, inputFilename string, themeName string, outputFilePath string) error {
+	ret := _m.Called(cv, outputDirectory, inputFilename, themeName, outputFilePath)
+
+	if len(ret) == 0 {
+		panic("no return value specified for RenderFormatScreenshot")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(model.CV, string, string, string, string) error); ok {
+		r0 = rf(cv, outputDirectory, inputFilename, themeName, outputFilePath)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // RenderScreenshotInterfaceMock_RenderFormatScreenshot_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'RenderFormatScreenshot'
@@ -47,13 +60,13 @@ func (_c *RenderScreenshotInterfaceMock_RenderFormatScreenshot_Call) Run(run fun
 	return _c
 }
 
-func (_c *RenderScreenshotInterfaceMock_RenderFormatScreenshot_Call) Return() *RenderScreenshotInterfaceMock_RenderFormatScreenshot_Call {
-	_c.Call.Return()
+func (_c *RenderScreenshotInterfaceMock_RenderFormatScreenshot_Call) Return(_a0 error) *RenderScreenshotInterfaceMock_RenderFormatScreenshot_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *RenderScreenshotInterfaceMock_RenderFormatScreenshot_Call) RunAndReturn(run func(model.CV, string, string, string, string)) *RenderScreenshotInterfaceMock_RenderFormatScreenshot_Call {
-	_c.Run(run)
+func (_c *RenderScreenshotInterfaceMock_RenderFormatScreenshot_Call) RunAndReturn(run func(model.CV, string, string, string, string) error) *RenderScreenshotInterfaceMock_RenderFormatScreenshot_Call {
+	_c.Call.Return(run)
 	return _c
 }
 

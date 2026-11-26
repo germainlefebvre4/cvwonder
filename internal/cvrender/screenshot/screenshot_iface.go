@@ -6,7 +6,7 @@ import (
 )
 
 type RenderScreenshotInterface interface {
-	RenderFormatScreenshot(cv model.CV, outputDirectory string, inputFilename string, themeName string, outputFilePath string)
+	RenderFormatScreenshot(cv model.CV, outputDirectory string, inputFilename string, themeName string, outputFilePath string) error
 }
 
 type RenderScreenshotServices struct {

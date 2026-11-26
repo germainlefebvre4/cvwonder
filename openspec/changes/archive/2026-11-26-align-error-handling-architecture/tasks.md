@@ -8,6 +8,7 @@
 - [x] 2.1 Change `ParserServices.readFile` and `.convertFileContentToStruct` to return `error` instead of calling `logrus.Fatal`; have `ParseFile` propagate the first non-nil error; verify with `go test ./internal/cvparser/...`
 - [x] 2.2 Re-enable the commented-out error-case test in `internal/cvparser/parser_test.go` (`Should return an error`) with a real invalid-YAML fixture, and add a test for the unreadable-file path; verify both pass
 - [x] 2.3 Change `internal/themes/config` functions that call `logrus.Fatal` (theme.yaml download, read, parse, repository info) to return `error`; update `ThemeConfigInterface` if any method needs a new `error` return; verify with `go test ./internal/themes/config/...`
+- [x] 2.4 In `internal/themes/config`, make `ParseConfigOverrides` return an `error` naming the offending value for an empty key or a key with no usable segment (`=v`, `..=v`, `.=v`) instead of panicking in `buildNestedMap`; add table-driven tests for those inputs plus a valid-key regression case; verify with `go test ./internal/themes/config/...`
 
 ## 3. Rendering leaf packages: `cvrender/html`, `cvrender/pdf`, `cvrender/screenshot`
 
@@ -15,6 +16,7 @@
 - [x] 3.2 Add `error` to `RenderPDFInterface.RenderFormatPDF`'s signature; change its implementation and unexported helpers (`convertPageToPDF`, `runWebServer`, `generateOutputFile`) to return `error` instead of calling `logrus.Fatal`; regenerate the `RenderPDFInterface` mock; verify with `go test ./internal/cvrender/pdf/...`
 - [x] 3.3 Add `error` to `RenderScreenshotInterface.RenderFormatScreenshot`'s signature; change its implementation to return `error` instead of calling `logrus.Fatal`; regenerate the `RenderScreenshotInterface` mock; verify with `go test ./internal/cvrender/screenshot/...`
 - [x] 3.4 Confirm `RenderServices`'s use of `cvserve.ServeInterface.StartServerOnListener` (in `pdf.go`/`screenshot.go`) is untouched by this change (it already returns via the `ready` channel per `http-server-readiness`, no `Fatal` involved); no code change expected, just verify `go test ./internal/cvrender/...` still passes
+- [x] 3.5 In `cvrender/pdf` and `cvrender/screenshot`, release resources and surface the real cause: replace the `rod` `Must*` chain with error-returning calls and wrap each failure (`%w`) instead of the generic "Failed to connect to the server"; `defer` closing the browser, the launcher cleanup and the temporary listener inside the function that created each; ensure the serving goroutine treats a closed-listener error as normal shutdown; add tests that a failed launch returns a wrapped error and that the listener is closed after a render (port rebindable); verify with `go test ./internal/cvrender/pdf/... ./internal/cvrender/screenshot/...`
 
 ## 4. Render orchestrator: `cvrender`
 
@@ -31,6 +33,7 @@
 ## 6. `themes` package
 
 - [x] 6.1 Add `error` to every `ThemesInterface` method (`List`, `Install`, `Create`, `Verify`, `Screenshot`); change `internal/themes/*.go` implementations to return errors instead of calling `logrus.Fatal` (covers `screenshot.go`, `verify.go`, `list.go`, `create.go`); regenerate the `ThemesInterface` mock; verify with `go test ./internal/themes/...`
+- [x] 6.2 Change `parseGitHubURL` to return `(GithubRepo, error)` (reject non-GitHub hosts, missing `owner`/`repo` segments and unparsable URLs; strip a `.git` suffix) and make `Install` return that error before any download, folding the log-only `verifyTheme` check into it; add tests for `not-a-url`, `github.com/owner`, `https://github.com/owner/repo.git@v1` and a valid URL with a ref; verify with `go test ./internal/themes/...` and a manual `cvwonder themes install not-a-url` that exits non-zero with a message instead of a panic
 
 ## 7. `cmd/cvwonder/*` entrypoints
 

@@ -32,7 +32,15 @@ Alternative considered: treat any runtime error as fatal and stop watching. Reje
 **Regenerate mockery mocks per package as each layer's interface changes, in the same commit as the interface change.**
 Keeps the build green at every step instead of batching all mock regeneration at the end, which would leave the repo non-compiling for the whole migration.
 
+**Validate input at the parsing boundary and return the error: `parseGitHubURL` returns `(GithubRepo, error)`; `ParseConfigOverrides` keeps its existing signature.**
+`themes install <not-a-url>` currently logs "Not a GitHub URL" (`verifyTheme`) but does not stop, then `parseGitHubURL` indexes `path[1]`/`path[2]` and panics; likewise `--config "=v"` reaches `buildNestedMap` with zero segments. Both are the same class of defect as the `Fatal` calls (a failure path that does not return an error), so they are handled in this change. `verifyTheme` is folded into the error return rather than kept as a log-only check; `parseGitHubURL` also strips a `.git` suffix from the repository name. `ParseConfigOverrides` already declares `error`, so only its validation changes, not its interface.
+
+**Release Chromium and the temporary listener with `defer` inside the render function that created them.**
+`runWebServer` (pdf and screenshot) binds a listener that is never closed, and `rod.New().MustConnect()` is never closed, so every render leaks a Chromium process and a listener (compounded in watch and bulk modes). The function that starts each resource closes it, in reverse order: browser, then launcher cleanup, then listener. Alternative considered: a shared render-session type owning both. Rejected as larger than needed for two call sites. The `Must*` calls are replaced by their error-returning forms so the underlying cause can be wrapped (`%w`) instead of being collapsed into the generic "Failed to connect to the server" message.
+
 ## Risks / Trade-offs
+
+**[Risk] Closing the temporary listener makes `http.Serve` inside `StartServerOnListener` return `net.ErrClosed`.** → Mitigation: that goroutine already discards `http.Serve`'s return value and the readiness contract (`ready` closed before `Serve`) is unchanged, so `http-server-readiness` is not affected; the render function owns the close and the goroutine must treat a closed-listener error as a normal shutdown, not a runtime failure.
 
 **[Risk] Changing 6 interface signatures is a breaking change for any external consumer of these Go interfaces.** → Mitigation: this is an `internal/` Go package tree, not part of any published module surface; the only consumers are this repo's own `cmd/*` binaries and its tests, all of which are updated in the same change.
 

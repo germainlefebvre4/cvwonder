@@ -1,6 +1,7 @@
 package themes
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/goccy/go-yaml"
@@ -11,34 +12,43 @@ import (
 	"github.com/germainlefebvre4/cvwonder/internal/version"
 )
 
-func (t *ThemesService) Create(themeName string) {
+func (t *ThemesService) Create(themeName string) error {
 	logrus.Debug("Create")
 	themeSlugName := slugify.Slugify(themeName)
 
-	createThemesDir()
-	if _, err := os.Stat("themes/" + themeSlugName); os.IsNotExist(err) {
-		// Create theme directory
-		createNewThemeDir(themeSlugName)
-
-		// Create theme.yaml
-		createThemeConfig(themeName, themeSlugName)
-
-		// Create theme index.html
-		createThemeIndexHTML(themeName, themeSlugName)
-
-		// Create sample.yml
-		createThemeSampleYML(themeSlugName)
-
-		// Create .cvwonderignore
-		createThemeCVWonderIgnore(themeSlugName)
-
-		logrus.Info("Your theme '" + themeName + "' has been created in the directory themes/" + themeSlugName + "/.")
-	} else {
-		logrus.Error("Theme '" + themeSlugName + "' already exists.")
+	if err := createThemesDir(); err != nil {
+		return err
 	}
+	if _, err := os.Stat("themes/" + themeSlugName); !os.IsNotExist(err) {
+		return fmt.Errorf("theme '%s' already exists", themeSlugName)
+	}
+
+	// Create theme directory
+	if err := createNewThemeDir(themeSlugName); err != nil {
+		return err
+	}
+	// Create theme.yaml
+	if err := createThemeConfig(themeName, themeSlugName); err != nil {
+		return err
+	}
+	// Create theme index.html
+	if err := createThemeIndexHTML(themeName, themeSlugName); err != nil {
+		return err
+	}
+	// Create sample.yml
+	if err := createThemeSampleYML(themeSlugName); err != nil {
+		return err
+	}
+	// Create .cvwonderignore
+	if err := createThemeCVWonderIgnore(themeSlugName); err != nil {
+		return err
+	}
+
+	logrus.Info("Your theme '" + themeName + "' has been created in the directory themes/" + themeSlugName + "/.")
+	return nil
 }
 
-func createThemeConfig(themeName string, themeSlugName string) {
+func createThemeConfig(themeName string, themeSlugName string) error {
 	themeConfig := theme_config.ThemeConfig{
 		Name:           themeName,
 		Slug:           themeSlugName,
@@ -46,38 +56,27 @@ func createThemeConfig(themeName string, themeSlugName string) {
 		Author:         "Anonymous",
 		MinimumVersion: version.CVWONDER_VERSION,
 	}
-	err := createThemeConfigFile("themes/"+themeSlugName+"/theme.yaml", themeConfig)
-	if err != nil {
-		logrus.Fatal("Error creating theme.yaml: ", err)
+	if err := createThemeConfigFile("themes/"+themeSlugName+"/theme.yaml", themeConfig); err != nil {
+		return fmt.Errorf("creating theme.yaml: %w", err)
 	}
-}
-
-func createThemeConfigFile(filePath string, themeConfig theme_config.ThemeConfig) error {
-	// Create theme.yaml file
-	file, err := os.Create(filePath)
-	if err != nil {
-		logrus.Error("Error creating theme.yaml: ", err)
-	}
-	defer file.Close()
-
-	// Write theme.yaml
-	configYaml, err := yaml.Marshal(&themeConfig)
-	if err != nil {
-		logrus.Error("fail to marshal credentials")
-	}
-	err = os.WriteFile(filePath, configYaml, 0600)
-
 	return nil
 }
 
-func createThemeIndexHTML(themeName string, themeSlugName string) {
-	// Create index.html file
-	file, err := os.Create("themes/" + themeSlugName + "/index.html")
+func createThemeConfigFile(filePath string, themeConfig theme_config.ThemeConfig) error {
+	// Marshal theme.yaml
+	configYaml, err := yaml.Marshal(&themeConfig)
 	if err != nil {
-		logrus.Error("Error creating index.html: ", err)
+		return fmt.Errorf("marshalling theme config: %w", err)
 	}
-	defer file.Close()
 
+	// Write theme.yaml
+	if err := os.WriteFile(filePath, configYaml, 0600); err != nil {
+		return fmt.Errorf("writing %s: %w", filePath, err)
+	}
+	return nil
+}
+
+func createThemeIndexHTML(themeName string, themeSlugName string) error {
 	// Write index.html
 	indexHTML := `<html>
   <head>
@@ -89,13 +88,13 @@ func createThemeIndexHTML(themeName string, themeSlugName string) {
   </body>
 </html>
 `
-	err = os.WriteFile("themes/"+themeSlugName+"/index.html", []byte(indexHTML), 0600)
-	if err != nil {
-		logrus.Error("Error writing index.html: ", err)
+	if err := os.WriteFile("themes/"+themeSlugName+"/index.html", []byte(indexHTML), 0600); err != nil {
+		return fmt.Errorf("writing index.html: %w", err)
 	}
+	return nil
 }
 
-func createThemeSampleYML(themeSlugName string) {
+func createThemeSampleYML(themeSlugName string) error {
 	sampleContent := `person:
   name: Jane Doe
   profession: Software Engineer
@@ -120,13 +119,13 @@ career:
           - Go
           - Docker
 `
-	err := os.WriteFile("themes/"+themeSlugName+"/sample.yml", []byte(sampleContent), 0600)
-	if err != nil {
-		logrus.Error("Error writing sample.yml: ", err)
+	if err := os.WriteFile("themes/"+themeSlugName+"/sample.yml", []byte(sampleContent), 0600); err != nil {
+		return fmt.Errorf("writing sample.yml: %w", err)
 	}
+	return nil
 }
 
-func createThemeCVWonderIgnore(themeSlugName string) {
+func createThemeCVWonderIgnore(themeSlugName string) error {
 	// Write .cvwonderignore with default patterns
 	cvwonderignoreContent := `# CVWonder ignore file
 # This file uses gitignore-style syntax to exclude files from being copied
@@ -146,8 +145,8 @@ LICENSE
 *.tmp
 *.bak
 `
-	err := os.WriteFile("themes/"+themeSlugName+"/.cvwonderignore", []byte(cvwonderignoreContent), 0600)
-	if err != nil {
-		logrus.Error("Error writing .cvwonderignore: ", err)
+	if err := os.WriteFile("themes/"+themeSlugName+"/.cvwonderignore", []byte(cvwonderignoreContent), 0600); err != nil {
+		return fmt.Errorf("writing .cvwonderignore: %w", err)
 	}
+	return nil
 }

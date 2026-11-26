@@ -3,6 +3,7 @@ package render_html
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"text/template"
 
@@ -584,4 +585,34 @@ func TestGenerateTemplateFileWithConfig(t *testing.T) {
 	if err := os.RemoveAll(outputDirectory); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestRenderFormatHTML_ReturnsErrorInsteadOfExiting(t *testing.T) {
+	t.Run("missing theme template", func(t *testing.T) {
+		base := t.TempDir()
+		r := &RenderHTMLServices{}
+		err := r.RenderFormatHTML(model.CV{}, base, filepath.Join(base, "out"), "cv", "nope", false, nil)
+		if err == nil {
+			t.Fatal("expected an error for a theme without index.html")
+		}
+		if !strings.Contains(err.Error(), "parsing template file") {
+			t.Fatalf("unexpected error: %v", err)
+		}
+	})
+
+	t.Run("template execution failure", func(t *testing.T) {
+		base := t.TempDir()
+		themeDir := filepath.Join(base, "themes", "bad")
+		if err := os.MkdirAll(themeDir, 0o750); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(themeDir, "index.html"), []byte("{{ .Missing.Field }}"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		r := &RenderHTMLServices{}
+		err := r.RenderFormatHTML(model.CV{}, base, filepath.Join(base, "out"), "cv", "bad", false, nil)
+		if err == nil {
+			t.Fatal("expected a template execution error")
+		}
+	})
 }

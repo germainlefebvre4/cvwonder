@@ -1,6 +1,8 @@
 package themes
 
 import (
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -19,60 +21,66 @@ import (
 // Screenshot generates a PNG preview image for the given theme and writes it to
 // themes/<theme>/preview.png. The CV data is sourced from themes/<theme>/sample.yml
 // if present, falling back to ./cv.yml in the working directory.
-func (t *ThemesService) Screenshot(themeName string) {
+func (t *ThemesService) Screenshot(themeName string) error {
 	logrus.Debug("Screenshot")
 
 	baseDirectory, err := os.Getwd()
 	if err != nil {
-		logrus.Fatal("Error getting current directory: ", err)
+		return fmt.Errorf("getting current directory: %w", err)
 	}
 
 	themeSlugName := slugify.Slugify(themeName)
 	themeDir := filepath.Join(baseDirectory, "themes", themeSlugName)
 
 	// Resolve CV source file
-	cvFilePath, inputFilename := resolveCVSource(themeDir)
+	cvFilePath, inputFilename, err := resolveCVSource(themeDir)
+	if err != nil {
+		return err
+	}
 
 	// Parse CV
 	parserService, err := cvparser.NewParserServices()
 	if err != nil {
-		logrus.Fatal("Error creating parser services: ", err)
+		return fmt.Errorf("creating parser services: %w", err)
 	}
 	cv, err := parserService.ParseFile(cvFilePath)
 	if err != nil {
-		logrus.Fatal("Error parsing CV file: ", err)
+		return fmt.Errorf("parsing CV file: %w", err)
 	}
 
 	// Load theme configuration (no CLI overrides for automated screenshot)
-	themeConf := theme_config.GetThemeConfigFromDir(themeDir)
+	themeConf, err := theme_config.GetThemeConfigFromDir(themeDir)
+	if err != nil {
+		return fmt.Errorf("loading theme '%s': %w", themeName, err)
+	}
 	config := theme_config.NormalizeConfigKeys(themeConf.Configuration)
 
 	// Create render services
 	serveService, err := cvserve.NewServeServices()
 	if err != nil {
-		logrus.Fatal("Error creating serve services: ", err)
+		return fmt.Errorf("creating serve services: %w", err)
 	}
 	renderHTMLService, err := render_html.NewRenderHTMLServices()
 	if err != nil {
-		logrus.Fatal("Error creating render HTML services: ", err)
+		return fmt.Errorf("creating render HTML services: %w", err)
 	}
 	renderPDFService, err := render_pdf.NewRenderPDFServices(serveService)
 	if err != nil {
-		logrus.Fatal("Error creating render PDF services: ", err)
+		return fmt.Errorf("creating render PDF services: %w", err)
 	}
 	renderScreenshotService, err := render_screenshot.NewRenderScreenshotServices(serveService)
 	if err != nil {
-		logrus.Fatal("Error creating render screenshot services: ", err)
+		return fmt.Errorf("creating render screenshot services: %w", err)
 	}
 	renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService, renderScreenshotService)
 	if err != nil {
-		logrus.Fatal("Error creating render services: ", err)
+		return fmt.Errorf("creating render services: %w", err)
 	}
 
 	// Create temporary directory for HTML output; cleaned up after screenshot
 	tmpDir, err := os.MkdirTemp("", "cvwonder-screenshot-*")
 	if err != nil {
-		logrus.Fatal("Error creating temporary directory: ", err)
+		return fmt.Errorf("creating temporary directory: %w", err)
 	}
 	defer os.RemoveAll(tmpDir)
 
@@ -80,25 +88,27 @@ func (t *ThemesService) Screenshot(themeName string) {
 	outputFilePath := filepath.Join(themeDir, "preview.png")
 
 	logrus.Infof("Generating screenshot for theme '%s'", themeSlugName)
-	renderService.Screenshot(cv, baseDirectory, tmpDir, inputFilename, themeSlugName, outputFilePath, config)
+	if err := renderService.Screenshot(cv, baseDirectory, tmpDir, inputFilename, themeSlugName, outputFilePath, config); err != nil {
+		return fmt.Errorf("generating screenshot for theme '%s': %w", themeSlugName, err)
+	}
 	logrus.Infof("Screenshot saved to %s", outputFilePath)
+	return nil
 }
 
 // resolveCVSource returns the path to the CV YAML file and its base filename (without extension).
-// Priority: themes/<theme>/sample.yml → ./cv.yml → fatal.
-func resolveCVSource(themeDir string) (string, string) {
+// Priority: themes/<theme>/sample.yml → ./cv.yml → error.
+func resolveCVSource(themeDir string) (string, string, error) {
 	samplePath := filepath.Join(themeDir, "sample.yml")
 	if _, err := os.Stat(samplePath); err == nil {
 		logrus.Debug("Using sample.yml from theme directory")
-		return samplePath, "sample"
+		return samplePath, "sample", nil
 	}
 
 	cvPath := "cv.yml"
 	if _, err := os.Stat(cvPath); err == nil {
 		logrus.Debug("Using cv.yml from working directory")
-		return cvPath, "cv"
+		return cvPath, "cv", nil
 	}
 
-	logrus.Fatal("No CV source found: provide themes/<theme>/sample.yml or ./cv.yml in the working directory")
-	return "", ""
+	return "", "", errors.New("no CV source found: provide themes/<theme>/sample.yml or ./cv.yml in the working directory")
 }

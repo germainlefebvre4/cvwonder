@@ -16,7 +16,8 @@ func TestResolveCVSource_SampleYML(t *testing.T) {
 		err := os.WriteFile(samplePath, []byte("person:\n  name: Test\n"), 0600)
 		require.NoError(t, err)
 
-		gotPath, gotFilename := resolveCVSource(tmpDir)
+		gotPath, gotFilename, err := resolveCVSource(tmpDir)
+		require.NoError(t, err)
 
 		assert.Equal(t, samplePath, gotPath)
 		assert.Equal(t, "sample", gotFilename)
@@ -44,9 +45,23 @@ func TestResolveCVSource_FallbackCVYML(t *testing.T) {
 		err = os.MkdirAll(themeDir, 0750)
 		require.NoError(t, err)
 
-		gotPath, gotFilename := resolveCVSource(themeDir)
+		gotPath, gotFilename, err := resolveCVSource(themeDir)
+		require.NoError(t, err)
 
 		assert.Equal(t, "cv.yml", gotPath)
 		assert.Equal(t, "cv", gotFilename)
 	})
+}
+
+func TestResolveCVSource_NoSourceReturnsError(t *testing.T) {
+	originalDir, err := os.Getwd()
+	require.NoError(t, err)
+	defer os.Chdir(originalDir) //nolint:errcheck
+	require.NoError(t, os.Chdir(t.TempDir()))
+
+	gotPath, gotFilename, err := resolveCVSource(t.TempDir())
+
+	require.Error(t, err)
+	assert.Empty(t, gotPath)
+	assert.Empty(t, gotFilename)
 }

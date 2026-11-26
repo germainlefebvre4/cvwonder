@@ -105,10 +105,16 @@ func isBulkMode(inputPath string) (bool, error) {
 // generateSingle runs the single-file CV generation using utils.CliArgs.
 func generateSingle() {
 	// Build InputFile object.
-	inputFile := model.BuildInputFile(utils.CliArgs.InputFile)
+	inputFile, err := model.BuildInputFile(utils.CliArgs.InputFile)
+	if err != nil {
+		logrus.Fatal("Error building input file: ", err)
+	}
 
 	// Build OutputDirectory object.
-	outputDir := model.BuildOutputDirectory(utils.CliArgs.OutputDirectory)
+	outputDir, err := model.BuildOutputDirectory(utils.CliArgs.OutputDirectory)
+	if err != nil {
+		logrus.Fatal("Error building output directory: ", err)
+	}
 
 	// Get the actual ref being used from the git repository.
 	themeRef := themes.ParseThemeName(utils.CliArgs.ThemeName)
@@ -160,7 +166,10 @@ func generateSingle() {
 	}
 
 	// Check theme version compatibility.
-	themeConf := theme_config.GetThemeConfigFromDir(themeDir)
+	themeConf, err := theme_config.GetThemeConfigFromDir(themeDir)
+	if err != nil {
+		logrus.Fatal("Error loading theme config: ", err)
+	}
 	themeConf.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
 
 	// Build merged config: theme defaults + CLI overrides.
@@ -208,7 +217,7 @@ func generateSingle() {
 	}
 
 	// Use the theme name (without ref) for rendering.
-	renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeRef.Name, utils.CliArgs.Format, false, mergedConfig)
+	err = renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeRef.Name, utils.CliArgs.Format, false, mergedConfig)
 	if err != nil {
 		logrus.Fatal("Error rendering CV: ", err)
 	}

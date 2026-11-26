@@ -1,7 +1,6 @@
 package render_html
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -23,27 +22,33 @@ func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string,
 	// Output file
 	outputDirectory, err := filepath.Abs(outputDirectory)
 	if err != nil {
-		logrus.Fatal(err)
+		return fmt.Errorf("resolving output directory: %w", err)
 	}
 	outputFilename := filepath.Base(inputFilename) + ".html"
 	outputFilePath := filepath.Join(outputDirectory, outputFilename)
 	outputTmpFilePath := outputFilePath + ".tmp"
 
 	// Generate template file
-	r.generateTemplateFile(themeDirectory, outputDirectory, outputFilePath, outputTmpFilePath, cv, config)
+	if err := r.generateTemplateFile(themeDirectory, outputDirectory, outputFilePath, outputTmpFilePath, cv, config); err != nil {
+		return err
+	}
 
 	// On serve with watch, add livereload script to the end of the tmp file
 	if isWatch {
-		appendLivereloaderScript(outputTmpFilePath)
+		if err := appendLivereloaderScript(outputTmpFilePath); err != nil {
+			return err
+		}
 	}
 
 	// Copy template file to output directory
-	copyTemplateFileContent(outputTmpFilePath, outputFilePath)
+	if err := copyTemplateFileContent(outputTmpFilePath, outputFilePath); err != nil {
+		return err
+	}
 
 	// Load .cvwonderignore from theme directory
 	ignoreMatcher, err := utils.LoadIgnoreMatcher(themeDirectory)
 	if err != nil {
-		logrus.Fatal(fmt.Sprintf("Error loading .cvwonderignore: %s", err))
+		return fmt.Errorf("loading .cvwonderignore: %w", err)
 	}
 	if ignoreMatcher != nil {
 		logrus.Debug("Using .cvwonderignore for theme asset filtering")
@@ -52,26 +57,26 @@ func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string,
 	// Copy theme assets to output directory with ignore patterns
 	err = utils.CopyDirectoryWithIgnore(themeDirectory, outputDirectory, ignoreMatcher)
 	if err != nil {
-		logrus.Fatal(fmt.Sprintf("Error copying theme assets from: %s to: %s", themeDirectory, outputDirectory), err)
+		return fmt.Errorf("copying theme assets from %s to %s: %w", themeDirectory, outputDirectory, err)
 	}
 
-	return err
+	return nil
 }
 
-func appendLivereloaderScript(outputTmpFilePath string) {
+func appendLivereloaderScript(outputTmpFilePath string) error {
 	livereloadScript := "<script src=\"http://localhost:35729/livereload.js\"></script>\n"
 	file, err := os.OpenFile(outputTmpFilePath, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
-		logrus.Fatal(fmt.Sprintf("Error opening tmp file for appending: %s", outputTmpFilePath), err)
+		return fmt.Errorf("opening tmp file for appending %s: %w", outputTmpFilePath, err)
 	}
-	_, _ = file.WriteString(livereloadScript)
-	if err != nil {
-		logrus.Fatal(fmt.Sprintf("Error appending livereload script to tmp file: "))
+	if _, err := file.WriteString(livereloadScript); err != nil {
+		_ = file.Close()
+		return fmt.Errorf("appending livereload script to tmp file %s: %w", outputTmpFilePath, err)
 	}
-	err = file.Close()
-	if err != nil {
-		logrus.Fatal(fmt.Sprintf("Error closing tmp file: %s", outputTmpFilePath), err)
+	if err := file.Close(); err != nil {
+		return fmt.Errorf("closing tmp file %s: %w", outputTmpFilePath, err)
 	}
+	return nil
 }
 
 func getTemplateFunctions() template.FuncMap {
@@ -94,7 +99,7 @@ func getTemplateFunctions() template.FuncMap {
 	return funcMap
 }
 
-func (r *RenderHTMLServices) generateTemplateFile(themeDirectory string, outputDirectory string, outputFilePath string, outputTmpFilePath string, cv model.CV, config map[string]interface{}) {
+func (r *RenderHTMLServices) generateTemplateFile(themeDirectory string, outputDirectory string, outputFilePath string, outputTmpFilePath string, cv model.CV, config map[string]interface{}) error {
 	// Inject custom functions in template
 	funcMap := getTemplateFunctions()
 
@@ -102,58 +107,51 @@ func (r *RenderHTMLServices) generateTemplateFile(themeDirectory string, outputD
 	tmplFile := themeDirectory + "/index.html"
 	tmpl, err := template.New("index.html").Funcs(funcMap).ParseFiles(tmplFile)
 	if err != nil {
-		logrus.Fatal(fmt.Sprintf("Error parsing template file: %s", tmplFile), err)
+		return fmt.Errorf("parsing template file %s: %w", tmplFile, err)
 	}
 
 	// Create output file and directory
-	if _, err := os.Stat(outputDirectory); errors.Is(err, os.ErrNotExist) {
-		err = os.MkdirAll(outputDirectory, os.ModePerm)
-		if err != nil {
-			logrus.Fatal(fmt.Sprintf("Error creating output directory: %s", outputDirectory), err)
-		}
+	if err := os.MkdirAll(outputDirectory, os.ModePerm); err != nil {
+		return fmt.Errorf("creating output directory %s: %w", outputDirectory, err)
 	}
 	outputFile, err := os.Create(outputFilePath)
 	if err != nil {
-		logrus.Fatal(fmt.Sprintf("Error creating output file: %s", outputFilePath), err)
+		return fmt.Errorf("creating output file %s: %w", outputFilePath, err)
 	}
 	defer outputFile.Close()
-	var outputTmpFile *os.File
-	if _, err := os.Stat(outputTmpFilePath); errors.Is(err, os.ErrNotExist) {
-		outputTmpFile, err = os.Create(outputTmpFilePath)
-		if err != nil {
-			logrus.Fatal(fmt.Sprintf("Error creating output tmp file: %s", outputTmpFilePath), err)
-		}
-		defer outputTmpFile.Close()
+	outputTmpFile, err := os.Create(outputTmpFilePath)
+	if err != nil {
+		return fmt.Errorf("creating output tmp file %s: %w", outputTmpFilePath, err)
 	}
+	defer outputTmpFile.Close()
 
 	// Generate output
 	renderCtx := RenderContext{CV: cv, Config: config}
 	err = tmpl.ExecuteTemplate(outputTmpFile, "index.html", renderCtx)
 	if err != nil {
-		errFile := os.Remove(outputTmpFilePath)
-		if errFile != nil {
-			logrus.Fatal(fmt.Sprintf("Error removing output tmp file: %s", outputTmpFilePath), errFile)
+		if errFile := os.Remove(outputTmpFilePath); errFile != nil {
+			return fmt.Errorf("executing template %s: %w (also failed removing tmp file %s: %v)", tmplFile, err, outputTmpFilePath, errFile)
 		}
-		logrus.Fatal(err)
+		return fmt.Errorf("executing template %s: %w", tmplFile, err)
 	}
 
 	logrus.Debug("HTML file generated at:", outputFilePath)
+	return nil
 }
 
-func copyTemplateFileContent(outputTmpFilePath string, outputFilePath string) {
+func copyTemplateFileContent(outputTmpFilePath string, outputFilePath string) error {
 	// Note: Copy file content from tmp to final to avoid flooding file events in the watcher
 	input, err := os.ReadFile(outputTmpFilePath)
 	if err != nil {
-		logrus.Fatal(fmt.Sprintf("Error reading output tmp file: %s", outputTmpFilePath), err)
+		return fmt.Errorf("reading output tmp file %s: %w", outputTmpFilePath, err)
 	}
-	err = os.WriteFile(outputFilePath, input, 0644)
-	if err != nil {
-		logrus.Fatal(fmt.Sprintf("Error writing output file: %s", outputFilePath), err)
+	if err := os.WriteFile(outputFilePath, input, 0644); err != nil {
+		return fmt.Errorf("writing output file %s: %w", outputFilePath, err)
 	}
 
 	// Clean the tmp file
-	err = os.Remove(outputTmpFilePath)
-	if err != nil {
-		logrus.Fatal(fmt.Sprintf("Error removing output tmp file: %s", outputTmpFilePath), err)
+	if err := os.Remove(outputTmpFilePath); err != nil {
+		return fmt.Errorf("removing output tmp file %s: %w", outputTmpFilePath, err)
 	}
+	return nil
 }

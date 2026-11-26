@@ -1,6 +1,7 @@
 package themes
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -11,12 +12,15 @@ import (
 	"github.com/germainlefebvre4/cvwonder/internal/version"
 )
 
-func (t *ThemesService) Verify(themeName string) {
+func (t *ThemesService) Verify(themeName string) error {
 	logrus.Debug("Verify")
 	baseDirectory, _ := os.Getwd()
 	themeDir := "themes"
 	themeSlugName := slugify.Slugify(themeName)
-	themeConfig := theme_config.GetThemeConfigFromDir(filepath.Join(baseDirectory, themeDir, themeSlugName))
+	themeConfig, err := theme_config.GetThemeConfigFromDir(filepath.Join(baseDirectory, themeDir, themeSlugName))
+	if err != nil {
+		return fmt.Errorf("loading theme '%s': %w", themeName, err)
+	}
 	themeDirPath := filepath.Join(baseDirectory, themeDir, themeSlugName)
 
 	valid01 := themeConfig.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
@@ -32,6 +36,7 @@ func (t *ThemesService) Verify(themeName string) {
 	if valid01 {
 		logrus.Info("Your theme '" + themeName + "' is valid.")
 	} else {
-		logrus.Fatal("Your theme '" + themeName + "' is not valid.")
+		return fmt.Errorf("your theme '%s' is not valid: minimum version %s is above CV Wonder version %s", themeName, themeConfig.MinimumVersion, version.CVWONDER_VERSION)
 	}
+	return nil
 }

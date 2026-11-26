@@ -32,10 +32,16 @@ func ServeCmd() *cobra.Command {
 			}
 
 			// Build InputFile object
-			inputFile := model.BuildInputFile(utils.CliArgs.InputFile)
+			inputFile, err := model.BuildInputFile(utils.CliArgs.InputFile)
+			if err != nil {
+				logrus.Fatal("Error building input file: ", err)
+			}
 
 			// Build OutputDirectory object
-			outputDir := model.BuildOutputDirectory(utils.CliArgs.OutputDirectory)
+			outputDir, err := model.BuildOutputDirectory(utils.CliArgs.OutputDirectory)
+			if err != nil {
+				logrus.Fatal("Error building output directory: ", err)
+			}
 
 			logrus.Info("CV Wonder")
 			logrus.Info("  Input file: ", inputFile.RelativePath)
@@ -47,11 +53,16 @@ func ServeCmd() *cobra.Command {
 			logrus.Info()
 
 			// Check Theme exists
-			err := themes.CheckThemeExists(utils.CliArgs.ThemeName)
-			utils.CheckError(err)
+			err = themes.CheckThemeExists(utils.CliArgs.ThemeName)
+			if err != nil {
+				logrus.Fatal(err)
+			}
 
 			// Check Theme version compatibility
-			themeCfg := theme_config.GetThemeConfigFromThemeName(utils.CliArgs.ThemeName)
+			themeCfg, err := theme_config.GetThemeConfigFromThemeName(utils.CliArgs.ThemeName)
+			if err != nil {
+				logrus.Fatal("Error loading theme config: ", err)
+			}
 			themeCfg.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
 
 			// Build merged config: theme defaults + CLI overrides.
@@ -62,38 +73,80 @@ func ServeCmd() *cobra.Command {
 
 			// Parse the CV
 			parserService, err := cvparser.NewParserServices()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal(err)
+			}
 			content, err := parserService.ParseFile(inputFile.FullPath)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal(err)
+			}
 
 			// Create render services
 			serveService, err := cvserve.NewServeServices()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal(err)
+			}
 			renderHTMLService, err := render_html.NewRenderHTMLServices()
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal(err)
+			}
 			renderPDFService, err := render_pdf.NewRenderPDFServices(serveService)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal(err)
+			}
 			renderScreenshotService, err := render_screenshot.NewRenderScreenshotServices(serveService)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal(err)
+			}
 			renderService, err := cvrender.NewRenderServices(renderHTMLService, renderPDFService, renderScreenshotService)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal(err)
+			}
 
 			// Render the CV
 			baseDirectory, err := os.Getwd()
-			utils.CheckError(err)
-			renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format, utils.CliArgs.Watch, mergedConfig)
-			utils.CheckError(err)
+			if err != nil {
+				logrus.Fatal(err)
+			}
+			err = renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format, utils.CliArgs.Watch, mergedConfig)
+			if err != nil {
+				logrus.Fatal("Error rendering CV: ", err)
+			}
 
 			if utils.CliArgs.Watch {
 				watcherService, err := watcher.NewWatcherServices(parserService, renderService)
-				utils.CheckError(err)
-				go watcherService.ObserveFileEvents(baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format, mergedConfig)
+				if err != nil {
+					logrus.Fatal(err)
+				}
+				// Setup failures are fatal; runtime failures (a bad edit that fails to
+				// re-render) are logged and watching continues.
+				watchErrs, err := watcherService.ObserveFileEvents(baseDirectory, outputDir.FullPath, inputFile.FullPath, utils.CliArgs.ThemeName, utils.CliArgs.Format, mergedConfig)
+				if err != nil {
+					logrus.Fatal("Error watching files: ", err)
+				}
+				go func() {
+					for err := range watchErrs {
+						logrus.Error("Error while watching: ", err)
+					}
+				}()
 			}
+
 			// Serve the CV
-			if utils.CliArgs.Browser {
-				serveService.OpenBrowser(outputDir.FullPath, inputFile.FullPath)
+			serveErrs, err := serveService.StartLiveReloader(utils.CliArgs.Port, outputDir.FullPath, inputFile.FullPath)
+			if err != nil {
+				logrus.Fatal("Error starting server: ", err)
 			}
-			serveService.StartLiveReloader(utils.CliArgs.Port, outputDir.FullPath, inputFile.FullPath)
+			if utils.CliArgs.Browser {
+				if err := serveService.OpenBrowser(outputDir.FullPath, inputFile.FullPath); err != nil {
+					logrus.Fatal("Error opening browser: ", err)
+				}
+			}
+
+			// Block while serving. The channel delivers the error that stopped the
+			// HTTP server, if any, and is closed when serving ends.
+			if err := <-serveErrs; err != nil {
+				logrus.Fatal("Server stopped: ", err)
+			}
 		},
 	}
 	cobraCmd.Flags().BoolVarP(&utils.CliArgs.Browser, "browser", "b", false, "Open the browser.")

@@ -13,15 +13,17 @@ import (
 	"golang.org/x/exp/rand"
 )
 
-func CheckError(err error) {
-	if err != nil {
-		logrus.Fatal(err)
-	}
+// CheckError returns err unchanged. It never terminates the process: the
+// decision to exit on error belongs to the cmd/ entrypoints.
+func CheckError(err error) error {
+	return err
 }
 
 func ReadDirectory(path string) ([]string, error) {
 	files, err := os.ReadDir(path)
-	CheckError(err)
+	if err != nil {
+		return nil, err
+	}
 
 	result := make([]string, 0)
 	for _, file := range files {

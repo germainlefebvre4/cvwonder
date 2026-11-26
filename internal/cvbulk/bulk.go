@@ -145,7 +145,10 @@ func generateSingleFile(inputFile model.InputFile, outputDir string, themeName s
 	if err != nil {
 		return fmt.Errorf("getting theme directory: %w", err)
 	}
-	cfg := theme_config.GetThemeConfigFromDir(themeDir)
+	cfg, err := theme_config.GetThemeConfigFromDir(themeDir)
+	if err != nil {
+		return fmt.Errorf("loading theme config: %w", err)
+	}
 	cfg.VerifyThemeMinimumVersion(version.CVWONDER_VERSION)
 	parserService, err := cvparser.NewParserServices()
 	if err != nil {

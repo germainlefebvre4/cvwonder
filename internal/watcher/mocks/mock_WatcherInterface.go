@@ -18,8 +18,33 @@ func (_m *WatcherInterfaceMock) EXPECT() *WatcherInterfaceMock_Expecter {
 }
 
 // ObserveFileEvents provides a mock function with given fields: baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, config
-func (_m *WatcherInterfaceMock) ObserveFileEvents(baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, config map[string]interface{}) {
-	_m.Called(baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, config)
+func (_m *WatcherInterfaceMock) ObserveFileEvents(baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, config map[string]interface{}) (<-chan error, error) {
+	ret := _m.Called(baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, config)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ObserveFileEvents")
+	}
+
+	var r0 <-chan error
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, string, string, string, string, map[string]interface{}) (<-chan error, error)); ok {
+		return rf(baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, config)
+	}
+	if rf, ok := ret.Get(0).(func(string, string, string, string, string, map[string]interface{}) <-chan error); ok {
+		r0 = rf(baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, config)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(<-chan error)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string, string, string, string, string, map[string]interface{}) error); ok {
+		r1 = rf(baseDirectory, outputDirectory, inputFilePath, themeName, exportFormat, config)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // WatcherInterfaceMock_ObserveFileEvents_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ObserveFileEvents'
@@ -45,13 +70,13 @@ func (_c *WatcherInterfaceMock_ObserveFileEvents_Call) Run(run func(baseDirector
 	return _c
 }
 
-func (_c *WatcherInterfaceMock_ObserveFileEvents_Call) Return() *WatcherInterfaceMock_ObserveFileEvents_Call {
-	_c.Call.Return()
+func (_c *WatcherInterfaceMock_ObserveFileEvents_Call) Return(_a0 <-chan error, _a1 error) *WatcherInterfaceMock_ObserveFileEvents_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *WatcherInterfaceMock_ObserveFileEvents_Call) RunAndReturn(run func(string, string, string, string, string, map[string]interface{})) *WatcherInterfaceMock_ObserveFileEvents_Call {
-	_c.Run(run)
+func (_c *WatcherInterfaceMock_ObserveFileEvents_Call) RunAndReturn(run func(string, string, string, string, string, map[string]interface{}) (<-chan error, error)) *WatcherInterfaceMock_ObserveFileEvents_Call {
+	_c.Call.Return(run)
 	return _c
 }
 

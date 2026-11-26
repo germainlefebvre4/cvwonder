@@ -18,8 +18,21 @@ func (_m *ThemesInterfaceMock) EXPECT() *ThemesInterfaceMock_Expecter {
 }
 
 // Create provides a mock function with given fields: theme
-func (_m *ThemesInterfaceMock) Create(theme string) {
-	_m.Called(theme)
+func (_m *ThemesInterfaceMock) Create(theme string) error {
+	ret := _m.Called(theme)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Create")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(theme)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // ThemesInterfaceMock_Create_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Create'
@@ -40,19 +53,32 @@ func (_c *ThemesInterfaceMock_Create_Call) Run(run func(theme string)) *ThemesIn
 	return _c
 }
 
-func (_c *ThemesInterfaceMock_Create_Call) Return() *ThemesInterfaceMock_Create_Call {
-	_c.Call.Return()
+func (_c *ThemesInterfaceMock_Create_Call) Return(_a0 error) *ThemesInterfaceMock_Create_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *ThemesInterfaceMock_Create_Call) RunAndReturn(run func(string)) *ThemesInterfaceMock_Create_Call {
-	_c.Run(run)
+func (_c *ThemesInterfaceMock_Create_Call) RunAndReturn(run func(string) error) *ThemesInterfaceMock_Create_Call {
+	_c.Call.Return(run)
 	return _c
 }
 
 // Install provides a mock function with given fields: theme, force
-func (_m *ThemesInterfaceMock) Install(theme string, force bool) {
-	_m.Called(theme, force)
+func (_m *ThemesInterfaceMock) Install(theme string, force bool) error {
+	ret := _m.Called(theme, force)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Install")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, bool) error); ok {
+		r0 = rf(theme, force)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // ThemesInterfaceMock_Install_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Install'
@@ -74,19 +100,32 @@ func (_c *ThemesInterfaceMock_Install_Call) Run(run func(theme string, force boo
 	return _c
 }
 
-func (_c *ThemesInterfaceMock_Install_Call) Return() *ThemesInterfaceMock_Install_Call {
-	_c.Call.Return()
+func (_c *ThemesInterfaceMock_Install_Call) Return(_a0 error) *ThemesInterfaceMock_Install_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *ThemesInterfaceMock_Install_Call) RunAndReturn(run func(string, bool)) *ThemesInterfaceMock_Install_Call {
-	_c.Run(run)
+func (_c *ThemesInterfaceMock_Install_Call) RunAndReturn(run func(string, bool) error) *ThemesInterfaceMock_Install_Call {
+	_c.Call.Return(run)
 	return _c
 }
 
 // List provides a mock function with no fields
-func (_m *ThemesInterfaceMock) List() {
-	_m.Called()
+func (_m *ThemesInterfaceMock) List() error {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for List")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func() error); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // ThemesInterfaceMock_List_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'List'
@@ -106,19 +145,32 @@ func (_c *ThemesInterfaceMock_List_Call) Run(run func()) *ThemesInterfaceMock_Li
 	return _c
 }
 
-func (_c *ThemesInterfaceMock_List_Call) Return() *ThemesInterfaceMock_List_Call {
-	_c.Call.Return()
+func (_c *ThemesInterfaceMock_List_Call) Return(_a0 error) *ThemesInterfaceMock_List_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *ThemesInterfaceMock_List_Call) RunAndReturn(run func()) *ThemesInterfaceMock_List_Call {
-	_c.Run(run)
+func (_c *ThemesInterfaceMock_List_Call) RunAndReturn(run func() error) *ThemesInterfaceMock_List_Call {
+	_c.Call.Return(run)
 	return _c
 }
 
 // Verify provides a mock function with given fields: theme
-func (_m *ThemesInterfaceMock) Verify(theme string) {
-	_m.Called(theme)
+func (_m *ThemesInterfaceMock) Verify(theme string) error {
+	ret := _m.Called(theme)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Verify")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(theme)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // ThemesInterfaceMock_Verify_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Verify'
@@ -139,19 +191,32 @@ func (_c *ThemesInterfaceMock_Verify_Call) Run(run func(theme string)) *ThemesIn
 	return _c
 }
 
-func (_c *ThemesInterfaceMock_Verify_Call) Return() *ThemesInterfaceMock_Verify_Call {
-	_c.Call.Return()
+func (_c *ThemesInterfaceMock_Verify_Call) Return(_a0 error) *ThemesInterfaceMock_Verify_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *ThemesInterfaceMock_Verify_Call) RunAndReturn(run func(string)) *ThemesInterfaceMock_Verify_Call {
-	_c.Run(run)
+func (_c *ThemesInterfaceMock_Verify_Call) RunAndReturn(run func(string) error) *ThemesInterfaceMock_Verify_Call {
+	_c.Call.Return(run)
 	return _c
 }
 
 // Screenshot provides a mock function with given fields: theme
-func (_m *ThemesInterfaceMock) Screenshot(theme string) {
-	_m.Called(theme)
+func (_m *ThemesInterfaceMock) Screenshot(theme string) error {
+	ret := _m.Called(theme)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Screenshot")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(theme)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // ThemesInterfaceMock_Screenshot_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Screenshot'
@@ -172,13 +237,13 @@ func (_c *ThemesInterfaceMock_Screenshot_Call) Run(run func(theme string)) *Them
 	return _c
 }
 
-func (_c *ThemesInterfaceMock_Screenshot_Call) Return() *ThemesInterfaceMock_Screenshot_Call {
-	_c.Call.Return()
+func (_c *ThemesInterfaceMock_Screenshot_Call) Return(_a0 error) *ThemesInterfaceMock_Screenshot_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *ThemesInterfaceMock_Screenshot_Call) RunAndReturn(run func(string)) *ThemesInterfaceMock_Screenshot_Call {
-	_c.Run(run)
+func (_c *ThemesInterfaceMock_Screenshot_Call) RunAndReturn(run func(string) error) *ThemesInterfaceMock_Screenshot_Call {
+	_c.Call.Return(run)
 	return _c
 }
 

@@ -1,6 +1,7 @@
 package themes
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -73,23 +74,23 @@ func GetThemeRef(themeName string) string {
 	return head.Hash().String()[:7] // Return short hash
 }
 
-func createThemesDir() {
+func createThemesDir() error {
 	if _, err := os.Stat("themes"); os.IsNotExist(err) {
-		err := os.Mkdir("themes", 0750)
-		if err != nil {
-			logrus.Error("Error creating themes directory: themes/")
+		if err := os.Mkdir("themes", 0750); err != nil {
+			return fmt.Errorf("creating themes directory themes/: %w", err)
 		}
 	}
+	return nil
 }
 
-func createNewThemeDir(dirName string) {
+func createNewThemeDir(dirName string) error {
 	dirPath := "themes/" + dirName
 	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
-		err := os.Mkdir(dirPath, 0750)
-		if err != nil {
-			logrus.Error("Error creating theme directory: ", dirPath)
+		if err := os.Mkdir(dirPath, 0750); err != nil {
+			return fmt.Errorf("creating theme directory %s: %w", dirPath, err)
 		}
 	}
+	return nil
 }
 
 func CheckThemeExists(themeName string) error {
