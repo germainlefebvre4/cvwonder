@@ -7,8 +7,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var debug bool
-
 type PlainFormatter struct {
 }
 

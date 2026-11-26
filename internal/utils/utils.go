@@ -59,18 +59,18 @@ func Copy(srcFile, dstFile string) error {
 // Returns nil if the file doesn't exist (no error)
 func LoadIgnoreMatcher(rootDir string) (IgnoreMatcher, error) {
 	ignorePath := filepath.Join(rootDir, ".cvwonderignore")
-	
+
 	// Check if .cvwonderignore exists
 	if _, err := os.Stat(ignorePath); os.IsNotExist(err) {
 		return nil, nil
 	}
-	
+
 	// Load and parse the ignore file
 	matcher, err := dotignore.NewPatternMatcherFromFile(ignorePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load .cvwonderignore: %w", err)
 	}
-	
+
 	return matcher, nil
 }
 
@@ -101,7 +101,7 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 	for _, entry := range entries {
 		sourcePath := filepath.Join(scrDir, entry.Name())
 		destPath := filepath.Join(dest, entry.Name())
-		
+
 		// Calculate relative path from base directory for ignore matching
 		relPath, err := filepath.Rel(baseDir, sourcePath)
 		if err != nil {
@@ -127,7 +127,7 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 					logrus.Debugf("Directory %s matched ignore pattern, but checking contents for negations", relPath)
 				}
 			}
-			
+
 			// Always create the directory and recurse to check for negation patterns
 			if err := CreateIfNotExists(destPath, 0750); err != nil {
 				return err
@@ -135,7 +135,7 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 			if err := copyDirectoryWithIgnoreInternal(sourcePath, destPath, ignoreMatcher, baseDir); err != nil {
 				return err
 			}
-			
+
 			// After recursion, check if the directory is empty (all contents were ignored)
 			// If so, remove it and skip chmod
 			entries, err := os.ReadDir(destPath)
@@ -170,9 +170,10 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 					continue
 				}
 			}
-			
-			// Exclude the templated index.html theme file and path with .git/ dir from copying
-			if destPath == filepath.Join(dest, "index.html") {
+
+			// Exclude the templated index.html theme file (the root one only: an
+			// index.html in a sub-folder is a regular asset) and git metadata
+			if relPath == "index.html" {
 				continue
 			}
 			if isGitPath(relPath) {

@@ -550,3 +550,19 @@ func TestCopyDirectory_GitLookalikes(t *testing.T) {
 	assert.NoDirExists(t, filepath.Join(dst, ".git"))
 	assert.NoFileExists(t, filepath.Join(dst, ".gitignore"))
 }
+
+// Only the templated index.html at the theme root is excluded: an index.html in a
+// sub-folder (a bundled demo, documentation...) is a regular asset.
+func TestCopyDirectory_NestedIndexHTMLIsCopied(t *testing.T) {
+	src, dst := t.TempDir(), t.TempDir()
+	require.NoError(t, os.MkdirAll(filepath.Join(src, "assets", "demo"), 0o750))
+	require.NoError(t, os.WriteFile(filepath.Join(src, "index.html"), []byte("template"), 0o644))
+	require.NoError(t, os.WriteFile(filepath.Join(src, "assets", "demo", "index.html"), []byte("demo"), 0o644))
+
+	require.NoError(t, CopyDirectory(src, dst))
+
+	assert.NoFileExists(t, filepath.Join(dst, "index.html"))
+	content, err := os.ReadFile(filepath.Join(dst, "assets", "demo", "index.html"))
+	require.NoError(t, err)
+	assert.Equal(t, "demo", string(content))
+}

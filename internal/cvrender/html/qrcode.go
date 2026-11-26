@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	qrcode "github.com/yeqown/go-qrcode/v2"
 	"github.com/yeqown/go-qrcode/writer/standard"
-	"github.com/sirupsen/logrus"
 )
 
 // nopWriteCloser wraps a *bytes.Buffer to satisfy io.WriteCloser.
