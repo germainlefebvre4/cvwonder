@@ -1,35 +1,39 @@
-FROM alpine:3 AS build
+# syntax=docker/dockerfile:1
 
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
-ARG JQ_VERSION=1.7
-ARG CVWONDER_VERSION=0.10.0
+# ---- Build stage: compile cvwonder from the (patched) sources ----------------
+# Runs on the builder's native platform and cross-compiles, so multi-arch
+# builds do not need to emulate the Go toolchain under QEMU.
+FROM --platform=$BUILDPLATFORM golang:1.27.4-alpine AS build
 
-WORKDIR /app
+ARG TARGETOS
+ARG TARGETARCH
+ARG CVWONDER_VERSION=dev
 
-RUN apk update && \
-    apk add --no-cache \
-        curl
+WORKDIR /src
 
-# Install dependencies: >=jq-1.8.1
-RUN apk add --no-cache jq && \
-    echo "jq version: " && \
-    jq --version
+COPY go.mod go.sum ./
+RUN go mod download && go mod verify
 
-# Download cvwonder binary for the target platform
-RUN OS=$(echo $TARGETPLATFORM | cut -d'/' -f1) && \
-    ARCH=$(echo $TARGETPLATFORM | cut -d'/' -f2) && \
-    ARM_VERSION=$(echo $TARGETPLATFORM | cut -d'/' -f3) && \
-    curl -L --output /app/cvwonder "https://github.com/germainlefebvre4/cvwonder/releases/download/v${CVWONDER_VERSION}/cvwonder_${OS}_${ARCH}${ARM_VERSION}" && \
-    chmod +x /app/cvwonder && \
-    /app/cvwonder version
+COPY . .
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
+    go build -trimpath \
+      -ldflags "-s -w -X github.com/germainlefebvre4/cvwonder/internal/version.CVWONDER_VERSION=v${CVWONDER_VERSION#v}" \
+      -o /out/cvwonder ./cmd/cvwonder
 
+# ---- Runtime stage: only chromium + the static binary ------------------------
 FROM alpine:3
 
-RUN apk add --no-cache chromium
+# chromium is required to render PDFs / screenshots. No curl, jq or build
+# tooling is shipped in the final image.
+RUN apk upgrade --no-cache && \
+    apk add --no-cache chromium && \
+    addgroup -g 1000 -S cvwonder && \
+    adduser -u 1000 -S -G cvwonder -h /home/cvwonder cvwonder && \
+    mkdir -p /cv && chown cvwonder:cvwonder /cv
 
-COPY --from=build /app/cvwonder /usr/local/bin/cvwonder
+COPY --from=build /out/cvwonder /usr/local/bin/cvwonder
 
+USER cvwonder
 WORKDIR /cv
 
 ENV CHROME_BIN=/usr/bin/chromium-browser
