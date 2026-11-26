@@ -44,6 +44,16 @@ func (s *ServeServices) StartLiveReloader(port int, outputDirectory string, inpu
 		return nil, fmt.Errorf("watching %s: %w", watchedFile, err)
 	}
 
+	// In watch mode the page relies on the LiveReload server. lrserver binds its
+	// port inside ListenAndServe, so probe it up front: if it is taken (e.g. a
+	// second `serve --watch`), reloads would silently go to the other instance.
+	if utils.CliArgs.Watch {
+		if err := checkPortFree(int(lrserver.DefaultPort)); err != nil {
+			_ = watcher.Close()
+			return nil, fmt.Errorf("LiveReload port unavailable: %w", err)
+		}
+	}
+
 	// Start serving html. Do it before the LiveReload server so a bind failure
 	// leaves nothing else running.
 	serverErrs, err := s.StartServer(port, outputDirectory)
@@ -93,6 +103,15 @@ func (s *ServeServices) StartLiveReloader(port int, outputDirectory string, inpu
 		}
 	}()
 	return out, nil
+}
+
+// checkPortFree reports whether port can currently be bound on all interfaces.
+func checkPortFree(port int) error {
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	if err != nil {
+		return fmt.Errorf("binding port %d: %w", port, err)
+	}
+	return l.Close()
 }
 
 // StartServer binds the port synchronously, returning an error immediately when

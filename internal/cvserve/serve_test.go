@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
+	"github.com/jaschaephraim/lrserver"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -181,4 +182,37 @@ func TestServeOnListener_ClosedListenerIsNotAnError(t *testing.T) {
 	case <-time.After(2 * time.Second):
 		t.Fatal("serving did not stop")
 	}
+}
+
+// In watch mode a busy LiveReload port must be reported instead of silently
+// leaving the page connected to another instance's LiveReload server.
+func TestStartLiveReloader_LiveReloadPortInUse(t *testing.T) {
+	occupied, err := net.Listen("tcp", fmt.Sprintf(":%d", lrserver.DefaultPort))
+	if err != nil {
+		t.Skipf("LiveReload port %d is not available in this environment: %v", lrserver.DefaultPort, err)
+	}
+	defer occupied.Close()
+
+	previous := utils.CliArgs.Watch
+	utils.CliArgs.Watch = true
+	t.Cleanup(func() { utils.CliArgs.Watch = previous })
+
+	outputDir := t.TempDir()
+	require.NoError(t, os.WriteFile(filepath.Join(outputDir, "cv.html"), []byte("x"), 0o600))
+	free, err := net.Listen("tcp", ":0")
+	require.NoError(t, err)
+	httpPort := free.Addr().(*net.TCPAddr).Port
+	require.NoError(t, free.Close())
+
+	service := &ServeServices{}
+	errs, err := service.StartLiveReloader(httpPort, outputDir, "cv.yml")
+
+	require.Error(t, err)
+	assert.Nil(t, errs)
+	assert.Contains(t, err.Error(), "LiveReload port unavailable")
+
+	// Nothing may be left listening on the HTTP port after the failure.
+	l, listenErr := net.Listen("tcp", fmt.Sprintf(":%d", httpPort))
+	require.NoError(t, listenErr, "HTTP port must not be left bound")
+	_ = l.Close()
 }

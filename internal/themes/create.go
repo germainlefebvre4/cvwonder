@@ -12,6 +12,15 @@ import (
 	"github.com/germainlefebvre4/cvwonder/internal/version"
 )
 
+// themeCreationSteps are the files written into a new theme directory, in order.
+// It is a variable so tests can inject a failing step.
+var themeCreationSteps = []func(themeName, themeSlugName string) error{
+	createThemeConfig,
+	createThemeIndexHTML,
+	func(_, themeSlugName string) error { return createThemeSampleYML(themeSlugName) },
+	func(_, themeSlugName string) error { return createThemeCVWonderIgnore(themeSlugName) },
+}
+
 func (t *ThemesService) Create(themeName string) error {
 	logrus.Debug("Create")
 	themeSlugName := slugify.Slugify(themeName)
@@ -27,21 +36,16 @@ func (t *ThemesService) Create(themeName string) error {
 	if err := createNewThemeDir(themeSlugName); err != nil {
 		return err
 	}
-	// Create theme.yaml
-	if err := createThemeConfig(themeName, themeSlugName); err != nil {
-		return err
-	}
-	// Create theme index.html
-	if err := createThemeIndexHTML(themeName, themeSlugName); err != nil {
-		return err
-	}
-	// Create sample.yml
-	if err := createThemeSampleYML(themeSlugName); err != nil {
-		return err
-	}
-	// Create .cvwonderignore
-	if err := createThemeCVWonderIgnore(themeSlugName); err != nil {
-		return err
+	// Populate it. A failure part-way must not leave a half-built theme behind:
+	// the next `themes create` would otherwise report "already exists".
+	for _, step := range themeCreationSteps {
+		if err := step(themeName, themeSlugName); err != nil {
+			themeDir := "themes/" + themeSlugName
+			if rmErr := os.RemoveAll(themeDir); rmErr != nil {
+				return fmt.Errorf("%w (also failed removing partial theme %s: %v)", err, themeDir, rmErr)
+			}
+			return err
+		}
 	}
 
 	logrus.Info("Your theme '" + themeName + "' has been created in the directory themes/" + themeSlugName + "/.")

@@ -114,11 +114,10 @@ func (r *RenderHTMLServices) generateTemplateFile(themeDirectory string, outputD
 	if err := os.MkdirAll(outputDirectory, os.ModePerm); err != nil {
 		return fmt.Errorf("creating output directory %s: %w", outputDirectory, err)
 	}
-	outputFile, err := os.Create(outputFilePath)
-	if err != nil {
-		return fmt.Errorf("creating output file %s: %w", outputFilePath, err)
-	}
-	defer outputFile.Close()
+	// Render only into the tmp file. The final output file is written by
+	// copyTemplateFileContent once rendering has succeeded: truncating it here
+	// would leave an empty page behind (and live-reloaded in watch mode) when
+	// the template fails.
 	outputTmpFile, err := os.Create(outputTmpFilePath)
 	if err != nil {
 		return fmt.Errorf("creating output tmp file %s: %w", outputTmpFilePath, err)

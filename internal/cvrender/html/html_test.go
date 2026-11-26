@@ -12,6 +12,7 @@ import (
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
 	utils "github.com/germainlefebvre4/cvwonder/internal/utils"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func NewRenderHTMLServicesTest() RenderHTMLServices {
@@ -411,10 +412,13 @@ func TestGenerateTemplateFile(t *testing.T) {
 		// Run test
 		t.Run(tt.name, func(t *testing.T) {
 			service := NewRenderHTMLServicesTest()
-			service.generateTemplateFile(tt.args.themeDirectory, tt.args.outputDirectory, tt.args.outputFilePath, tt.args.outputTmpFilePath, tt.args.cv, nil)
+			err := service.generateTemplateFile(tt.args.themeDirectory, tt.args.outputDirectory, tt.args.outputFilePath, tt.args.outputTmpFilePath, tt.args.cv, nil)
+			assert.NoError(t, err)
 			assert.DirExists(t, tt.args.outputDirectory)
-			assert.FileExists(t, tt.args.outputFilePath)
 			assert.FileExists(t, tt.args.outputTmpFilePath)
+			// The final file is only written once rendering succeeded
+			// (copyTemplateFileContent), never truncated beforehand.
+			assert.NoFileExists(t, tt.args.outputFilePath)
 		})
 
 		// Clean
@@ -615,4 +619,30 @@ func TestRenderFormatHTML_ReturnsErrorInsteadOfExiting(t *testing.T) {
 			t.Fatal("expected a template execution error")
 		}
 	})
+}
+
+// A failed re-render (e.g. in watch mode) must not truncate the previous output:
+// the browser would otherwise live-reload an empty page.
+func TestRenderFormatHTML_FailedRenderKeepsPreviousOutput(t *testing.T) {
+	base := t.TempDir()
+	themeDir := filepath.Join(base, "themes", "flaky")
+	outDir := filepath.Join(base, "out")
+	require.NoError(t, os.MkdirAll(themeDir, 0o750))
+	indexPath := filepath.Join(themeDir, "index.html")
+	outputPath := filepath.Join(outDir, "cv.html")
+	r := &RenderHTMLServices{}
+
+	require.NoError(t, os.WriteFile(indexPath, []byte("<h1>first render</h1>"), 0o600))
+	require.NoError(t, r.RenderFormatHTML(model.CV{}, base, outDir, "cv", "flaky", false, nil))
+	before, err := os.ReadFile(outputPath)
+	require.NoError(t, err)
+	require.Contains(t, string(before), "first render")
+
+	require.NoError(t, os.WriteFile(indexPath, []byte("{{ .Missing.Field }}"), 0o600))
+	require.Error(t, r.RenderFormatHTML(model.CV{}, base, outDir, "cv", "flaky", false, nil))
+
+	after, err := os.ReadFile(outputPath)
+	require.NoError(t, err)
+	assert.Equal(t, string(before), string(after), "previous output must survive a failed render")
+	assert.NoFileExists(t, outputPath+".tmp", "tmp file must be cleaned up after a failed render")
 }

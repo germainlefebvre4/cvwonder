@@ -13,12 +13,6 @@ import (
 	"golang.org/x/exp/rand"
 )
 
-// CheckError returns err unchanged. It never terminates the process: the
-// decision to exit on error belongs to the cmd/ entrypoints.
-func CheckError(err error) error {
-	return err
-}
-
 func ReadDirectory(path string) ([]string, error) {
 	files, err := os.ReadDir(path)
 	if err != nil {
