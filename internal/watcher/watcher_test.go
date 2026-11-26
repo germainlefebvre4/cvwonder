@@ -243,3 +243,48 @@ func TestObserveFileEvents_RuntimeErrors(t *testing.T) {
 		renderMock.AssertNotCalled(t, "Render", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything)
 	})
 }
+
+// Editors that save atomically (temp file renamed over the original) replace the
+// watched file: the watcher must keep following the new file.
+func TestObserveFileEvents_FollowsAtomicReplace(t *testing.T) {
+	tempDir, inputFile, outputDir, _ := setupWatchFixture(t)
+	cv := model.CV{}
+
+	rendered := make(chan struct{}, 8)
+	parserMock := parserMocks.NewParserInterfaceMock(t)
+	renderMock := renderMocks.NewRenderInterfaceMock(t)
+	parserMock.On("ParseFile", inputFile).Return(cv, nil)
+	renderMock.On("Render", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+		Run(func(mock.Arguments) { rendered <- struct{}{} }).Return(nil)
+
+	service := &WatcherServices{ParserService: parserMock, RenderService: renderMock}
+	_, err := service.ObserveFileEvents(tempDir, outputDir, inputFile, "default", "html", nil)
+	require.NoError(t, err)
+
+	atomicSave := func(content string) {
+		tmp := inputFile + ".swp"
+		require.NoError(t, os.WriteFile(tmp, []byte(content), 0o600))
+		require.NoError(t, os.Rename(tmp, inputFile))
+	}
+	waitRender := func(step string) {
+		select {
+		case <-rendered:
+		case <-time.After(3 * time.Second):
+			t.Fatalf("no render after %s", step)
+		}
+	}
+	drain := func() {
+		time.Sleep(300 * time.Millisecond)
+		for len(rendered) > 0 {
+			<-rendered
+		}
+	}
+
+	atomicSave("first atomic save")
+	waitRender("the first atomic save")
+	drain()
+
+	// The watch must have been re-established on the new file.
+	atomicSave("second atomic save")
+	waitRender("the second atomic save")
+}
