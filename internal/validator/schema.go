@@ -3,13 +3,12 @@ package validator
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/sirupsen/logrus"
+	"log/slog"
 )
 
 // GetSchema returns the JSON schema as a string
 func (v *ValidatorServices) GetSchema() (string, error) {
-	logrus.Debug("Loading JSON schema")
+	slog.Debug("Loading JSON schema")
 
 	// Read schema from embedded file
 	schemaContent, err := schemaFS.ReadFile("schema.json")
@@ -22,7 +21,7 @@ func (v *ValidatorServices) GetSchema() (string, error) {
 
 // GetSchemaPretty returns the JSON schema as a pretty-printed string
 func (v *ValidatorServices) GetSchemaPretty() (string, error) {
-	logrus.Debug("Loading and formatting JSON schema")
+	slog.Debug("Loading and formatting JSON schema")
 
 	// Read schema from embedded file
 	schemaContent, err := schemaFS.ReadFile("schema.json")
@@ -48,7 +47,7 @@ func (v *ValidatorServices) GetSchemaPretty() (string, error) {
 
 // GetSchemaInfo returns information about the schema
 func (v *ValidatorServices) GetSchemaInfo() (*SchemaInfo, error) {
-	logrus.Debug("Extracting schema information")
+	slog.Debug("Extracting schema information")
 
 	// Read schema from embedded file
 	schemaContent, err := schemaFS.ReadFile("schema.json")

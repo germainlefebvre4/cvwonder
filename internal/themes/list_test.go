@@ -1,7 +1,7 @@
 package themes
 
 import (
-	"io"
+	"bytes"
 	"os"
 	"path/filepath"
 	"testing"
@@ -101,18 +101,10 @@ func TestListThemes(t *testing.T) {
 }
 
 func captureOutput(f func()) string {
-	// var buf bytes.Buffer
-	// log.SetOutput(&buf)
-	// f()
-	// log.SetOutput(os.Stderr)
-	// return buf.String()
-
-	orig := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
+	var buf bytes.Buffer
+	orig := Out
+	Out = &buf
+	defer func() { Out = orig }()
 	f()
-	os.Stdout = orig
-	w.Close()
-	out, _ := io.ReadAll(r)
-	return string(out)
+	return buf.String()
 }

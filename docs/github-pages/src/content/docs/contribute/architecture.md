@@ -95,8 +95,18 @@ Key external dependencies:
 
 - **Utilities**:
   - `github.com/goccy/go-yaml`: YAML parsing
-  - `github.com/sirupsen/logrus`: Structured logging
+  - `log/slog` (Go standard library): Diagnostic logging
+  - `charm.land/lipgloss/v2` and `github.com/charmbracelet/colorprofile`: Terminal styling and color detection
   - `github.com/spf13/cobra`: CLI framework
+
+## Output: UI and logger
+
+Two packages own everything that reaches the terminal. Keep them apart:
+
+- `cmd/*` talks to the **UI** (`internal/ui`): headers, step lines, results, tables and errors. Commands return errors (`RunE`); the root command renders them on stderr, with a hint when you wrap the error with `ui.WithHint`.
+- `internal/*` talks to the **logger** (`log/slog`, installed by `internal/logger`): `slog.Debug(...)` for internal chatter, `slog.Warn(...)` for recoverable problems. `internal/*` packages never print and never call `os.Exit`.
+
+The root command's `PersistentPreRunE` builds both from `--log-level`/`--quiet` and routes the streams. A command whose output is data (not progress) is marked with `Annotations: ui.DataAnnotations()` and writes its payload with `ui.Payload()`; everything else it prints goes to stderr so stdout stays pipe-safe.
 
 ## Adding New Features
 

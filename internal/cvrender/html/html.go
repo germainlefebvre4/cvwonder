@@ -2,6 +2,7 @@ package render_html
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -9,12 +10,10 @@ import (
 
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	utils "github.com/germainlefebvre4/cvwonder/internal/utils"
-
-	"github.com/sirupsen/logrus"
 )
 
 func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string, outputDirectory string, inputFilename string, themeName string, isWatch bool, config map[string]interface{}) error {
-	logrus.Debug("Generating HTML")
+	slog.Debug("Generating HTML")
 
 	// Theme directory
 	themeDirectory := filepath.Join(baseDirectory, "themes", themeName)
@@ -51,7 +50,7 @@ func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string,
 		return fmt.Errorf("loading .cvwonderignore: %w", err)
 	}
 	if ignoreMatcher != nil {
-		logrus.Debug("Using .cvwonderignore for theme asset filtering")
+		slog.Debug("Using .cvwonderignore for theme asset filtering")
 	}
 
 	// Copy theme assets to output directory with ignore patterns
@@ -134,7 +133,7 @@ func (r *RenderHTMLServices) generateTemplateFile(themeDirectory string, outputD
 		return fmt.Errorf("executing template %s: %w", tmplFile, err)
 	}
 
-	logrus.Debug("HTML file generated at:", outputFilePath)
+	slog.Debug("HTML file generated at", "path", outputFilePath)
 	return nil
 }
 

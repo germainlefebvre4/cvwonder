@@ -1,7 +1,7 @@
 package version
 
 type VersionInterface interface {
-	GetVersion()
+	GetVersion() string
 }
 
 type VersionService struct{}

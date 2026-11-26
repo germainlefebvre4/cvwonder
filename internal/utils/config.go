@@ -8,7 +8,8 @@ type Configuration struct {
 	Format            string   `mapstructure:"FORMAT"`
 	Watch             bool     `mapstructure:"WATCH"`
 	Browser           bool     `mapstructure:"BROWSER"`
-	Debug             bool     `mapstructure:"VERBOSE"`
+	LogLevel          string   `mapstructure:"LOG_LEVEL"`
+	Quiet             bool     `mapstructure:"QUIET"`
 	Port              int      `mapstructure:"PORT"`
 	Validate          bool     `mapstructure:"VALIDATE"`
 	ForceThemeInstall bool     `mapstructure:"FORCE_THEME_INSTALL"`

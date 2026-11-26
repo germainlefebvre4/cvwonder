@@ -2,6 +2,7 @@ package cvinit
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"strconv"
 	"strings"
@@ -9,14 +10,13 @@ import (
 	"charm.land/huh/v2"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	"github.com/goccy/go-yaml"
-	"github.com/sirupsen/logrus"
 )
 
 // checkpoint writes the current wizard state to outputFile, logging a
 // non-blocking warning instead of aborting the wizard if the write fails.
 func checkpoint(cv model.CV, outputFile string) {
 	if err := writePartial(cv, outputFile); err != nil {
-		logrus.Warnf("failed to save progress to %s: %v", outputFile, err)
+		slog.Warn(fmt.Sprintf("failed to save progress to %s: %v", outputFile, err))
 	}
 }
 
@@ -35,84 +35,85 @@ func writePartial(cv model.CV, path string) error {
 // RunWizard runs the interactive CV wizard and writes the result to outputFile.
 // Returns an error if outputFile already exists, unless resume is true, in
 // which case outputFile is loaded as the starting CV and every field is
-// pre-filled from it instead of starting blank.
-func RunWizard(outputFile string, resume bool) error {
+// pre-filled from it instead of starting blank. It returns the path written, or
+// "" when the user cancelled at the final confirmation.
+func RunWizard(outputFile string, resume bool) (string, error) {
 	var cv model.CV
 
 	if resume {
 		data, err := os.ReadFile(outputFile)
 		if err != nil {
-			return fmt.Errorf("nothing to resume: %s not found", outputFile)
+			return "", fmt.Errorf("nothing to resume: %s not found", outputFile)
 		}
 		if err := yaml.Unmarshal(data, &cv); err != nil {
-			return fmt.Errorf("not a valid CV file: %w", err)
+			return "", fmt.Errorf("not a valid CV file: %w", err)
 		}
 	} else if _, err := os.Stat(outputFile); err == nil {
-		return fmt.Errorf("file already exists: %s (remove it or use --output-file to choose a different name)", outputFile)
+		return "", fmt.Errorf("file already exists: %s (remove it or use --output-file to choose a different name)", outputFile)
 	}
 
 	// ── Step 1-2: Welcome + output-file confirmation ─────────────────────────
 	if err := runWelcome(&outputFile); err != nil {
-		return err
+		return "", err
 	}
 
 	// ── Step 3: Company ───────────────────────────────────────────────────────
 	if err := runCompany(&cv); err != nil {
-		return err
+		return "", err
 	}
 	checkpoint(cv, outputFile)
 
 	// ── Step 4: Person (mandatory) ────────────────────────────────────────────
 	if err := runPerson(&cv); err != nil {
-		return err
+		return "", err
 	}
 	checkpoint(cv, outputFile)
 
 	// ── Step 5: Social Networks ───────────────────────────────────────────────
 	if err := runSocialNetworks(&cv); err != nil {
-		return err
+		return "", err
 	}
 	checkpoint(cv, outputFile)
 
 	// ── Step 6: Abstract ──────────────────────────────────────────────────────
 	if err := runAbstract(&cv); err != nil {
-		return err
+		return "", err
 	}
 	checkpoint(cv, outputFile)
 
 	// ── Step 7: Career ────────────────────────────────────────────────────────
 	if err := runCareer(&cv, outputFile); err != nil {
-		return err
+		return "", err
 	}
 
 	// ── Step 8: Technical Skills ──────────────────────────────────────────────
 	if err := runTechnicalSkills(&cv, outputFile); err != nil {
-		return err
+		return "", err
 	}
 
 	// ── Step 9: Education ─────────────────────────────────────────────────────
 	if err := runEducation(&cv, outputFile); err != nil {
-		return err
+		return "", err
 	}
 
 	// ── Step 10: Certifications ───────────────────────────────────────────────
 	if err := runCertifications(&cv, outputFile); err != nil {
-		return err
+		return "", err
 	}
 
 	// ── Step 11: Languages ────────────────────────────────────────────────────
 	if err := runLanguages(&cv, outputFile); err != nil {
-		return err
+		return "", err
 	}
 
 	// ── Step 12: Side Projects ────────────────────────────────────────────────
 	if err := runSideProjects(&cv, outputFile); err != nil {
-		return err
+		return "", err
 	}
 
 	// ── Step 13: References ───────────────────────────────────────────────────
 	if err := runReferences(&cv, outputFile); err != nil {
-		return err
+		return "", err
 	}
 
 	// ── Step 14: Final confirmation + write ───────────────────────────────────
@@ -810,7 +811,9 @@ func collectReference() (model.Reference, error) {
 	return ref, err
 }
 
-func runFinalize(cv model.CV, outputFile string) error {
+// runFinalize asks for confirmation and writes the file. It returns the path
+// written, or "" when the user cancelled.
+func runFinalize(cv model.CV, outputFile string) (string, error) {
 	var confirm bool
 	if err := huh.NewForm(
 		huh.NewGroup(
@@ -822,19 +825,15 @@ func runFinalize(cv model.CV, outputFile string) error {
 				Value(&confirm),
 		),
 	).Run(); err != nil {
-		return err
+		return "", err
 	}
 
 	if !confirm {
-		fmt.Println("Cancelled. No file was written.")
-		return nil
+		return "", nil
 	}
 
 	if err := writePartial(cv, outputFile); err != nil {
-		return fmt.Errorf("failed to write %s: %w", outputFile, err)
+		return "", fmt.Errorf("failed to write %s: %w", outputFile, err)
 	}
-
-	fmt.Printf("\nCreated %s\n", outputFile)
-	fmt.Println("Run: cvwonder generate")
-	return nil
+	return outputFile, nil
 }

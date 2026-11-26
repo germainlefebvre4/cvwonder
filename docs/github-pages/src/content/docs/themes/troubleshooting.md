@@ -39,7 +39,7 @@ Common issues and solutions when working with themes in CV Wonder.
 
 4. **Debug authentication detection:**
    ```bash
-   cvwonder theme install <url> --debug
+   cvwonder theme install <url> --log-level debug
    ```
    Look for messages indicating which authentication method is being used.
 
@@ -70,7 +70,7 @@ Common issues and solutions when working with themes in CV Wonder.
 3. Ensure the token is correctly set:
    ```bash
    export GITHUB_TOKEN="ghp_new_token_here"
-   cvwonder theme install <url> --debug
+   cvwonder theme install <url> --log-level debug
    ```
 
 ## Theme Generation Issues
@@ -126,7 +126,7 @@ Using `--force` will discard any uncommitted changes in the theme directory. Mak
 3. Review theme documentation for required fields
 4. Use debug mode to see detailed errors:
    ```bash
-   cvwonder generate --debug
+   cvwonder generate --log-level debug
    ```
 
 ## CI/CD Integration Issues
@@ -172,7 +172,7 @@ If you continue to experience issues:
 
 1. **Enable debug mode:**
    ```bash
-   cvwonder theme install <url> --debug
+   cvwonder theme install <url> --log-level debug
    ```
 
 2. **Check the logs** for detailed error messages

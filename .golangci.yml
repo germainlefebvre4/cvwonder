@@ -49,13 +49,13 @@ linters:
           list-mode: lax
           deny:
             - pkg: gopkg.in/DataDog/dd-trace-go.v1/internal/log
-              desc: use github.com/sirupsen/logrus instead
+              desc: use log/slog instead
             - pkg: github.com/bombsimon/logrusr/v2
-              desc: use github.com/sirupsen/logrus instead
+              desc: use log/slog instead
             - pkg: github.com/opentracing/opentracing-go/log
-              desc: use github.com/sirupsen/logrus instead
+              desc: use log/slog instead
             - pkg: gopkg.in/DataDog/dd-trace-go.v1/contrib/sirupsen/logrus
-              desc: use github.com/sirupsen/logrus instead
+              desc: use log/slog instead
         yaml:
           list-mode: lax
           deny:

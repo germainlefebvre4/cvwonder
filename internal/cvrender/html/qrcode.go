@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
+	"log/slog"
 	"strconv"
 	"strings"
 
-	"github.com/sirupsen/logrus"
 	qrcode "github.com/yeqown/go-qrcode/v2"
 	"github.com/yeqown/go-qrcode/writer/standard"
 )
@@ -90,7 +90,7 @@ func qrCode(url string, opts ...string) string {
 
 	qrc, err := qrcode.NewWith(url, ecLevel(o.ec))
 	if err != nil {
-		logrus.Warnf("qrCode: failed to create QR code for %q: %v", url, err)
+		slog.Warn(fmt.Sprintf("qrCode: failed to create QR code for %q: %v", url, err))
 		return ""
 	}
 
@@ -105,7 +105,7 @@ func qrCode(url string, opts ...string) string {
 	)
 
 	if err = qrc.Save(w); err != nil {
-		logrus.Warnf("qrCode: failed to save QR code for %q: %v", url, err)
+		slog.Warn(fmt.Sprintf("qrCode: failed to save QR code for %q: %v", url, err))
 		return ""
 	}
 

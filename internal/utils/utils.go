@@ -3,13 +3,13 @@ package utils
 import (
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
 	dotignore "github.com/codeglyph/go-dotignore/v2"
-	"github.com/sirupsen/logrus"
 	"golang.org/x/exp/rand"
 )
 
@@ -124,7 +124,7 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 					return fmt.Errorf("error checking ignore pattern for %s: %w", relPath, err)
 				}
 				if dirIgnored {
-					logrus.Debugf("Directory %s matched ignore pattern, but checking contents for negations", relPath)
+					slog.Debug(fmt.Sprintf("Directory %s matched ignore pattern, but checking contents for negations", relPath))
 				}
 			}
 
@@ -151,7 +151,7 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 					return fmt.Errorf("error checking ignore pattern for %s: %w", relPath, err)
 				}
 				if ignored {
-					logrus.Debugf("Ignoring %s (matched .cvwonderignore pattern)", relPath)
+					slog.Debug(fmt.Sprintf("Ignoring %s (matched .cvwonderignore pattern)", relPath))
 					continue
 				}
 			}
@@ -166,7 +166,7 @@ func copyDirectoryWithIgnoreInternal(scrDir string, dest string, ignoreMatcher I
 					return fmt.Errorf("error checking ignore pattern for %s: %w", relPath, err)
 				}
 				if ignored {
-					logrus.Debugf("Ignoring %s (matched .cvwonderignore pattern)", relPath)
+					slog.Debug(fmt.Sprintf("Ignoring %s (matched .cvwonderignore pattern)", relPath))
 					continue
 				}
 			}

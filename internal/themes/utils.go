@@ -2,12 +2,12 @@ package themes
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/go-git/go-git/v5"
-	"github.com/sirupsen/logrus"
 )
 
 type ThemeRef struct {
@@ -46,14 +46,14 @@ func GetThemeRef(themeName string) string {
 	// Open the git repository
 	repo, err := git.PlainOpen(themePath)
 	if err != nil {
-		logrus.Debugf("Could not open theme repository: %v", err)
+		slog.Debug(fmt.Sprintf("Could not open theme repository: %v", err))
 		return ""
 	}
 
 	// Get the HEAD reference
 	head, err := repo.Head()
 	if err != nil {
-		logrus.Debugf("Could not get HEAD reference: %v", err)
+		slog.Debug(fmt.Sprintf("Could not get HEAD reference: %v", err))
 		return ""
 	}
 

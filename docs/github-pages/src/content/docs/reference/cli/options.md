@@ -17,7 +17,25 @@ These options are accepted by every command.
 | `--output` | `-o` | Output directory. | `generated/` |
 | `--theme` | `-t` | Name of the theme. | `default` |
 | `--format` | `-f` | Export format: `html` or `pdf`. | `html` |
-| `--debug` | `-d` | More verbose output. | `false` |
+| `--log-level` | | Verbosity: `error`, `warn`, `info`, `debug` or `trace`. | `info` |
+| `--quiet` | | Print only errors and the final result. Cannot be combined with `--log-level` or `--debug`. | `false` |
+| `--debug` | `-d` | **Deprecated.** Alias of `--log-level debug`; prints a deprecation notice on stderr. | `false` |
+
+### Output and verbosity
+
+- At the default `info` level, commands print a header, one line per step (`✓` success, `!` warning, `✗` failure) and the result. Timestamped diagnostic lines (`15:04:05 DBG component message key=value`) appear only at `debug` and `trace`.
+- `--quiet` hides the header and the steps. Errors, the final result (the validation outcome, the bulk generation report) and the exit status are unchanged.
+- An unknown `--log-level` value fails before any work is done and lists the accepted levels.
+- Color is used only when the output is a terminal and the `NO_COLOR` environment variable is unset. Redirected output never contains escape sequences.
+
+### Output streams
+
+| Command kind | stdout | stderr |
+|--------------|--------|--------|
+| `generate`, `serve`, `validate`, `init`, `themes install|create|verify|screenshot` | Header, steps, results, validation findings, `info`/`debug` diagnostics | Errors (with a hint when a remedy is known) |
+| `version`, `validate show-schema`, `themes list` | **Only** the payload (pipe-safe) | Everything else: diagnostics, notices, errors |
+
+For example, `cvwonder validate show-schema | jq .` always receives clean JSON, even with `--log-level debug`.
 
 ## `generate`
 
@@ -47,7 +65,7 @@ These options are accepted by every command.
 
 ## `validate`
 
-`validate` uses the global `--input` and `--debug` options and has no option of its own. Its `show-schema` subcommand takes `--info` and `--pretty` (`-p`).
+`validate` uses the global `--input` option and has no option of its own. Its `show-schema` subcommand takes `--info` and `--pretty` (`-p`).
 
 ## `themes`
 

@@ -3,21 +3,21 @@ package render_pdf
 import (
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"os"
 	"path/filepath"
 
+	"github.com/germainlefebvre4/cvwonder/internal/logger"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
-	"github.com/germainlefebvre4/cvwonder/internal/utils"
 
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
-	"github.com/sirupsen/logrus"
 )
 
 func (r *RenderPDFServices) RenderFormatPDF(cv model.CV, outputDirectory string, inputFilename string, themeName string) error {
-	logrus.Debug("Generating PDF")
+	slog.Debug("Generating PDF")
 
 	// Output file
 	outputFilePath, err := r.generateOutputFile(outputDirectory, inputFilename)
@@ -44,8 +44,8 @@ func (r *RenderPDFServices) convertPageToPDF(localServerUrl string, outputFilePa
 	if bin := os.Getenv("CHROME_BIN"); bin != "" {
 		l = l.Bin(bin)
 	}
-	if utils.CliArgs.Debug {
-		l = l.Logger(os.Stdout)
+	if w := logger.DebugWriter(); w != nil {
+		l = l.Logger(w)
 	}
 	u, err := l.Launch()
 	if err != nil {
@@ -60,7 +60,7 @@ func (r *RenderPDFServices) convertPageToPDF(localServerUrl string, outputFilePa
 	}
 	defer func() {
 		if err := browser.Close(); err != nil {
-			logrus.Debugf("Closing browser failed, killing it: %v", err)
+			slog.Debug(fmt.Sprintf("Closing browser failed, killing it: %v", err))
 			l.Kill()
 		}
 	}()
@@ -103,7 +103,7 @@ func (r *RenderPDFServices) runWebServer(inputFilename string, outputDirectory s
 	port := tcpAddr.Port
 
 	localServerUrl := fmt.Sprintf("http://localhost:%d/%s.html", port, inputFilename)
-	logrus.Info("Serve temporary the CV on server at address ", localServerUrl)
+	slog.Debug("Serving temporary CV for PDF", "address", localServerUrl)
 	ready := make(chan struct{})
 	go func() {
 		r.ServeService.StartServerOnListener(listener, outputDirectory, ready)

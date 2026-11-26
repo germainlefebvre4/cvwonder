@@ -2,18 +2,17 @@ package cvserve
 
 import (
 	"fmt"
+	"log/slog"
 	"os/exec"
 	"path"
 	"path/filepath"
 	"runtime"
 
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
-
-	"github.com/sirupsen/logrus"
 )
 
 func (s *ServeServices) OpenBrowser(outputDirectory string, inputFilePath string) error {
-	logrus.Debug("Opening browser")
+	slog.Debug("Opening browser")
 
 	// Input file
 	inputFilenameExt := path.Base(inputFilePath)

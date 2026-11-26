@@ -1,10 +1,10 @@
 package version
 
 import (
-	"bytes"
+	"log/slog"
 	"testing"
 
-	"github.com/sirupsen/logrus"
+	"github.com/germainlefebvre4/cvwonder/internal/logger"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,21 +13,10 @@ func NewVersionServicesTest() VersionService {
 }
 
 func TestGetVersion(t *testing.T) {
-	// Set up a buffer to capture log output
-	var logBuffer bytes.Buffer
-	logrus.SetOutput(&logBuffer)
-	logrus.SetLevel(logrus.DebugLevel)
+	out, _ := logger.Capture(t, slog.LevelDebug)
 
-	// Create an instance of VersionService
 	service := &VersionService{}
 
-	// Call GetVersion
-	service.GetVersion()
-
-	// Check if the debug log contains "GetVersion"
-	assert.Contains(t, logBuffer.String(), "GetVersion", "Expected debug log to contain 'GetVersion'")
-
-	// Check if the info log contains the version string
-	expectedVersionLog := CVWONDER_VERSION
-	assert.Contains(t, logBuffer.String(), expectedVersionLog, "Expected info log to contain the version string")
+	assert.Equal(t, CVWONDER_VERSION, service.GetVersion())
+	assert.Contains(t, out.String(), "GetVersion", "Expected debug log to contain 'GetVersion'")
 }

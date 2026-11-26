@@ -4,6 +4,8 @@ go 1.27.4
 
 require (
 	charm.land/huh/v2 v2.0.3
+	charm.land/lipgloss/v2 v2.0.1
+	github.com/charmbracelet/colorprofile v0.4.2
 	github.com/cli/go-gh/v2 v2.16.1
 	github.com/codeglyph/go-dotignore/v2 v2.3.0
 	github.com/fsnotify/fsnotify v1.10.1
@@ -13,7 +15,6 @@ require (
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/jaschaephraim/lrserver v0.0.0-20240306232639-afed386b3640
 	github.com/mozillazg/go-slugify v0.2.0
-	github.com/sirupsen/logrus v1.10.2
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.12.1
 	github.com/xeipuuv/gojsonschema v1.2.0
@@ -26,13 +27,11 @@ require (
 require (
 	charm.land/bubbles/v2 v2.0.0 // indirect
 	charm.land/bubbletea/v2 v2.0.2 // indirect
-	charm.land/lipgloss/v2 v2.0.1 // indirect
 	dario.cat/mergo v1.0.1 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.1.6 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/catppuccin/go v0.2.0 // indirect
-	github.com/charmbracelet/colorprofile v0.4.2 // indirect
 	github.com/charmbracelet/ultraviolet v0.0.0-20260205113103-524a6607adb8 // indirect
 	github.com/charmbracelet/x/ansi v0.11.6 // indirect
 	github.com/charmbracelet/x/exp/ordered v0.1.0 // indirect

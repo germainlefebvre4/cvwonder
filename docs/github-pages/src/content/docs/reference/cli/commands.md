@@ -189,9 +189,9 @@ export GH_TOKEN="ghp_your_personal_access_token"
 cvwonder theme install https://github.com/your-org/your-private-theme
 ```
 
-Verify authentication in debug mode:
+Verify authentication with debug logging:
 ```bash
-cvwonder theme install https://github.com/your-org/your-private-theme --debug
+cvwonder theme install https://github.com/your-org/your-private-theme --log-level debug
 ```
 
 Create a new theme:
@@ -231,10 +231,10 @@ export GITHUB_TOKEN="ghp_your_personal_access_token"
 
 **Debugging Authentication:**
 
-Enable debug mode to see which authentication method is being used:
+Enable debug logging (`--log-level debug`) to see which authentication method is being used:
 
 ```bash
-cvwonder theme install <url> --debug
+cvwonder theme install <url> --log-level debug
 ```
 
 See the [Theme Installation](/themes/install-remote/) documentation for detailed authentication setup and troubleshooting.

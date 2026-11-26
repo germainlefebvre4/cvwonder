@@ -14,12 +14,13 @@ Available Commands:
   version     Show version
 
 Flags:
-  -d, --debug           Debug mode: more verbose.
-  -f, --format string   Format for the export. (default "html")
-  -h, --help            help for cvwonder
-  -i, --input string    Input file in YAML format. (default "cv.yml")
-  -o, --output string   Output directory. (default "generated/")
-  -t, --theme string    Name of the theme. (default "default")
-  -v, --version         version for cvwonder
+  -f, --format string      Format for the export. (default "html")
+  -h, --help               help for cvwonder
+  -i, --input string       Input file in YAML format. (default "cv.yml")
+      --log-level string   Log level: error, warn, info, debug, trace. (default "info")
+  -o, --output string      Output directory. (default "generated/")
+      --quiet              Only print errors and the final result.
+  -t, --theme string       Name of the theme. (default "default")
+  -v, --version            version for cvwonder
 
 Use "cvwonder [command] --help" for more information about a command.
