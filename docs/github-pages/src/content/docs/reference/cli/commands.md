@@ -25,6 +25,27 @@ cvwonder generate [OPTIONS]
 
 **Options:** `--validate`, `--concurrency`, `--port` and `--config`, in addition to the global `--input`, `--output`, `--theme` and `--format`. See [Options](/reference/cli/options/) for the full list.
 
+**Output:**
+
+```text
+CV Wonder v1.0.0
+  › Input   cv.yml
+  › Output  generated/
+  › Theme   default
+  › Format  pdf
+
+✓ Parsed cv.yml  3ms
+✓ Rendered pdf  1.9s
+
+Done in 1.9s
+  generated/cv.html
+  generated/cv.pdf
+
+Next: cvwonder serve --watch
+```
+
+On an interactive terminal the title is styled with a gradient and the summary adds an emoji and clickable file links. With redirected output, `NO_COLOR` or `CI`, the same text is printed without any decoration (see [Interactive and plain output](/reference/cli/options/#interactive-and-plain-output)).
+
 **`--config` flag:**
 
 The `--config` flag overrides individual keys from the `configuration:` block declared in `theme.yaml`. It can be repeated to set multiple keys.
@@ -189,9 +210,9 @@ export GH_TOKEN="ghp_your_personal_access_token"
 cvwonder theme install https://github.com/your-org/your-private-theme
 ```
 
-Verify authentication in debug mode:
+Verify authentication with debug logging:
 ```bash
-cvwonder theme install https://github.com/your-org/your-private-theme --debug
+cvwonder theme install https://github.com/your-org/your-private-theme --log-level debug
 ```
 
 Create a new theme:
@@ -231,10 +252,10 @@ export GITHUB_TOKEN="ghp_your_personal_access_token"
 
 **Debugging Authentication:**
 
-Enable debug mode to see which authentication method is being used:
+Enable debug logging (`--log-level debug`) to see which authentication method is being used:
 
 ```bash
-cvwonder theme install <url> --debug
+cvwonder theme install <url> --log-level debug
 ```
 
 See the [Theme Installation](/themes/install-remote/) documentation for detailed authentication setup and troubleshooting.

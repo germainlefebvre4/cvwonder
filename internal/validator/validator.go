@@ -4,12 +4,12 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	"github.com/goccy/go-yaml"
-	"github.com/sirupsen/logrus"
 	"github.com/xeipuuv/gojsonschema"
 )
 
@@ -45,7 +45,7 @@ func NewValidatorServices() (*ValidatorServices, error) {
 }
 
 func (v *ValidatorServices) ValidateFile(filePath string) (*ValidationResult, error) {
-	logrus.Debug("Validating YAML file: ", filePath)
+	slog.Debug("Validating YAML file", "path", filePath)
 
 	// Read file
 	content, err := os.ReadFile(filePath)
@@ -122,7 +122,7 @@ func (v *ValidatorServices) ValidateFile(filePath string) (*ValidationResult, er
 }
 
 func (v *ValidatorServices) ValidateStruct(cv model.CV) (*ValidationResult, error) {
-	logrus.Debug("Validating CV struct")
+	slog.Debug("Validating CV struct")
 
 	// Convert struct to YAML first, then to JSON for proper field name mapping
 	yamlData, err := yaml.Marshal(cv)
@@ -294,49 +294,16 @@ func (v *ValidatorServices) addRecommendedFieldWarnings(data interface{}, result
 	}
 }
 
-// FormatValidationResult formats the validation result for display
-func FormatValidationResult(result *ValidationResult) string {
-	var output strings.Builder
-
-	if result.Valid && len(result.Warnings) == 0 {
-		output.WriteString("✓ Validation passed! Your CV YAML file is valid.\n")
-		return output.String()
-	}
-
-	if !result.Valid {
-		output.WriteString("✗ Validation failed! Please fix the following errors:\n\n")
-
-		for i, err := range result.Errors {
-			output.WriteString(fmt.Sprintf("Error %d:\n", i+1))
-			if err.LineNumber > 0 {
-				output.WriteString(fmt.Sprintf("  Line: %d\n", err.LineNumber))
-			}
-			output.WriteString(fmt.Sprintf("  Field: %s\n", err.Field))
-			output.WriteString(fmt.Sprintf("  Issue: %s\n", err.Message))
-			if err.Suggestion != "" {
-				output.WriteString(fmt.Sprintf("  Suggestion: %s\n", err.Suggestion))
-			}
-			output.WriteString("\n")
+// Summary returns a one-line description of the validation errors, suitable
+// for embedding in an error message.
+func (r *ValidationResult) Summary() string {
+	parts := make([]string, 0, len(r.Errors))
+	for _, e := range r.Errors {
+		part := fmt.Sprintf("%s: %s", e.Field, e.Message)
+		if e.LineNumber > 0 {
+			part = fmt.Sprintf("line %d, %s", e.LineNumber, part)
 		}
+		parts = append(parts, part)
 	}
-
-	if len(result.Warnings) > 0 {
-		if result.Valid {
-			output.WriteString("✓ Validation passed, but here are some recommendations:\n\n")
-		} else {
-			output.WriteString("Warnings:\n\n")
-		}
-
-		for i, warning := range result.Warnings {
-			output.WriteString(fmt.Sprintf("Warning %d:\n", i+1))
-			output.WriteString(fmt.Sprintf("  Field: %s\n", warning.Field))
-			output.WriteString(fmt.Sprintf("  Message: %s\n", warning.Message))
-			if warning.Suggestion != "" {
-				output.WriteString(fmt.Sprintf("  Suggestion: %s\n", warning.Suggestion))
-			}
-			output.WriteString("\n")
-		}
-	}
-
-	return output.String()
+	return strings.Join(parts, "; ")
 }

@@ -1,12 +1,11 @@
 package version
 
-import (
-	"github.com/sirupsen/logrus"
-)
+import "log/slog"
 
 var CVWONDER_VERSION = "dev"
 
-func (t *VersionService) GetVersion() {
-	logrus.Debug("GetVersion")
-	logrus.Info("Version: " + CVWONDER_VERSION)
+// GetVersion returns the CV Wonder version string.
+func (t *VersionService) GetVersion() string {
+	slog.Debug("GetVersion")
+	return CVWONDER_VERSION
 }

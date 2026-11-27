@@ -1,7 +1,9 @@
 package themes
 
+import "io"
+
 type ThemesInterface interface {
-	List() error
+	List(out io.Writer) error
 	Install(theme string, force bool) error
 	Create(theme string) error
 	Verify(theme string) error

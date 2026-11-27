@@ -2,11 +2,11 @@ package themes
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 
 	"github.com/goccy/go-yaml"
 	"github.com/mozillazg/go-slugify"
-	"github.com/sirupsen/logrus"
 
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
 	"github.com/germainlefebvre4/cvwonder/internal/version"
@@ -22,7 +22,7 @@ var themeCreationSteps = []func(themeName, themeSlugName string) error{
 }
 
 func (t *ThemesService) Create(themeName string) error {
-	logrus.Debug("Create")
+	slog.Debug("Create")
 	themeSlugName := slugify.Slugify(themeName)
 
 	if err := createThemesDir(); err != nil {
@@ -48,7 +48,7 @@ func (t *ThemesService) Create(themeName string) error {
 		}
 	}
 
-	logrus.Info("Your theme '" + themeName + "' has been created in the directory themes/" + themeSlugName + "/.")
+	slog.Debug("Theme created", "theme", themeName, "dir", "themes/"+themeSlugName)
 	return nil
 }
 

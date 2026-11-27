@@ -2,6 +2,7 @@ package cvbulk
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -18,7 +19,6 @@ import (
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
 	"github.com/germainlefebvre4/cvwonder/internal/validator"
 	"github.com/germainlefebvre4/cvwonder/internal/version"
-	"github.com/sirupsen/logrus"
 )
 
 // BulkResult holds the outcome of processing a single input file in bulk mode.
@@ -138,7 +138,7 @@ func generateSingleFile(inputFile model.InputFile, outputDir string, themeName s
 			return fmt.Errorf("validating %s: %w", inputFile.FullPath, err)
 		}
 		if !result.Valid {
-			return fmt.Errorf("validation failed for %s: %s", inputFile.FullPath, validator.FormatValidationResult(result))
+			return fmt.Errorf("validation failed: %s", result.Summary())
 		}
 	}
 	themeRef := themes.ParseThemeName(themeName)
@@ -191,23 +191,6 @@ func generateSingleFile(inputFile model.InputFile, outputDir string, themeName s
 	if err := renderService.Render(content, baseDirectory, outputDir, inputFile.FullPath, themeRef.Name, format, false, mergedConfig); err != nil {
 		return fmt.Errorf("rendering %s: %w", inputFile.FullPath, err)
 	}
-	logrus.Infof("Generated: %s", inputFile.RelativePath)
+	slog.Debug("Generated", "file", inputFile.RelativePath)
 	return nil
-}
-
-// PrintBulkReport logs each BulkResult and a summary totals line.
-func PrintBulkReport(results []BulkResult) {
-	logrus.Info("")
-	logrus.Info("=== Bulk Generation Report ===")
-	success := 0
-	for _, r := range results {
-		if r.Success {
-			success++
-			logrus.Infof("  v %s", r.FilePath)
-		} else {
-			logrus.Errorf("  x %s -- %v", r.FilePath, r.Error)
-		}
-	}
-	failed := len(results) - success
-	logrus.Infof("Total: %d | Success: %d | Failed: %d", len(results), success, failed)
 }

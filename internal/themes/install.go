@@ -14,11 +14,11 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/sirupsen/logrus"
+	"log/slog"
 )
 
 func (t *ThemesService) Install(themeURL string, force bool) error {
-	logrus.Debug("Install")
+	slog.Debug("Install")
 	githubRepo, err := parseGitHubURL(themeURL)
 	if err != nil {
 		return err
@@ -61,7 +61,7 @@ func isGitHubURL(input string) bool {
 // GithubRepo. It returns an error for a non-GitHub host, a path lacking the
 // owner or repo segment, or a value that cannot be parsed as a URL.
 func parseGitHubURL(themeURL string) (theme_config.GithubRepo, error) {
-	logrus.Debug("Parse GitHub URL")
+	slog.Debug("Parse GitHub URL")
 
 	// Extract ref if present (format: url@ref)
 	ref := ""
@@ -141,8 +141,12 @@ func checkoutRef(worktree *git.Worktree, repo *git.Repository, ref string, force
 	return fmt.Errorf("unable to checkout ref '%s': not found as branch, tag, or commit", ref)
 }
 
+// ErrRefSwitch is returned (wrapped) when an already installed theme cannot be
+// moved to the requested ref, typically because of local changes.
+var ErrRefSwitch = errors.New("switching ref")
+
 func downloadTheme(githubRepo theme_config.GithubRepo, force bool) error {
-	logrus.Debug("Download theme")
+	slog.Debug("Download theme")
 
 	themeConfig, err := theme_config.GetThemeConfigFromURL(githubRepo)
 	if err != nil {
@@ -156,7 +160,7 @@ func downloadTheme(githubRepo theme_config.GithubRepo, force bool) error {
 		if err != nil {
 			return err
 		}
-		logrus.Debug("Using default branch: ", ref)
+		slog.Debug("Using default branch", "ref", ref)
 	}
 
 	// Build directory name without ref
@@ -165,7 +169,7 @@ func downloadTheme(githubRepo theme_config.GithubRepo, force bool) error {
 	// Check if theme already exists
 	if _, err := os.Stat(themeDirectory); !os.IsNotExist(err) {
 		// Theme exists, switch to the requested ref
-		logrus.Info("Theme '" + themeConfig.Name + "' already exists, switching to ref '" + ref + "'")
+		slog.Debug("Theme already exists, switching ref", "theme", themeConfig.Name, "ref", ref)
 
 		repo, err := git.PlainOpen(themeDirectory)
 		if err != nil {
@@ -179,7 +183,7 @@ func downloadTheme(githubRepo theme_config.GithubRepo, force bool) error {
 			Force:      true,
 		})
 		if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
-			logrus.Debugf("Fetch warning (may be ignorable): %v", err)
+			slog.Debug(fmt.Sprintf("Fetch warning (may be ignorable): %v", err))
 		}
 
 		// Get the worktree
@@ -190,10 +194,7 @@ func downloadTheme(githubRepo theme_config.GithubRepo, force bool) error {
 
 		// Checkout the requested ref
 		if err := checkoutRef(worktree, repo, ref, force); err != nil {
-			if !force {
-				logrus.Error("Hint: Use --force flag to discard local changes and force checkout")
-			}
-			return fmt.Errorf("switching ref '%s': %w", ref, err)
+			return fmt.Errorf("%w '%s': %w", ErrRefSwitch, ref, err)
 		}
 
 		return nil
@@ -226,6 +227,6 @@ func downloadTheme(githubRepo theme_config.GithubRepo, force bool) error {
 		return fmt.Errorf("switching ref '%s': %w", ref, err)
 	}
 
-	logrus.Info("Theme '" + themeConfig.Name + "' (ref=" + ref + ") successfully installed in " + themeDirectory + "/")
+	slog.Debug("Theme installed", "theme", themeConfig.Name, "ref", ref, "dir", themeDirectory)
 	return nil
 }

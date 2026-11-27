@@ -2,11 +2,11 @@ package watcher
 
 import (
 	"fmt"
+	"log/slog"
 	"path/filepath"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/sirupsen/logrus"
 )
 
 // rewatchAttempts and rewatchDelay bound how long a replaced file may stay
@@ -62,7 +62,7 @@ func (w *WatcherServices) ObserveFileEvents(baseDirectory string, outputDirector
 		case errs <- err:
 		default:
 			// The caller is not reading and the buffer is full: do not drop silently.
-			logrus.Errorf("Watch error channel full, error not delivered: %v", err)
+			slog.Error(fmt.Sprintf("Watch error channel full, error not delivered: %v", err))
 		}
 	}
 
@@ -81,14 +81,14 @@ func (w *WatcherServices) ObserveFileEvents(baseDirectory string, outputDirector
 					// Editors that save atomically (write a temp file, then rename it
 					// over the original) replace the file: the watch on the old file
 					// is gone, so watch the new one before re-rendering.
-					logrus.Debug("File replaced, watching it again:", event.Name)
+					slog.Debug("File replaced, watching it again", "path", event.Name)
 					_ = watcher.Remove(event.Name)
 					if err := rewatch(watcher, event.Name); err != nil {
 						report(err)
 						continue
 					}
 				case event.Has(fsnotify.Write) || event.Has(fsnotify.Create):
-					logrus.Debug("Modification detected on template:", event.Name)
+					slog.Debug("Modification detected on template", "path", event.Name)
 				default:
 					continue
 				}

@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -80,11 +79,9 @@ func TestThemesService_Create(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Setup
-			logrus.SetLevel(logrus.DebugLevel)
 			if tt.setup != nil {
 				tt.setup()
 			}
-			logrus.Debug("outputDirectory", outputDirectory)
 
 			// Act
 			tt.service.Create(tt.args.themeSlug)

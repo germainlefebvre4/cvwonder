@@ -1,9 +1,10 @@
 package cmdInit
 
 import (
+	"fmt"
+
 	"github.com/germainlefebvre4/cvwonder/internal/cvinit"
-	"github.com/germainlefebvre4/cvwonder/internal/utils"
-	"github.com/sirupsen/logrus"
+	"github.com/germainlefebvre4/cvwonder/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -15,9 +16,8 @@ func InitCmd() *cobra.Command {
 	var resume bool
 
 	var cobraCmd = &cobra.Command{
-		PreRun: utils.ToggleDebug,
-		Use:    "init",
-		Short:  "Initialize a new CV file",
+		Use:   "init",
+		Short: "Initialize a new CV file",
 		Long: `Initialize a new CV Wonder YAML file.
 
 Without --interactive, writes a fully-commented cv.yml scaffold that you can
@@ -28,18 +28,25 @@ generates the YAML file for you.
 
 With --interactive --resume, reloads a previously interrupted wizard session
 from --output-file and re-runs the wizard with existing data pre-filled.`,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if interactive {
-				if err := cvinit.RunWizard(outputFile, resume); err != nil {
-					logrus.Fatal(err)
+				written, err := cvinit.RunWizard(outputFile, resume)
+				if err != nil {
+					return err
 				}
-				return
+				if written == "" {
+					ui.Default().Step(ui.Warning, "Canceled. No file was written.")
+					return nil
+				}
+				ui.Default().Step(ui.Success, fmt.Sprintf("Created %s — edit it and run: cvwonder generate", written))
+				return nil
 			}
 
 			if err := cvinit.WriteScaffold(outputFile); err != nil {
-				logrus.Fatal(err)
+				return err
 			}
-			logrus.Infof("Created %s — edit it and run: cvwonder generate", outputFile)
+			ui.Default().Step(ui.Success, fmt.Sprintf("Created %s — edit it and run: cvwonder generate", outputFile))
+			return nil
 		},
 	}
 

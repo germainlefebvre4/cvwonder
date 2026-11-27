@@ -1,25 +1,27 @@
 package cmdThemes
 
 import (
-	"github.com/germainlefebvre4/cvwonder/internal/utils"
+	"fmt"
+
+	"github.com/germainlefebvre4/cvwonder/internal/ui"
 	"github.com/germainlefebvre4/cvwonder/internal/version"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 func VersionCmd() *cobra.Command {
 	var cobraCmd = &cobra.Command{
-		PreRun:  utils.ToggleDebug,
-		Use:     "version",
-		Aliases: []string{"v"},
-		Short:   "Show version",
-		Long:    `Show version`,
-		Run: func(cmd *cobra.Command, args []string) {
+		Annotations: ui.DataAnnotations(),
+		Use:         "version",
+		Aliases:     []string{"v"},
+		Short:       "Show version",
+		Long:        `Show version`,
+		RunE: func(cmd *cobra.Command, args []string) error {
 			versionService, err := version.NewVersionService()
 			if err != nil {
-				logrus.Fatal(err)
+				return err
 			}
-			versionService.GetVersion()
+			_, err = fmt.Fprintf(ui.Payload(), "Version: %s\n", versionService.GetVersion())
+			return err
 		},
 	}
 

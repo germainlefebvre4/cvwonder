@@ -2,6 +2,8 @@ package render_html
 
 import (
 	"fmt"
+	"github.com/germainlefebvre4/cvwonder/internal/cvrender/outpath"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -9,12 +11,10 @@ import (
 
 	"github.com/germainlefebvre4/cvwonder/internal/model"
 	utils "github.com/germainlefebvre4/cvwonder/internal/utils"
-
-	"github.com/sirupsen/logrus"
 )
 
 func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string, outputDirectory string, inputFilename string, themeName string, isWatch bool, config map[string]interface{}) error {
-	logrus.Debug("Generating HTML")
+	slog.Debug("Generating HTML")
 
 	// Theme directory
 	themeDirectory := filepath.Join(baseDirectory, "themes", themeName)
@@ -24,8 +24,7 @@ func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string,
 	if err != nil {
 		return fmt.Errorf("resolving output directory: %w", err)
 	}
-	outputFilename := filepath.Base(inputFilename) + ".html"
-	outputFilePath := filepath.Join(outputDirectory, outputFilename)
+	outputFilePath := outpath.HTML(outputDirectory, inputFilename)
 	outputTmpFilePath := outputFilePath + ".tmp"
 
 	// Generate template file
@@ -51,7 +50,7 @@ func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string,
 		return fmt.Errorf("loading .cvwonderignore: %w", err)
 	}
 	if ignoreMatcher != nil {
-		logrus.Debug("Using .cvwonderignore for theme asset filtering")
+		slog.Debug("Using .cvwonderignore for theme asset filtering")
 	}
 
 	// Copy theme assets to output directory with ignore patterns
@@ -134,7 +133,7 @@ func (r *RenderHTMLServices) generateTemplateFile(themeDirectory string, outputD
 		return fmt.Errorf("executing template %s: %w", tmplFile, err)
 	}
 
-	logrus.Debug("HTML file generated at:", outputFilePath)
+	slog.Debug("HTML file generated at", "path", outputFilePath)
 	return nil
 }
 

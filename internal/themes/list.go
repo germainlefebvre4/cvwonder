@@ -2,26 +2,27 @@ package themes
 
 import (
 	"fmt"
+	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/tabwriter"
 
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
-
-	"github.com/sirupsen/logrus"
 )
 
-func (t *ThemesService) List() error {
-	logrus.Debug("List themes")
+// List writes the theme table, the command's payload, to out.
+func (t *ThemesService) List(out io.Writer) error {
+	slog.Debug("List themes")
 	baseDirectory, _ := os.Getwd()
 	themeDir := "themes"
 
 	// List directories in themes directory
-	return listThemes(baseDirectory, themeDir)
+	return listThemes(out, baseDirectory, themeDir)
 }
 
-func listThemes(baseDirectory string, themeDir string) error {
+func listThemes(out io.Writer, baseDirectory string, themeDir string) error {
 	if themeDir == "" {
 		themeDir = "themes"
 	}
@@ -31,7 +32,7 @@ func listThemes(baseDirectory string, themeDir string) error {
 	}
 
 	// Print directories in a table
-	output := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	output := tabwriter.NewWriter(out, 0, 0, 2, ' ', 0)
 	defer output.Flush()
 	// Table header
 	fmt.Fprintf(output, "%s", strings.ToUpper("Directory\tName\tDescription\tAuthor\tMin Version\n"))
@@ -48,10 +49,10 @@ func listThemes(baseDirectory string, themeDir string) error {
 					return err
 				}
 			} else {
-				logrus.Warn("Symlink to non-existing directory: ", dir.Name())
+				slog.Warn("Symlink to non-existing directory", "name", dir.Name())
 			}
 		} else {
-			logrus.Warn("Non-directory file in themes directory: ", dir.Name())
+			slog.Warn("Non-directory file in themes directory", "name", dir.Name())
 		}
 	}
 	return nil

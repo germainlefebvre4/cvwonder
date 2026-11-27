@@ -153,7 +153,7 @@ If you encounter authentication issues:
 
 1. **Verify authentication is detected:**
    ```bash
-   cvwonder theme install https://github.com/your-org/your-private-theme --debug
+   cvwonder theme install https://github.com/your-org/your-private-theme --log-level debug
    ```
    Look for messages indicating which authentication method is being used.
 

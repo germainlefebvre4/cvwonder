@@ -3,6 +3,7 @@ package cvserve
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"net"
 	"net/http"
 	"path"
@@ -12,7 +13,6 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/jaschaephraim/lrserver"
-	"github.com/sirupsen/logrus"
 )
 
 // StartLiveReloader sets up the file watcher, the LiveReload server and the HTTP
@@ -66,7 +66,7 @@ func (s *ServeServices) StartLiveReloader(port int, outputDirectory string, inpu
 	lr := lrserver.New(lrserver.DefaultName, lrserver.DefaultPort)
 	go func() {
 		if err := lr.ListenAndServe(); err != nil {
-			logrus.Errorf("LiveReload server stopped: %v", err)
+			slog.Error(fmt.Sprintf("LiveReload server stopped: %v", err))
 		}
 	}()
 
@@ -86,7 +86,7 @@ func (s *ServeServices) StartLiveReloader(port int, outputDirectory string, inpu
 					if !ok {
 						return
 					}
-					logrus.Errorf("File watcher error: %v", err)
+					slog.Error(fmt.Sprintf("File watcher error: %v", err))
 				}
 			}
 		}()
@@ -128,8 +128,7 @@ func (s *ServeServices) StartServer(port int, outputDirectory string) (<-chan er
 		return nil, fmt.Errorf("binding port %d: %w", port, err)
 	}
 
-	logrus.Info(fmt.Sprintf("Listening on: http://localhost:%d", port))
-	logrus.Info("")
+	slog.Debug("HTTP server listening", "address", fmt.Sprintf("http://localhost:%d", port))
 
 	// Create a new ServeMux to avoid conflicts with global DefaultServeMux
 	mux := http.NewServeMux()
@@ -158,14 +157,13 @@ func serveOnListener(listener net.Listener, handler http.Handler) <-chan error {
 // ready is closed immediately before http.Serve is called, signalling to the
 // caller that the handler is configured and connections will be accepted.
 func (s *ServeServices) StartServerOnListener(listener net.Listener, outputDirectory string, ready chan<- struct{}) {
-	logrus.Info(fmt.Sprintf("Listening on: %s", listener.Addr()))
-	logrus.Info("")
+	slog.Debug("HTTP server listening", "address", listener.Addr().String())
 
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(http.Dir(outputDirectory)))
 	close(ready)
 	// A closed listener is the owner's normal way to shut this server down.
 	if err := http.Serve(listener, mux); err != nil && !errors.Is(err, net.ErrClosed) {
-		logrus.Errorf("HTTP server on %s stopped unexpectedly: %v", listener.Addr(), err)
+		slog.Error(fmt.Sprintf("HTTP server on %s stopped unexpectedly: %v", listener.Addr(), err))
 	}
 }

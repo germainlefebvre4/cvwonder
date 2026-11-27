@@ -1,96 +1,95 @@
 package cvinit
 
 import (
-"bytes"
-"os"
-"path/filepath"
-"testing"
+	"log/slog"
+	"os"
+	"path/filepath"
+	"testing"
 
-"github.com/germainlefebvre4/cvwonder/internal/model"
-"github.com/sirupsen/logrus"
-"github.com/stretchr/testify/assert"
-"github.com/stretchr/testify/require"
+	"github.com/germainlefebvre4/cvwonder/internal/logger"
+	"github.com/germainlefebvre4/cvwonder/internal/model"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestWritePartial_WritesValidYAML(t *testing.T) {
-dir := t.TempDir()
-path := filepath.Join(dir, "cv.yml")
+	dir := t.TempDir()
+	path := filepath.Join(dir, "cv.yml")
 
-cv := model.CV{
-Person: model.Person{
-Name:       "Jane Doe",
-Profession: "Engineer",
-Email:      "jane@example.com",
-},
-}
+	cv := model.CV{
+		Person: model.Person{
+			Name:       "Jane Doe",
+			Profession: "Engineer",
+			Email:      "jane@example.com",
+		},
+	}
 
-err := writePartial(cv, path)
-require.NoError(t, err)
+	err := writePartial(cv, path)
+	require.NoError(t, err)
 
-content, readErr := os.ReadFile(path)
-require.NoError(t, readErr)
-assert.Contains(t, string(content), "Jane Doe")
-assert.Contains(t, string(content), "Engineer")
+	content, readErr := os.ReadFile(path)
+	require.NoError(t, readErr)
+	assert.Contains(t, string(content), "Jane Doe")
+	assert.Contains(t, string(content), "Engineer")
 }
 
 func TestWritePartial_OverwritesExistingFile(t *testing.T) {
-dir := t.TempDir()
-path := filepath.Join(dir, "cv.yml")
+	dir := t.TempDir()
+	path := filepath.Join(dir, "cv.yml")
 
-require.NoError(t, os.WriteFile(path, []byte("old content"), 0644))
+	require.NoError(t, os.WriteFile(path, []byte("old content"), 0644))
 
-cv := model.CV{
-Person: model.Person{Name: "New Name"},
-}
+	cv := model.CV{
+		Person: model.Person{Name: "New Name"},
+	}
 
-err := writePartial(cv, path)
-require.NoError(t, err)
+	err := writePartial(cv, path)
+	require.NoError(t, err)
 
-content, _ := os.ReadFile(path)
-assert.NotEqual(t, "old content", string(content))
-assert.Contains(t, string(content), "New Name")
+	content, _ := os.ReadFile(path)
+	assert.NotEqual(t, "old content", string(content))
+	assert.Contains(t, string(content), "New Name")
 }
 
 func TestWritePartial_EmptyCVIsValid(t *testing.T) {
-dir := t.TempDir()
-path := filepath.Join(dir, "cv.yml")
+	dir := t.TempDir()
+	path := filepath.Join(dir, "cv.yml")
 
-err := writePartial(model.CV{}, path)
-require.NoError(t, err)
+	err := writePartial(model.CV{}, path)
+	require.NoError(t, err)
 
-content, _ := os.ReadFile(path)
-assert.NotEmpty(t, content)
+	content, _ := os.ReadFile(path)
+	assert.NotEmpty(t, content)
 }
 
 func TestRunWizard_ResumeMissingFileReturnsError(t *testing.T) {
-dir := t.TempDir()
-path := filepath.Join(dir, "cv.yml")
+	dir := t.TempDir()
+	path := filepath.Join(dir, "cv.yml")
 
-err := RunWizard(path, true)
-require.Error(t, err)
-assert.Contains(t, err.Error(), "nothing to resume")
+	_, err := RunWizard(path, true)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "nothing to resume")
 }
 
 func TestRunWizard_ResumeInvalidYAMLReturnsError(t *testing.T) {
-dir := t.TempDir()
-path := filepath.Join(dir, "cv.yml")
-require.NoError(t, os.WriteFile(path, []byte("not: [valid, yaml"), 0644))
+	dir := t.TempDir()
+	path := filepath.Join(dir, "cv.yml")
+	require.NoError(t, os.WriteFile(path, []byte("not: [valid, yaml"), 0644))
 
-err := RunWizard(path, true)
-require.Error(t, err)
-assert.Contains(t, err.Error(), "not a valid CV file")
+	_, err := RunWizard(path, true)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "not a valid CV file")
 }
 
 func TestCheckpoint_LogsWarningOnWriteFailure(t *testing.T) {
-dir := t.TempDir()
-badPath := filepath.Join(dir, "missing-subdir", "cv.yml")
+	dir := t.TempDir()
+	badPath := filepath.Join(dir, "missing-subdir", "cv.yml")
 
-var buf bytes.Buffer
-logrus.SetOutput(&buf)
-defer logrus.SetOutput(os.Stderr)
+	out, errBuf := logger.Capture(t, slog.LevelInfo)
 
-checkpoint(model.CV{Person: model.Person{Name: "Jane"}}, badPath)
+	checkpoint(model.CV{Person: model.Person{Name: "Jane"}}, badPath)
 
-assert.Contains(t, buf.String(), "failed to save progress")
-assert.NoFileExists(t, badPath)
+	assert.Contains(t, out.String(), "failed to save progress")
+	assert.Empty(t, errBuf.String())
+	assert.NoFileExists(t, badPath)
 }

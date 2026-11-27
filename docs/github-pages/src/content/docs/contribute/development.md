@@ -68,10 +68,10 @@ CVWonder checks for credentials in this order:
 
 **Debugging Authentication:**
 
-Use debug mode to verify which authentication method is being used:
+Use debug logging to verify which authentication method is being used:
 
 ```bash
-./cvwonder theme install <url> --debug
+./cvwonder theme install <url> --log-level debug
 ```
 
 **Testing Authentication Flow:**
@@ -81,17 +81,17 @@ When developing authentication features, test all methods:
 ```bash
 # Test GitHub CLI
 gh auth login
-./cvwonder theme install <private-repo> --debug
+./cvwonder theme install <private-repo> --log-level debug
 
 # Test environment variable
 gh auth logout
 export GITHUB_TOKEN="token_here"
-./cvwonder theme install <private-repo> --debug
+./cvwonder theme install <private-repo> --log-level debug
 
 # Test unauthenticated (should fail for private repos)
 unset GITHUB_TOKEN
 unset GH_TOKEN
-./cvwonder theme install <private-repo> --debug
+./cvwonder theme install <private-repo> --log-level debug
 ```
 
 ### Live Development

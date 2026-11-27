@@ -17,7 +17,31 @@ These options are accepted by every command.
 | `--output` | `-o` | Output directory. | `generated/` |
 | `--theme` | `-t` | Name of the theme. | `default` |
 | `--format` | `-f` | Export format: `html` or `pdf`. | `html` |
-| `--debug` | `-d` | More verbose output. | `false` |
+| `--log-level` | | Verbosity: `error`, `warn`, `info`, `debug` or `trace`. | `info` |
+| `--quiet` | | Print only errors and the final result. Cannot be combined with `--log-level` or `--debug`. | `false` |
+| `--debug` | `-d` | **Deprecated.** Alias of `--log-level debug`; prints a deprecation notice on stderr. | `false` |
+
+### Output and verbosity
+
+- At the default `info` level, commands print a branded header (title, version and one line per setting), one line per step (`✓` success, `!` warning, `✗` failure) and the result. A step that performs work, such as parsing or rendering, ends with its duration (`148ms`, `1.9s`, `1m05s`); lines that only announce a state, such as the serve listening address, carry none. Timestamped diagnostic lines (`15:04:05 DBG component message key=value`) appear only at `debug` and `trace`.
+- A successful single-file `generate` ends with a footer: the total time, the path of each produced file and the `cvwonder serve --watch` command to preview it. The footer is not printed in bulk mode, after a failure or with `--quiet`.
+- `--quiet` hides the header, the steps and the footer. Errors, the final result (the validation outcome, the bulk generation report) and the exit status are unchanged.
+- An unknown `--log-level` value fails before any work is done and lists the accepted levels.
+
+### Interactive and plain output
+
+cvwonder decides once per output stream whether to decorate it. Output is **interactive** when the stream is a terminal, `NO_COLOR` is unset and `CI` is unset. Interactive output uses the signature color palette (truecolor, downgraded to 256 or 16 colors depending on the terminal), a spinner on steps that take more than a fraction of a second, a celebratory emoji on the footer and clickable file links on terminals that support them.
+
+Everything else is **plain**: redirected or piped output, `NO_COLOR=1`, or `CI=true`. Plain output contains no escape sequences, spinner, emoji or hyperlinks, but keeps the same markers, durations and footer as text, so CI logs stay readable and carry timings.
+
+### Output streams
+
+| Command kind | stdout | stderr |
+|--------------|--------|--------|
+| `generate`, `serve`, `validate`, `init`, `themes install|create|verify|screenshot` | Header, steps, results, validation findings, `info`/`debug` diagnostics | Errors (with a hint when a remedy is known) |
+| `version`, `validate show-schema`, `themes list` | **Only** the payload (pipe-safe) | Everything else: diagnostics, notices, errors |
+
+For example, `cvwonder validate show-schema | jq .` always receives clean JSON, even with `--log-level debug`.
 
 ## `generate`
 
@@ -47,7 +71,7 @@ These options are accepted by every command.
 
 ## `validate`
 
-`validate` uses the global `--input` and `--debug` options and has no option of its own. Its `show-schema` subcommand takes `--info` and `--pretty` (`-p`).
+`validate` uses the global `--input` option and has no option of its own. Its `show-schema` subcommand takes `--info` and `--pretty` (`-p`).
 
 ## `themes`
 

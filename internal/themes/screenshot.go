@@ -3,11 +3,11 @@ package themes
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 
 	"github.com/mozillazg/go-slugify"
-	"github.com/sirupsen/logrus"
 
 	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
 	"github.com/germainlefebvre4/cvwonder/internal/cvrender"
@@ -22,7 +22,7 @@ import (
 // themes/<theme>/preview.png. The CV data is sourced from themes/<theme>/sample.yml
 // if present, falling back to ./cv.yml in the working directory.
 func (t *ThemesService) Screenshot(themeName string) error {
-	logrus.Debug("Screenshot")
+	slog.Debug("Screenshot")
 
 	baseDirectory, err := os.Getwd()
 	if err != nil {
@@ -87,11 +87,11 @@ func (t *ThemesService) Screenshot(themeName string) error {
 	// Output path: themes/<name>/preview.png
 	outputFilePath := filepath.Join(themeDir, "preview.png")
 
-	logrus.Infof("Generating screenshot for theme '%s'", themeSlugName)
+	slog.Debug("Generating screenshot", "theme", themeSlugName)
 	if err := renderService.Screenshot(cv, baseDirectory, tmpDir, inputFilename, themeSlugName, outputFilePath, config); err != nil {
 		return fmt.Errorf("generating screenshot for theme '%s': %w", themeSlugName, err)
 	}
-	logrus.Infof("Screenshot saved to %s", outputFilePath)
+	slog.Debug("Screenshot saved", "path", outputFilePath)
 	return nil
 }
 
@@ -100,13 +100,13 @@ func (t *ThemesService) Screenshot(themeName string) error {
 func resolveCVSource(themeDir string) (string, string, error) {
 	samplePath := filepath.Join(themeDir, "sample.yml")
 	if _, err := os.Stat(samplePath); err == nil {
-		logrus.Debug("Using sample.yml from theme directory")
+		slog.Debug("Using sample.yml from theme directory")
 		return samplePath, "sample", nil
 	}
 
 	cvPath := "cv.yml"
 	if _, err := os.Stat(cvPath); err == nil {
-		logrus.Debug("Using cv.yml from working directory")
+		slog.Debug("Using cv.yml from working directory")
 		return cvPath, "cv", nil
 	}
 

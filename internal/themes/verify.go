@@ -2,18 +2,18 @@ package themes
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 
 	"github.com/mozillazg/go-slugify"
-	"github.com/sirupsen/logrus"
 
 	theme_config "github.com/germainlefebvre4/cvwonder/internal/themes/config"
 	"github.com/germainlefebvre4/cvwonder/internal/version"
 )
 
 func (t *ThemesService) Verify(themeName string) error {
-	logrus.Debug("Verify")
+	slog.Debug("Verify")
 	baseDirectory, _ := os.Getwd()
 	themeDir := "themes"
 	themeSlugName := slugify.Slugify(themeName)
@@ -27,14 +27,14 @@ func (t *ThemesService) Verify(themeName string) error {
 
 	// Non-blocking optional file warnings
 	if _, err := os.Stat(filepath.Join(themeDirPath, "sample.yml")); os.IsNotExist(err) {
-		logrus.Warnf("sample.yml not found in theme '%s'. Add a sample.yml to enable automated screenshots with `cvwonder themes screenshot`.", themeName)
+		slog.Warn(fmt.Sprintf("sample.yml not found in theme '%s'. Add a sample.yml to enable automated screenshots with `cvwonder themes screenshot`.", themeName))
 	}
 	if _, err := os.Stat(filepath.Join(themeDirPath, "preview.png")); os.IsNotExist(err) {
-		logrus.Warnf("preview.png not found in theme '%s'. Run `cvwonder themes screenshot %s` to generate it.", themeName, themeName)
+		slog.Warn(fmt.Sprintf("preview.png not found in theme '%s'. Run `cvwonder themes screenshot %s` to generate it.", themeName, themeName))
 	}
 
 	if valid01 {
-		logrus.Info("Your theme '" + themeName + "' is valid.")
+		slog.Debug("Theme is valid", "theme", themeName)
 	} else {
 		return fmt.Errorf("your theme '%s' is not valid: minimum version %s is above CV Wonder version %s", themeName, themeConfig.MinimumVersion, version.CVWONDER_VERSION)
 	}

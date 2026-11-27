@@ -1,17 +1,20 @@
 package cmdThemes
 
 import (
+	"errors"
+	"fmt"
+	"io/fs"
 	"strings"
 
 	"github.com/germainlefebvre4/cvwonder/internal/themes"
+	"github.com/germainlefebvre4/cvwonder/internal/ui"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
-	"github.com/sirupsen/logrus"
+	slugify "github.com/mozillazg/go-slugify"
 	"github.com/spf13/cobra"
 )
 
 func ThemesCmd() *cobra.Command {
 	var cobraCmd = &cobra.Command{
-		PreRun:  utils.ToggleDebug,
 		Use:     "themes",
 		Aliases: []string{"theme", "t"},
 		Short:   "Manage themes",
@@ -29,41 +32,61 @@ func ThemesCmd() *cobra.Command {
 
 func CmdList() *cobra.Command {
 	var cobraCmd = &cobra.Command{
-		PreRun:  utils.ToggleDebug,
-		Use:     "list",
-		Aliases: []string{"l"},
-		Short:   "List themes",
-		Long:    `List themes`,
-		Run: func(cmd *cobra.Command, args []string) {
+		Annotations: ui.DataAnnotations(),
+		Use:         "list",
+		Aliases:     []string{"l"},
+		Short:       "List themes",
+		Long:        `List themes`,
+		RunE: func(cmd *cobra.Command, args []string) error {
 			themesService, err := themes.NewThemesService()
 			if err != nil {
-				logrus.Fatal("Error creating themes service: ", err)
+				return fmt.Errorf("creating themes service: %w", err)
 			}
-			if err := themesService.List(); err != nil {
-				logrus.Fatal("Error listing themes: ", err)
+			if err := themesService.List(ui.Payload()); err != nil {
+				return fmt.Errorf("listing themes: %w", err)
 			}
+			return nil
 		},
 	}
 
 	return cobraCmd
 }
 
+// installError attaches the --force hint when switching ref was blocked.
+func installError(err error, force bool) error {
+	err = fmt.Errorf("installing theme: %w", err)
+	if errors.Is(err, themes.ErrRefSwitch) && !force {
+		return ui.WithHint(err, ui.ForceHint)
+	}
+	return err
+}
+
+// notFoundHint attaches the install/list hint when a theme is missing.
+func notFoundHint(err error) error {
+	if errors.Is(err, fs.ErrNotExist) {
+		return ui.WithHint(err, ui.ThemeNotFoundHint)
+	}
+	return err
+}
+
 func CmdInstall() *cobra.Command {
 	var cobraCmd = &cobra.Command{
-		PreRun:  utils.ToggleDebug,
 		Use:     "install",
 		Aliases: []string{"d"},
 		Args:    cobra.ExactArgs(1),
 		Short:   "Install theme",
 		Long:    `Install theme`,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			themesService, err := themes.NewThemesService()
 			if err != nil {
-				logrus.Fatal("Error creating themes service: ", err)
+				return fmt.Errorf("creating themes service: %w", err)
 			}
-			if err := themesService.Install(args[0], utils.CliArgs.ForceThemeInstall); err != nil {
-				logrus.Fatal("Error installing theme: ", err)
-			}
+			return ui.Run(ui.Default(), fmt.Sprintf("Installing theme from %s", args[0]), fmt.Sprintf("Theme installed from %s", args[0]), func() error {
+				if err := themesService.Install(args[0], utils.CliArgs.ForceThemeInstall); err != nil {
+					return installError(err, utils.CliArgs.ForceThemeInstall)
+				}
+				return nil
+			})
 		},
 	}
 
@@ -74,21 +97,22 @@ func CmdInstall() *cobra.Command {
 
 func CmdCreate() *cobra.Command {
 	var cobraCmd = &cobra.Command{
-		PreRun:  utils.ToggleDebug,
 		Use:     "create",
 		Aliases: []string{"c"},
 		Short:   "Create a new theme",
 		Long:    `Create a new theme`,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			themesService, err := themes.NewThemesService()
 			if err != nil {
-				logrus.Fatal("Error creating themes service: ", err)
+				return fmt.Errorf("creating themes service: %w", err)
 			}
 			themeName := strings.ReplaceAll(utils.CliArgs.CreateThemeName, "'", "")
 			themeName = strings.ReplaceAll(themeName, "\"", "")
 			if err := themesService.Create(themeName); err != nil {
-				logrus.Fatal("Error creating theme: ", err)
+				return fmt.Errorf("creating theme: %w", err)
 			}
+			ui.Default().Step(ui.Success, fmt.Sprintf("Theme '%s' created in themes/%s/", themeName, slugify.Slugify(themeName)))
+			return nil
 		},
 	}
 
@@ -99,20 +123,21 @@ func CmdCreate() *cobra.Command {
 
 func CmdCheck() *cobra.Command {
 	var cobraCmd = &cobra.Command{
-		PreRun:  utils.ToggleDebug,
 		Use:     "verify",
 		Aliases: []string{"v"},
 		Args:    cobra.ExactArgs(1),
 		Short:   "Check themes",
 		Long:    `Check themes`,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			themesService, err := themes.NewThemesService()
 			if err != nil {
-				logrus.Fatal("Error creating themes service: ", err)
+				return fmt.Errorf("creating themes service: %w", err)
 			}
 			if err := themesService.Verify(args[0]); err != nil {
-				logrus.Fatal("Error verifying theme: ", err)
+				return notFoundHint(fmt.Errorf("verifying theme: %w", err))
 			}
+			ui.Default().Result(ui.Success, fmt.Sprintf("Theme '%s' is valid", args[0]))
+			return nil
 		},
 	}
 
@@ -121,7 +146,6 @@ func CmdCheck() *cobra.Command {
 
 func CmdScreenshot() *cobra.Command {
 	var cobraCmd = &cobra.Command{
-		PreRun:  utils.ToggleDebug,
 		Use:     "screenshot",
 		Aliases: []string{"ss"},
 		Args:    cobra.ExactArgs(1),
@@ -131,14 +155,17 @@ func CmdScreenshot() *cobra.Command {
 The screenshot is taken at 1280x900 viewport (2x scale) and saved to
 themes/<name>/preview.png. CV data is sourced from themes/<name>/sample.yml
 if present, otherwise falls back to ./cv.yml in the current directory.`,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			themesService, err := themes.NewThemesService()
 			if err != nil {
-				logrus.Fatal("Error creating themes service: ", err)
+				return fmt.Errorf("creating themes service: %w", err)
 			}
-			if err := themesService.Screenshot(args[0]); err != nil {
-				logrus.Fatal("Error generating theme screenshot: ", err)
-			}
+			return ui.Run(ui.Default(), fmt.Sprintf("Generating screenshot for %s", args[0]), fmt.Sprintf("Screenshot saved to themes/%s/preview.png", slugify.Slugify(args[0])), func() error {
+				if err := themesService.Screenshot(args[0]); err != nil {
+					return notFoundHint(fmt.Errorf("generating theme screenshot: %w", err))
+				}
+				return nil
+			})
 		},
 	}
 

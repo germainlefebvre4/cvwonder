@@ -8,7 +8,6 @@ import (
 
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
 	"github.com/germainlefebvre4/cvwonder/internal/version"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -44,8 +43,6 @@ minimumVersion: "0.1.0"
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	logrus.SetLevel(logrus.DebugLevel)
 
 	t.Run("Verify does not fatal when sample.yml and preview.png are absent", func(t *testing.T) {
 		service := &ThemesService{}

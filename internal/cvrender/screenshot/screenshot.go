@@ -2,15 +2,15 @@ package render_screenshot
 
 import (
 	"fmt"
+	"log/slog"
 	"net"
 	"os"
 
+	"github.com/germainlefebvre4/cvwonder/internal/logger"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
-	"github.com/germainlefebvre4/cvwonder/internal/utils"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
-	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -22,7 +22,7 @@ const (
 // RenderFormatScreenshot generates a PNG screenshot of the CV rendered with the given theme.
 // The screenshot is written to outputFilePath (typically themes/<name>/preview.png).
 func (r *RenderScreenshotServices) RenderFormatScreenshot(cv model.CV, outputDirectory string, inputFilename string, themeName string, outputFilePath string) error {
-	logrus.Debug("Generating screenshot")
+	slog.Debug("Generating screenshot")
 
 	// Run the server to serve the rendered HTML. The listener is released before returning.
 	localServerUrl, stopServer, err := r.runWebServer(inputFilename, outputDirectory)
@@ -43,8 +43,8 @@ func (r *RenderScreenshotServices) captureScreenshot(localServerUrl string, outp
 	if bin := os.Getenv("CHROME_BIN"); bin != "" {
 		l = l.Bin(bin)
 	}
-	if utils.CliArgs.Debug {
-		l = l.Logger(os.Stdout)
+	if w := logger.DebugWriter(); w != nil {
+		l = l.Logger(w)
 	}
 	u, err := l.Launch()
 	if err != nil {
@@ -59,7 +59,7 @@ func (r *RenderScreenshotServices) captureScreenshot(localServerUrl string, outp
 	}
 	defer func() {
 		if err := browser.Close(); err != nil {
-			logrus.Debugf("Closing browser failed, killing it: %v", err)
+			slog.Debug(fmt.Sprintf("Closing browser failed, killing it: %v", err))
 			l.Kill()
 		}
 	}()
@@ -114,7 +114,7 @@ func (r *RenderScreenshotServices) runWebServer(inputFilename string, outputDire
 	port := tcpAddr.Port
 
 	localServerUrl := fmt.Sprintf("http://localhost:%d/%s.html", port, inputFilename)
-	logrus.Info("Serving temporary CV for screenshot at address ", localServerUrl)
+	slog.Debug("Serving temporary CV for screenshot", "address", localServerUrl)
 	ready := make(chan struct{})
 	go func() {
 		r.ServeService.StartServerOnListener(listener, outputDirectory, ready)

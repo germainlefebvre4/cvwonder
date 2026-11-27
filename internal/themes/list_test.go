@@ -1,6 +1,7 @@
 package themes
 
 import (
+	"bytes"
 	"io"
 	"os"
 	"path/filepath"
@@ -78,8 +79,8 @@ func TestListThemes(t *testing.T) {
 
 		// Run test
 		t.Run("Should list themes", func(t *testing.T) {
-			output := captureOutput(func() {
-				listThemes(baseDirectory, "themes-test")
+			output := captureOutput(func(out io.Writer) {
+				listThemes(out, baseDirectory, "themes-test")
 			})
 			// assert.Contains(t, output, "Directory\tName\tDescription\tAuthor\n")
 			assert.Contains(t, output, tt.args.themeName)
@@ -100,19 +101,8 @@ func TestListThemes(t *testing.T) {
 	}
 }
 
-func captureOutput(f func()) string {
-	// var buf bytes.Buffer
-	// log.SetOutput(&buf)
-	// f()
-	// log.SetOutput(os.Stderr)
-	// return buf.String()
-
-	orig := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-	f()
-	os.Stdout = orig
-	w.Close()
-	out, _ := io.ReadAll(r)
-	return string(out)
+func captureOutput(f func(out io.Writer)) string {
+	var buf bytes.Buffer
+	f(&buf)
+	return buf.String()
 }

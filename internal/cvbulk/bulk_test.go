@@ -161,17 +161,6 @@ func TestMirrorOutputDir(t *testing.T) {
 	})
 }
 
-func TestPrintBulkReport(t *testing.T) {
-	// Smoke test: PrintBulkReport should not panic.
-	results := []BulkResult{
-		{FilePath: "/cvs/alice.yml", Success: true},
-		{FilePath: "/cvs/bob.yml", Success: false, Error: errors.New("parse error")},
-	}
-	assert.NotPanics(t, func() {
-		PrintBulkReport(results)
-	})
-}
-
 // --config overrides must reach every per-file generation in bulk mode.
 func TestBulkGenerate_PassesConfigOverrides(t *testing.T) {
 	var mu sync.Mutex

@@ -217,54 +217,15 @@ func TestValidateStruct_Invalid(t *testing.T) {
 	assert.NotEmpty(t, result.Errors)
 }
 
-func TestFormatValidationResult_Success(t *testing.T) {
-	result := &ValidationResult{
-		Valid:    true,
-		Errors:   []ValidationError{},
-		Warnings: []ValidationWarning{},
-	}
-
-	output := FormatValidationResult(result)
-	assert.Contains(t, output, "✓")
-	assert.Contains(t, output, "valid")
-}
-
-func TestFormatValidationResult_WithErrors(t *testing.T) {
+func TestValidationResultSummary(t *testing.T) {
 	result := &ValidationResult{
 		Valid: false,
 		Errors: []ValidationError{
-			{
-				Field:      "person.name",
-				Message:    "required",
-				LineNumber: 5,
-				Suggestion: "This field is required",
-			},
-		},
-		Warnings: []ValidationWarning{},
-	}
-
-	output := FormatValidationResult(result)
-	assert.Contains(t, output, "✗")
-	assert.Contains(t, output, "person.name")
-	assert.Contains(t, output, "Line: 5")
-}
-
-func TestFormatValidationResult_WithWarnings(t *testing.T) {
-	result := &ValidationResult{
-		Valid:  true,
-		Errors: []ValidationError{},
-		Warnings: []ValidationWarning{
-			{
-				Field:      "person.email",
-				Message:    "Optional but recommended",
-				Suggestion: "Adding email helps",
-			},
+			{Field: "person.name", Message: "required", LineNumber: 5},
+			{Field: "person.email", Message: "invalid format"},
 		},
 	}
-
-	output := FormatValidationResult(result)
-	assert.Contains(t, output, "Warning")
-	assert.Contains(t, output, "person.email")
+	assert.Equal(t, "line 5, person.name: required; person.email: invalid format", result.Summary())
 }
 
 func TestGetSuggestionForError(t *testing.T) {

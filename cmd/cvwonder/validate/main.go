@@ -1,57 +1,51 @@
 package cmdValidate
 
 import (
+	"errors"
 	"fmt"
-	"os"
 
 	"github.com/germainlefebvre4/cvwonder/internal/model"
+	"github.com/germainlefebvre4/cvwonder/internal/ui"
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
 	"github.com/germainlefebvre4/cvwonder/internal/validator"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
+// ErrValidationFailed is returned when the file is invalid; the findings have
+// already been shown.
+var ErrValidationFailed = errors.New("validation failed")
+
 func ValidateCmd() *cobra.Command {
 	var cobraCmd = &cobra.Command{
-		PreRun:  utils.ToggleDebug,
 		Use:     "validate",
 		Aliases: []string{"val", "valid"},
 		Short:   "Validate the CV YAML file",
 		Long:    `Validate the CV YAML file against the schema and provide helpful feedback`,
-		Run: func(cmd *cobra.Command, args []string) {
-			// Build InputFile object
+		RunE: func(cmd *cobra.Command, args []string) error {
+			rep := ui.Default()
+
 			inputFile, err := model.BuildInputFile(utils.CliArgs.InputFile)
 			if err != nil {
-				logrus.Fatal("Error building input file: ", err)
+				return fmt.Errorf("building input file: %w", err)
 			}
 
-			logrus.Info("CV Wonder - Validation")
-			logrus.Info("  Input file: ", inputFile.RelativePath)
-			logrus.Info("")
+			rep.Header("CV Wonder - Validation", ui.Field{Label: ui.LabelInput, Value: inputFile.RelativePath})
 
-			// Create validator service
 			validatorService, err := validator.NewValidatorServices()
 			if err != nil {
-				logrus.Fatal("Error creating validator service: ", err)
+				return fmt.Errorf("creating validator service: %w", err)
 			}
 
-			// Validate the file
 			result, err := validatorService.ValidateFile(inputFile.FullPath)
 			if err != nil {
-				logrus.Fatal("Error validating file: ", err)
+				return fmt.Errorf("validating file: %w", err)
 			}
 
-			// Format and display the result
-			output := validator.FormatValidationResult(result)
-			logrus.Info(output)
-
-			// Exit with appropriate code
+			ui.ReportValidation(rep, result, true)
 			if !result.Valid {
-				logrus.Error("Validation failed. Please fix the errors above.")
-				os.Exit(1)
+				return ErrValidationFailed
 			}
-
-			logrus.Info("Validation completed successfully!")
+			return nil
 		},
 	}
 
@@ -66,44 +60,36 @@ func ValidateShowSchemaCmd() *cobra.Command {
 	var showInfo bool
 
 	var cobraCmd = &cobra.Command{
-		PreRun:  utils.ToggleDebug,
-		Use:     "show-schema",
-		Aliases: []string{"schema", "show"},
-		Short:   "Display the JSON schema used for validation",
-		Long:    `Display the JSON schema used for CV YAML validation. Can show raw JSON, pretty-printed JSON, or schema information.`,
-		Run: func(cmd *cobra.Command, args []string) {
-			// Create validator service
+		Annotations: ui.DataAnnotations(),
+		Use:         "show-schema",
+		Aliases:     []string{"schema", "show"},
+		Short:       "Display the JSON schema used for validation",
+		Long:        `Display the JSON schema used for CV YAML validation. Can show raw JSON, pretty-printed JSON, or schema information.`,
+		RunE: func(cmd *cobra.Command, args []string) error {
 			validatorService, err := validator.NewValidatorServices()
 			if err != nil {
-				logrus.Fatal("Error creating validator service: ", err)
+				return fmt.Errorf("creating validator service: %w", err)
 			}
 
-			if showInfo {
-				// Show schema information
+			var payload string
+			switch {
+			case showInfo:
 				info, err := validatorService.GetSchemaInfo()
 				if err != nil {
-					logrus.Fatal("Error getting schema info: ", err)
+					return fmt.Errorf("getting schema info: %w", err)
 				}
-
-				output := validator.FormatSchemaInfo(info)
-				fmt.Println(output)
-			} else if showPretty {
-				// Show pretty-printed schema
-				schema, err := validatorService.GetSchemaPretty()
-				if err != nil {
-					logrus.Fatal("Error getting schema: ", err)
+				payload = validator.FormatSchemaInfo(info)
+			case showPretty:
+				if payload, err = validatorService.GetSchemaPretty(); err != nil {
+					return fmt.Errorf("getting schema: %w", err)
 				}
-
-				fmt.Println(schema)
-			} else {
-				// Show raw schema
-				schema, err := validatorService.GetSchema()
-				if err != nil {
-					logrus.Fatal("Error getting schema: ", err)
+			default:
+				if payload, err = validatorService.GetSchema(); err != nil {
+					return fmt.Errorf("getting schema: %w", err)
 				}
-
-				fmt.Println(schema)
 			}
+			_, err = fmt.Fprintln(ui.Payload(), payload)
+			return err
 		},
 	}
 

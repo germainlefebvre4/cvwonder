@@ -3,6 +3,7 @@ package theme_config
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 	"strconv"
 	"strings"
@@ -11,7 +12,6 @@ import (
 	"github.com/germainlefebvre4/cvwonder/internal/utils"
 	"github.com/goccy/go-yaml"
 	"github.com/google/go-github/github"
-	"github.com/sirupsen/logrus"
 )
 
 type ThemeConfig struct {
@@ -137,21 +137,19 @@ func (tc *ThemeConfig) VerifyThemeMinimumVersion(cvwonderVersion string) bool {
 	}
 	minimum, ok := parseVersion(tc.MinimumVersion)
 	if !ok {
-		logrus.Debugf("Theme minimum version %q is not a version number, skipping the check", tc.MinimumVersion)
+		slog.Debug(fmt.Sprintf("Theme minimum version %q is not a version number, skipping the check", tc.MinimumVersion))
 		return true
 	}
 	current, ok := parseVersion(cvwonderVersion)
 	if !ok {
-		logrus.Debugf("CV Wonder version %q is not a version number, skipping the theme minimum version check", cvwonderVersion)
+		slog.Debug(fmt.Sprintf("CV Wonder version %q is not a version number, skipping the theme minimum version check", cvwonderVersion))
 		return true
 	}
 	if compareVersions(minimum, current) <= 0 {
 		return true
 	}
-	logrus.Error("CV Wonder version: ", cvwonderVersion)
-	logrus.Error("Theme minimum version: ", tc.MinimumVersion)
-	logrus.Error("The theme minimum version not met. You might encounter issues with this theme.")
-	logrus.Error("")
+	slog.Warn("The theme minimum version is not met. You might encounter issues with this theme.",
+		"cvwonder_version", cvwonderVersion, "theme_minimum_version", tc.MinimumVersion)
 	return false
 }
 
