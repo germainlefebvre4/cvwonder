@@ -2,6 +2,7 @@ package render_pdf
 
 import (
 	"fmt"
+	"github.com/germainlefebvre4/cvwonder/internal/cvrender/outpath"
 	"io"
 	"log/slog"
 	"net"
@@ -117,8 +118,7 @@ func (r *RenderPDFServices) generateOutputFile(outputDirectory string, inputFile
 	if err != nil {
 		return "", fmt.Errorf("resolving output directory: %w", err)
 	}
-	outputFilename := filepath.Base(inputFilename) + ".pdf"
-	outputFilePath, err := filepath.Abs(outputDirectory + "/" + outputFilename)
+	outputFilePath, err := filepath.Abs(outpath.PDF(outputDirectory, inputFilename))
 	if err != nil {
 		return "", fmt.Errorf("resolving output file path: %w", err)
 	}

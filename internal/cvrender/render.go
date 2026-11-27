@@ -2,8 +2,8 @@ package cvrender
 
 import (
 	"fmt"
+	"github.com/germainlefebvre4/cvwonder/internal/cvrender/outpath"
 	"log/slog"
-	"path"
 
 	render_html "github.com/germainlefebvre4/cvwonder/internal/cvrender/html"
 	render_pdf "github.com/germainlefebvre4/cvwonder/internal/cvrender/pdf"
@@ -34,8 +34,7 @@ func NewRenderServices(
 func (r *RenderServices) Render(cv model.CV, baseDirectory string, outputDirectory string, inputFilePath string, themeName string, exportFormat string, isWatch bool, config map[string]interface{}) error {
 	slog.Debug("Rendering CV")
 
-	inputFilenameExt := path.Base(inputFilePath)
-	inputFilename := inputFilenameExt[:len(inputFilenameExt)-len(path.Ext(inputFilenameExt))]
+	inputFilename := outpath.Base(inputFilePath)
 
 	// Generate HTML
 	if err := r.RenderHTMLService.RenderFormatHTML(cv, baseDirectory, outputDirectory, inputFilename, themeName, isWatch, config); err != nil {
@@ -66,4 +65,10 @@ func (r *RenderServices) Screenshot(cv model.CV, baseDirectory string, tmpDirect
 		return fmt.Errorf("capturing screenshot: %w", err)
 	}
 	return nil
+}
+
+// OutputPaths returns the files Render writes for inputFile into outputDir with
+// the export format ("html" produces the HTML file, "pdf" also the PDF file).
+func OutputPaths(outputDir, inputFile, format string) []string {
+	return outpath.Paths(outputDir, inputFile, format)
 }

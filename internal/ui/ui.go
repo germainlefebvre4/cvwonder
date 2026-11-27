@@ -9,7 +9,10 @@
 //	✗  failure
 package ui
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 // Status classifies a step or result.
 type Status int
@@ -48,6 +51,11 @@ type Reporter interface {
 	Header(title string, fields ...Field)
 	// Step reports one progress line.
 	Step(status Status, text string)
+	// Start begins a step that performs work and returns a Span to finish it.
+	// The finished line shows the step's duration.
+	Start(text string) Span
+	// Summary prints the closing footer of a successful command.
+	Summary(s Summary)
 	// Detail prints indented lines beneath the previous step.
 	Detail(lines ...string)
 	// Table prints aligned columns.
@@ -56,6 +64,34 @@ type Reporter interface {
 	Result(status Status, text string)
 	// Error reports a failure on the error stream, with an optional hint.
 	Error(err error, hint string)
+}
+
+// Span is a step in progress, created by Reporter.Start.
+type Span interface {
+	// Done ends the step with a final status line that includes its duration.
+	Done(status Status, text string)
+}
+
+// Summary is the data of the closing footer.
+type Summary struct {
+	// Elapsed is the total duration of the command.
+	Elapsed time.Duration
+	// Files are the produced files, relative to the working directory.
+	Files []string
+	// NextStep is a one-line suggestion, empty for none.
+	NextStep string
+}
+
+// Run reports fn as a span: label while it runs, then doneLabel on success or
+// label with the failure marker on error. It returns fn's error unchanged.
+func Run(r Reporter, label, doneLabel string, fn func() error) error {
+	sp := r.Start(label)
+	if err := fn(); err != nil {
+		sp.Done(Failure, label)
+		return err
+	}
+	sp.Done(Success, doneLabel)
+	return nil
 }
 
 // HintError wraps an error with a remedy shown to the user.

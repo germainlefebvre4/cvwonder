@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/germainlefebvre4/cvwonder/internal/cvbulk"
 	"github.com/germainlefebvre4/cvwonder/internal/cvparser"
@@ -151,6 +153,8 @@ type generator struct {
 	validator validator.ValidatorInterface
 	parser    cvparser.ParserInterface
 	renderer  cvrender.RenderInterface
+	// now is the clock used to time the run; nil means time.Now.
+	now func() time.Time
 }
 
 // newGenerator wires the real services.
@@ -188,6 +192,11 @@ func newGenerator(rep ui.Reporter) (*generator, error) {
 
 // generateSingle runs the single-file CV generation using utils.CliArgs.
 func (g *generator) generateSingle() error {
+	now := g.now
+	if now == nil {
+		now = time.Now
+	}
+	start := now()
 	inputFile, err := model.BuildInputFile(utils.CliArgs.InputFile)
 	if err != nil {
 		return fmt.Errorf("building input file: %w", err)
@@ -242,12 +251,15 @@ func (g *generator) generateSingle() error {
 	}
 
 	// Parse the CV.
-	content, err := g.parser.ParseFile(inputFile.FullPath)
+	var content model.CV
+	err = ui.Run(g.rep, fmt.Sprintf("Parsing %s", inputFile.RelativePath), fmt.Sprintf("Parsed %s", inputFile.RelativePath), func() error {
+		var perr error
+		content, perr = g.parser.ParseFile(inputFile.FullPath)
+		return perr
+	})
 	if err != nil {
-		g.rep.Step(ui.Failure, fmt.Sprintf("Parsing %s", inputFile.RelativePath))
 		return fmt.Errorf("parsing file: %w", err)
 	}
-	g.rep.Step(ui.Success, fmt.Sprintf("Parsed %s", inputFile.RelativePath))
 
 	// Render the CV.
 	baseDirectory, err := os.Getwd()
@@ -255,12 +267,33 @@ func (g *generator) generateSingle() error {
 		return fmt.Errorf("getting current directory: %w", err)
 	}
 	// Use the theme name (without ref) for rendering.
-	err = g.renderer.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeRef.Name, utils.CliArgs.Format, false, mergedConfig)
+	err = ui.Run(g.rep, fmt.Sprintf("Rendering %s", utils.CliArgs.Format), fmt.Sprintf("Rendered %s", utils.CliArgs.Format), func() error {
+		return g.renderer.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeRef.Name, utils.CliArgs.Format, false, mergedConfig)
+	})
 	if err != nil {
-		g.rep.Step(ui.Failure, fmt.Sprintf("Rendering %s", utils.CliArgs.Format))
 		return fmt.Errorf("rendering CV: %w", err)
 	}
-	g.rep.Step(ui.Success, fmt.Sprintf("Rendered %s to %s", utils.CliArgs.Format, outputDir.RelativePath))
-	g.rep.Step(ui.Success, "CV generated successfully")
+
+	g.rep.Summary(ui.Summary{
+		Elapsed:  now().Sub(start),
+		Files:    cvrender.OutputPaths(outputDir.RelativePath, inputFile.FullPath, utils.CliArgs.Format),
+		NextStep: serveHint(inputFile.RelativePath, outputDir.RelativePath),
+	})
 	return nil
+}
+
+// serveHint suggests how to preview the result, repeating the input and output
+// paths only when they differ from the defaults of `cvwonder serve`.
+func serveHint(input, output string) string {
+	cmd := "cvwonder serve --watch"
+	if input != "cv.yml" {
+		cmd += " -i " + input
+	}
+	if filepath.Clean(output) != "generated" {
+		cmd += " -o " + output
+	}
+	if utils.CliArgs.ThemeName != "default" {
+		cmd += " -t " + utils.CliArgs.ThemeName
+	}
+	return cmd
 }

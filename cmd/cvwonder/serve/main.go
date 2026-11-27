@@ -169,11 +169,15 @@ func ServeCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			content, err := parserService.ParseFile(inputFile.FullPath)
+			var content model.CV
+			err = ui.Run(rep, fmt.Sprintf("Parsing %s", inputFile.RelativePath), fmt.Sprintf("Parsed %s", inputFile.RelativePath), func() error {
+				var perr error
+				content, perr = parserService.ParseFile(inputFile.FullPath)
+				return perr
+			})
 			if err != nil {
 				return fmt.Errorf("parsing file: %w", err)
 			}
-			rep.Step(ui.Success, fmt.Sprintf("Parsed %s", inputFile.RelativePath))
 
 			serveService, err := cvserve.NewServeServices()
 			if err != nil {
@@ -189,11 +193,12 @@ func ServeCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			err = renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeName, utils.CliArgs.Format, utils.CliArgs.Watch, mergedConfig)
+			err = ui.Run(rep, fmt.Sprintf("Rendering %s", utils.CliArgs.Format), fmt.Sprintf("Rendered %s to %s", utils.CliArgs.Format, outputDir.RelativePath), func() error {
+				return renderService.Render(content, baseDirectory, outputDir.FullPath, inputFile.FullPath, themeName, utils.CliArgs.Format, utils.CliArgs.Watch, mergedConfig)
+			})
 			if err != nil {
 				return fmt.Errorf("rendering CV: %w", err)
 			}
-			rep.Step(ui.Success, fmt.Sprintf("Rendered %s to %s", utils.CliArgs.Format, outputDir.RelativePath))
 
 			if utils.CliArgs.Watch {
 				if err := startWatcher(rep, parserService, renderService, watchParams{baseDirectory, outputDir.FullPath, inputFile.FullPath, inputFile.RelativePath, themeName, mergedConfig}); err != nil {

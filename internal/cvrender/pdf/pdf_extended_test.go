@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/germainlefebvre4/cvwonder/internal/cvrender/outpath"
 	"github.com/germainlefebvre4/cvwonder/internal/cvserve"
 	serveMocks "github.com/germainlefebvre4/cvwonder/internal/cvserve/mocks"
 	"github.com/germainlefebvre4/cvwonder/internal/model"
@@ -196,4 +197,14 @@ func TestRenderFormatPDF_LaunchFailureWrapsCauseAndReleasesListener(t *testing.T
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	require.NoError(t, err, "port should be rebindable after the render")
 	_ = l.Close()
+}
+
+// The PDF file created by the renderer is the one the output helper names.
+func TestGenerateOutputFileMatchesOutpath(t *testing.T) {
+	dir := t.TempDir()
+	service := RenderPDFServices{}
+	got, err := service.generateOutputFile(dir, "my-cv")
+	require.NoError(t, err)
+	assert.Equal(t, outpath.PDF(dir, "my-cv"), got)
+	assert.FileExists(t, outpath.PDF(dir, "my-cv"))
 }

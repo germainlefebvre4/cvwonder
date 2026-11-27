@@ -5,8 +5,10 @@ import (
 	"errors"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/charmbracelet/colorprofile"
+	"github.com/charmbracelet/x/ansi"
 	"github.com/germainlefebvre4/cvwonder/internal/validator"
 )
 
@@ -48,20 +50,65 @@ func TestStyledWhenColorProfileForced(t *testing.T) {
 
 func TestHeaderGolden(t *testing.T) {
 	r, out, _ := newBuf(colorprofile.NoTTY)
+	r.version = "v1.2.3"
 	r.Header("CV Wonder", Field{LabelInput, "cv.yml"}, Field{LabelOutput, "generated/"}, Field{LabelTheme, "default"}, Field{LabelFormat, "html"})
-	want := "CV Wonder\n  Input:  cv.yml\n  Output: generated/\n  Theme:  default\n  Format: html\n\n"
+	want := "CV Wonder v1.2.3\n  › Input   cv.yml\n  › Output  generated/\n  › Theme   default\n  › Format  html\n\n"
 	if out.String() != want {
 		t.Fatalf("got %q want %q", out.String(), want)
 	}
 	r, out, _ = newBuf(colorprofile.NoTTY)
-	r.Header("CV Wonder - Bulk", Field{LabelInput, "cvs/ (3 files)"}, Field{LabelConcurrency, "4"})
-	if !strings.Contains(out.String(), "Input:") || !strings.Contains(out.String(), "Concurrency: 4") {
+	r.Header("CV Wonder - Bulk Mode", Field{LabelInput, "cvs/ (3 files)"}, Field{LabelConcurrency, "4"})
+	if !strings.HasPrefix(out.String(), "CV Wonder - Bulk Mode\n") || !strings.Contains(out.String(), "› Input        cvs/ (3 files)") || !strings.Contains(out.String(), "› Concurrency  4") {
 		t.Fatalf("bulk header: %q", out.String())
 	}
 	r, out, _ = newBuf(colorprofile.NoTTY)
 	r.Header("CV Wonder - Serve", Field{LabelWatch, "true"}, Field{LabelBrowser, "false"})
-	if !strings.Contains(out.String(), "Watch:") || !strings.Contains(out.String(), "Browser:") {
+	if !strings.Contains(out.String(), "Watch    true") || !strings.Contains(out.String(), "Browser  false") {
 		t.Fatalf("serve header: %q", out.String())
+	}
+}
+
+func TestInteractiveTitle(t *testing.T) {
+	r, out, _ := newBuf(colorprofile.TrueColor)
+	r.version = "v1.2.3"
+	r.Header("CV Wonder - Serve", Field{LabelWatch, "true"})
+	plain := ansi.Strip(out.String())
+	lines := strings.Split(plain, "\n")
+	if lines[0] != "✦ C V   W O N D E R  ·  Serve  v1.2.3" {
+		t.Fatalf("title: %q", lines[0])
+	}
+	if !strings.HasPrefix(lines[1], "──") || len([]rune(lines[1])) != len([]rune(lines[0])) {
+		t.Fatalf("rule: %q", lines[1])
+	}
+}
+
+func TestPaletteDegradesWithProfile(t *testing.T) {
+	render := func(p colorprofile.Profile) string {
+		r, out, _ := newBuf(p)
+		r.version = "v1"
+		r.Header("CV Wonder", Field{LabelInput, "x"})
+		r.Step(Success, "ok")
+		return out.String()
+	}
+	if got := render(colorprofile.TrueColor); !strings.Contains(got, "38;2;") {
+		t.Errorf("truecolor expected 24-bit escapes: %q", got)
+	}
+	for _, p := range []colorprofile.Profile{colorprofile.ANSI256, colorprofile.ANSI} {
+		got := render(p)
+		if !strings.Contains(got, "\x1b[") {
+			t.Errorf("%v: expected escapes: %q", p, got)
+		}
+		if strings.Contains(got, "38;2;") || strings.Contains(got, "48;2;") {
+			t.Errorf("%v: 24-bit sequence leaked: %q", p, got)
+		}
+	}
+	if got := render(colorprofile.ANSI); strings.Contains(got, "38;5;") {
+		t.Errorf("ANSI: 256-color sequence leaked: %q", got)
+	}
+	for _, p := range []colorprofile.Profile{colorprofile.NoTTY, colorprofile.Ascii} {
+		if got := render(p); strings.Contains(got, "\x1b") {
+			t.Errorf("%v: escapes in plain output: %q", p, got)
+		}
 	}
 }
 
@@ -100,6 +147,8 @@ func TestQuietKeepsResultAndError(t *testing.T) {
 	// generate-like
 	q.Header("CV Wonder", Field{"a", "b"})
 	q.Step(Success, "parsed")
+	q.Start("working").Done(Success, "worked")
+	q.Summary(Summary{Elapsed: time.Second, Files: []string{"a.html"}, NextStep: "go"})
 	q.Result(Success, "CV generated")
 	// validate-like: findings follow a kept result
 	q.Result(Failure, "Validation failed")

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -210,4 +211,36 @@ func TestBulkGenerateReportEndToEnd(t *testing.T) {
 	assert.Equal(t, 0, code)
 	assert.NotContains(t, out, "CV Wonder - Bulk Mode")
 	assert.Contains(t, out, "Total: 3 | Success: 2 | Failed: 1", "the report is the final result, kept by --quiet")
+}
+
+var durationRe = regexp.MustCompile(`  (<1ms|\d+ms|\d+\.\ds|\d+m\d\ds)$`)
+
+func TestStepDurationsOnWorkStepsOnly(t *testing.T) {
+	dir := workdir(t)
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "themes", "demo", "index.html"), []byte("<html>{{ .Person.Name }}</html>"), 0o644))
+
+	code, out, errb := execCLI(t, "generate", "-i", "valid.yml", "-t", "demo")
+	require.Equal(t, 0, code, errb)
+	assert.NotContains(t, out, "\x1b")
+	lines := strings.Split(strings.TrimRight(out, "\n"), "\n")
+	assert.Equal(t, "CV Wonder dev", lines[0])
+	for _, l := range lines {
+		isWork := strings.HasPrefix(l, "✓ Parsed ") || strings.HasPrefix(l, "✓ Rendered ")
+		assert.Equal(t, isWork, durationRe.MatchString(l), "line %q", l)
+	}
+	assert.Contains(t, out, "\nDone in ")
+	assert.Contains(t, out, filepath.Join("generated", "valid.html"))
+	assert.Contains(t, out, "Next: cvwonder serve --watch -i valid.yml")
+	assert.NotContains(t, out, "CV generated successfully")
+
+	// --quiet: no header, spans, footer or hint.
+	code, out, _ = execCLI(t, "generate", "-i", "valid.yml", "-t", "demo", "--quiet")
+	require.Equal(t, 0, code)
+	assert.Empty(t, out)
+
+	// Instantaneous state lines carry no duration.
+	code, out, _ = execCLI(t, "init", "--output-file", "new.yml")
+	require.Equal(t, 0, code)
+	assert.True(t, strings.HasPrefix(out, "✓ Created new.yml"), out)
+	assert.False(t, durationRe.MatchString(strings.TrimSpace(out)), out)
 }

@@ -81,11 +81,12 @@ func CmdInstall() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("creating themes service: %w", err)
 			}
-			if err := themesService.Install(args[0], utils.CliArgs.ForceThemeInstall); err != nil {
-				return installError(err, utils.CliArgs.ForceThemeInstall)
-			}
-			ui.Default().Step(ui.Success, fmt.Sprintf("Theme installed from %s", args[0]))
-			return nil
+			return ui.Run(ui.Default(), fmt.Sprintf("Installing theme from %s", args[0]), fmt.Sprintf("Theme installed from %s", args[0]), func() error {
+				if err := themesService.Install(args[0], utils.CliArgs.ForceThemeInstall); err != nil {
+					return installError(err, utils.CliArgs.ForceThemeInstall)
+				}
+				return nil
+			})
 		},
 	}
 
@@ -159,11 +160,12 @@ if present, otherwise falls back to ./cv.yml in the current directory.`,
 			if err != nil {
 				return fmt.Errorf("creating themes service: %w", err)
 			}
-			if err := themesService.Screenshot(args[0]); err != nil {
-				return notFoundHint(fmt.Errorf("generating theme screenshot: %w", err))
-			}
-			ui.Default().Step(ui.Success, fmt.Sprintf("Screenshot saved to themes/%s/preview.png", slugify.Slugify(args[0])))
-			return nil
+			return ui.Run(ui.Default(), fmt.Sprintf("Generating screenshot for %s", args[0]), fmt.Sprintf("Screenshot saved to themes/%s/preview.png", slugify.Slugify(args[0])), func() error {
+				if err := themesService.Screenshot(args[0]); err != nil {
+					return notFoundHint(fmt.Errorf("generating theme screenshot: %w", err))
+				}
+				return nil
+			})
 		},
 	}
 

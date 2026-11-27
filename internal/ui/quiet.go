@@ -1,6 +1,6 @@
 package ui
 
-// quiet drops header, step and informational output but keeps results and
+// quiet drops header, step, span and summary output but keeps results and
 // errors, plus any Detail/Table that directly follows a kept call.
 type quiet struct {
 	next     Reporter
@@ -12,6 +12,16 @@ func Quiet(r Reporter) Reporter { return &quiet{next: r} }
 
 func (q *quiet) Header(string, ...Field) { q.lastKept = false }
 func (q *quiet) Step(Status, string)     { q.lastKept = false }
+func (q *quiet) Summary(Summary)         { q.lastKept = false }
+
+type noopSpan struct{}
+
+func (noopSpan) Done(Status, string) {}
+
+func (q *quiet) Start(string) Span {
+	q.lastKept = false
+	return noopSpan{}
+}
 
 func (q *quiet) Detail(lines ...string) {
 	if q.lastKept {

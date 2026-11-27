@@ -5,8 +5,8 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
+	"time"
 
 	"github.com/charmbracelet/colorprofile"
 	"github.com/germainlefebvre4/cvwonder/internal/cvbulk"
@@ -22,9 +22,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// stepClock advances 10ms on every call, so durations are deterministic.
+func stepClock() func() time.Time {
+	t := time.Unix(1000, 0)
+	return func() time.Time { t = t.Add(10 * time.Millisecond); return t }
+}
+
 func newReporter() (*ui.Text, *bytes.Buffer, *bytes.Buffer) {
 	out, errb := &bytes.Buffer{}, &bytes.Buffer{}
-	return ui.NewTextProfile(out, errb, colorprofile.NoTTY), out, errb
+	return ui.NewTextProfile(out, errb, colorprofile.NoTTY, ui.WithClock(stepClock()), ui.WithVersion("1.2.3")), out, errb
 }
 
 // singleFixture prepares a working directory with a theme and an input file and
@@ -54,20 +60,64 @@ func TestGenerateSingle_OrderedStepsOnStdout(t *testing.T) {
 	renderer := rendermocks.NewRenderInterfaceMock(t)
 	renderer.EXPECT().Render(mock.Anything, mock.Anything, mock.Anything, mock.Anything, "default", "html", false, mock.Anything).Return(nil)
 
-	g := &generator{rep: rep, validator: val, parser: parser, renderer: renderer}
+	g := &generator{rep: rep, validator: val, parser: parser, renderer: renderer, now: stepClock()}
 	require.NoError(t, g.generateSingle())
 
-	got := out.String()
+	want := "CV Wonder v1.2.3\n" +
+		"  › Input   cv.yml\n" +
+		"  › Output  generated/\n" +
+		"  › Theme   default\n" +
+		"  › Format  html\n" +
+		"\n" +
+		"✓ Validation passed: the CV YAML file is valid\n" +
+		"✓ Parsed cv.yml  10ms\n" +
+		"✓ Rendered html  10ms\n" +
+		"\n" +
+		"Done in 10ms\n" +
+		"  " + filepath.Join("generated", "cv.html") + "\n" +
+		"\n" +
+		"Next: cvwonder serve --watch\n"
 	assert.Empty(t, errb.String())
-	assert.True(t, strings.HasPrefix(got, "CV Wonder\n"), got)
-	order := []string{"Input:", "Output:", "Theme:", "Format:", "Validation passed", "Parsed cv.yml", "Rendered html", "CV generated successfully"}
-	last := -1
-	for _, want := range order {
-		i := strings.Index(got, want)
-		require.GreaterOrEqual(t, i, 0, "missing %q in %q", want, got)
-		require.Greater(t, i, last, "%q out of order in %q", want, got)
-		last = i
-	}
+	assert.Equal(t, want, out.String())
+	assert.NotContains(t, out.String(), "CV generated successfully")
+}
+
+func TestGenerateSingle_PDFFooterListsHTMLAndPDF(t *testing.T) {
+	singleFixture(t)
+	utils.CliArgs.Format = "pdf"
+	rep, out, _ := newReporter()
+	parser := parsermocks.NewParserInterfaceMock(t)
+	parser.EXPECT().ParseFile(mock.Anything).Return(model.CV{}, nil)
+	renderer := rendermocks.NewRenderInterfaceMock(t)
+	renderer.EXPECT().Render(mock.Anything, mock.Anything, mock.Anything, mock.Anything, "default", "pdf", false, mock.Anything).Return(nil)
+
+	g := &generator{rep: rep, parser: parser, renderer: renderer, now: stepClock()}
+	require.NoError(t, g.generateSingle())
+	got := out.String()
+	assert.Contains(t, got, "  "+filepath.Join("generated", "cv.html")+"\n  "+filepath.Join("generated", "cv.pdf")+"\n")
+	assert.Contains(t, got, "Next: cvwonder serve --watch\n")
+	assert.NotContains(t, got, "\x1b")
+}
+
+func TestGenerateSingle_NextStepRepeatsNonDefaultFlags(t *testing.T) {
+	singleFixture(t)
+	utils.CliArgs.OutputDirectory = "public/"
+	utils.CliArgs.ThemeName = "default"
+	assert.Equal(t, "cvwonder serve --watch -i my.yml -o public/", serveHint("my.yml", "public/"))
+	assert.Equal(t, "cvwonder serve --watch", serveHint("cv.yml", "generated/"))
+}
+
+func TestGenerateSingle_QuietPrintsNoFooterOrHint(t *testing.T) {
+	singleFixture(t)
+	rep, out, _ := newReporter()
+	parser := parsermocks.NewParserInterfaceMock(t)
+	parser.EXPECT().ParseFile(mock.Anything).Return(model.CV{}, nil)
+	renderer := rendermocks.NewRenderInterfaceMock(t)
+	renderer.EXPECT().Render(mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil)
+
+	g := &generator{rep: ui.Quiet(rep), parser: parser, renderer: renderer, now: stepClock()}
+	require.NoError(t, g.generateSingle())
+	assert.Empty(t, out.String())
 }
 
 func TestGenerateSingle_InvalidFileShowsFindingsAndStops(t *testing.T) {
@@ -98,11 +148,12 @@ func TestGenerateSingle_RenderFailureIsAnError(t *testing.T) {
 	renderer := rendermocks.NewRenderInterfaceMock(t)
 	renderer.EXPECT().Render(mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("boom"))
 
-	g := &generator{rep: rep, parser: parser, renderer: renderer}
+	g := &generator{rep: rep, parser: parser, renderer: renderer, now: stepClock()}
 	err := g.generateSingle()
 	require.ErrorContains(t, err, "boom")
-	assert.Contains(t, out.String(), "✗ Rendering html")
-	assert.NotContains(t, out.String(), "CV generated successfully")
+	assert.Contains(t, out.String(), "✗ Rendering html  10ms\n")
+	assert.NotContains(t, out.String(), "Done in")
+	assert.NotContains(t, out.String(), "Next:")
 }
 
 func TestReportBulk_Mixed(t *testing.T) {

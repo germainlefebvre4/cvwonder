@@ -3,7 +3,9 @@ package main
 import (
 	"io"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 
 	cmdGenerate "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/generate"
 	cmdInit "github.com/germainlefebvre4/cvwonder/cmd/cvwonder/init"
@@ -53,14 +55,38 @@ func setupOutput(cmd *cobra.Command, debugAlias bool) error {
 		// Data commands keep stdout for the payload only.
 		out = stderr
 	}
-	logger.Setup(level, out, stderr)
+	// One writer per stream, shared by the logger and the reporter, so a running
+	// spinner and log lines never corrupt each other.
+	shared := ui.NewSharedWriter(out)
+	logger.Setup(level, shared, stderr)
 
-	var reporter ui.Reporter = ui.NewText(out, stderr)
+	text := ui.NewText(shared, stderr, ui.WithVersion(version.CVWONDER_VERSION))
+	if text.Interactive() {
+		restoreCursorOnInterrupt(text)
+	}
+	var reporter ui.Reporter = text
 	if utils.CliArgs.Quiet {
 		reporter = ui.Quiet(reporter)
 	}
 	ui.Set(reporter, ui.Streams{Out: out, Err: stderr, Payload: stdout})
 	return nil
+}
+
+// restoreCursorOnInterrupt makes sure an interrupt never leaves the terminal
+// cursor hidden by a spinner: it restores it, then exits with the usual
+// 128+signal status.
+func restoreCursorOnInterrupt(t *ui.Text) {
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		s := <-sig
+		t.RestoreCursor()
+		code := 130
+		if s == syscall.SIGTERM {
+			code = 143
+		}
+		os.Exit(code)
+	}()
 }
 
 func newRootCmd() *cobra.Command {

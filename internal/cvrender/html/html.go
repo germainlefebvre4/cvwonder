@@ -2,6 +2,7 @@ package render_html
 
 import (
 	"fmt"
+	"github.com/germainlefebvre4/cvwonder/internal/cvrender/outpath"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -23,8 +24,7 @@ func (r *RenderHTMLServices) RenderFormatHTML(cv model.CV, baseDirectory string,
 	if err != nil {
 		return fmt.Errorf("resolving output directory: %w", err)
 	}
-	outputFilename := filepath.Base(inputFilename) + ".html"
-	outputFilePath := filepath.Join(outputDirectory, outputFilename)
+	outputFilePath := outpath.HTML(outputDirectory, inputFilename)
 	outputTmpFilePath := outputFilePath + ".tmp"
 
 	// Generate template file
