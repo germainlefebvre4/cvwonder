@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.12.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.11.0...v0.12.0) (2026-11-27)
+
+
+### Features
+
+* **cli:** improve output readability and visuals ([#188](https://github.com/germainlefebvre4/cvwonder/issues/188)) ([e51e014](https://github.com/germainlefebvre4/cvwonder/commit/e51e01449deeb3b8cb71d86618e36993e65d94ce))
+* **wizard:** Add wizard resume ([#134](https://github.com/germainlefebvre4/cvwonder/issues/134)) ([3474f9d](https://github.com/germainlefebvre4/cvwonder/commit/3474f9d52bdf9f6057deec4a3eecd9f1112a0f85))
+
+
+### Bug Fixes
+
+* return errors from internal packages and fix bugs found in audit ([#187](https://github.com/germainlefebvre4/cvwonder/issues/187)) ([2bd2767](https://github.com/germainlefebvre4/cvwonder/commit/2bd2767ed3c446cb2d04206f09046bd04cbeec8f))
+* **security:** patch CVEs and harden Docker image ([#186](https://github.com/germainlefebvre4/cvwonder/issues/186)) ([fba16e5](https://github.com/germainlefebvre4/cvwonder/commit/fba16e5b8f84d631eaf6ec3ee18b8b0da95a6327))
+
 ## [0.11.0](https://github.com/germainlefebvre4/cvwonder/compare/v0.10.1...v0.11.0) (2026-08-07)
 
 
